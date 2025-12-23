@@ -27,12 +27,20 @@ router.get('/:surveyId/:stepId', async (req, res) => {
     responseDoc = await ResponseService.getLatestResponse(surveyId, userId);
   }
 
-  res.render(`questions/${step.type}`, {
+res.render(`questions/${step.type}`, 
+  { survey, step, options ,
+  responseId: responseDoc._id  // passer l'id au formulaire
+}, (err, html) => {
+  if (err) return res.status(500).send(err.message);
+
+  // Injecter la question dans le layout
+  res.render('layout', {
     survey,
     step,
-    options,
-    responseId: responseDoc._id  // passer l'id au formulaire
+    content: html
   });
+});
+
 });
 
 /* Afficher une question 

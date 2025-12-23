@@ -1,0 +1,7 @@
+.question-autocomplete input {
+  background: #f9fafb;
+}
+
+.question-autocomplete datalist {
+  display: none;
+}

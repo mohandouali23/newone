@@ -7,7 +7,9 @@
 </head>
 <body>
   {{> partials/header }}
-<main class="survey" data-step-id="{{step.id}}" data-step-type="{{step.type}}">
+<main class="survey question-{{step.type}}" 
+data-step-id="{{step.id}}"
+ data-step-type="{{step.type}}">
 
   {{{content}}}
 </main>

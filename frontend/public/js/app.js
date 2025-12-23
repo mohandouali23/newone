@@ -1,3 +1,12 @@
+const stepType = document.querySelector('.survey')?.dataset.stepType;
+
+if (stepType) {
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = `/assets/css/questions/${stepType}.css`;
+  document.head.appendChild(link);
+}
+
 // import SurveyManager from './SurveyManager.js';
 
 // // Initialiser le manager

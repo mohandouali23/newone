@@ -1,0 +1,18 @@
+.question-single-choice label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: background 0.2s, border 0.2s;
+}
+
+.question-single-choice label:hover {
+  background: #f3f4f6;
+}
+
+.question-single-choice input[type="radio"] {
+  accent-color: #2563eb;
+}
