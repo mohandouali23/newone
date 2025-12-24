@@ -1,15 +1,22 @@
-<h2>{{step.title}}</h2>
-<p>{{step.label}}</p>
-
 <form method="POST" action="/api/responses/{{survey.id}}/{{step.id}}">
-<input type="hidden" name="responseId" value="{{responseId}}">
+  <input type="hidden" name="responseId" value="{{responseId}}">
+
   {{#step.options}}
     <label>
-      <input type="checkbox" name="value" value="{{codeItem}}">
+      <input type="checkbox" name="value" value="{{codeItem}}" data-requires-precision="{{requiresPrecision}}">
       {{label}}
-    </label><br>
+    </label>
+    <input type="text" name="precision_{{codeItem}}" class="precision-input" style="display:none;" placeholder="Précisez..." />
   {{/step.options}}
 
   <button type="submit">Suivant</button>
-  
 </form>
+
+<script>
+  document.querySelectorAll('input[type=checkbox][name=value]').forEach(cb => {
+    cb.addEventListener('change', function() {
+      const input = document.querySelector(`input[name=precision_${this.value}]`);
+      input.style.display = this.checked && this.dataset.requiresPrecision === 'true' ? 'inline-block' : 'none';
+    });
+  });
+</script>

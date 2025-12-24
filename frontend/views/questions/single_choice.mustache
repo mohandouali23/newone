@@ -3,13 +3,26 @@
 
 <form method="POST" action="/api/responses/{{survey.id}}/{{step.id}}">
 <input type="hidden" name="responseId" value="{{responseId}}">
+ 
   {{#step.options}}
     <label>
-      <input type="radio" name="value" value="{{codeItem}}" required>
+      <input type="radio" name="value" value="{{codeItem}}" required data-requires-precision="{{requiresPrecision}}">
       {{label}}
     </label><br>
+     <input type="text" name="precision_{{codeItem}}" class="precision-input" style="display:none;" placeholder="Précisez..." />
   {{/step.options}}
 
   <button type="submit">Suivant</button>
   
 </form>
+<script>
+  // Afficher le champ précision si nécessaire
+  document.querySelectorAll('input[type=radio][name=value]').forEach(radio => {
+    radio.addEventListener('change', function() {
+      document.querySelectorAll('.precision-input').forEach(i => i.style.display='none');
+      if(this.dataset.requiresPrecision === 'true'){
+        document.querySelector(`input[name=precision_${this.value}]`).style.display='inline-block';
+      }
+    });
+  });
+</script>

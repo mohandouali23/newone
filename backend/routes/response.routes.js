@@ -54,8 +54,10 @@ router.post('/:surveyId/:stepId', async (req, res) => {
   const step = SurveyService.getStep(survey, stepId);
   if (!step) return res.status(404).send('Question introuvable');
 
+  // Récupérer la précision si elle existe
+const precisionValue = req.body[`precision_${req.body.value}`] || null;
   // Normaliser la réponse
-  const answer = ResponseNormalizer.normalize(step, req.body.value);
+  const answer = ResponseNormalizer.normalize(step, req.body.value,precisionValue);
 
   try {
     // Sauvegarder dans MongoDB

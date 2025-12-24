@@ -16,19 +16,27 @@ export default class ResponseNormalizer {
           value = rawValue;
           break;
   
-        case 'single_choice':
-          const selectedCode = rawValue;
-          const selectedOption = step.options.find(o => String(o.codeItem) === String(selectedCode));
-          value = selectedOption ? { codeItem: selectedOption.codeItem, label: selectedOption.label } : null;
-          break;
+          case 'single_choice': {
+            const selectedOption = step.options.find(o => String(o.codeItem) === String(rawValue));
+            if (!selectedOption) value = null;
+            else if (selectedOption.requiresPrecision) {
+              value = {  codeItem: selectedOption.codeItem, label: selectedOption.label , precision: precisionValue || '' };
+            } else {
+              value = { codeItem: selectedOption.codeItem, label: selectedOption.label };
+            }
+            break;
+          }
   
-        case 'multiple_choice':
-          const selectedCodes = Array.isArray(rawValue) ? rawValue : [rawValue];
-          value = step.options
-            .filter(o => selectedCodes.includes(String(o.codeItem) || o.value))
-            .map(o => ({ codeItem: o.codeItem, label: o.label }));
-          break;
-  
+          case 'multiple_choice': {
+            const selectedCodes = Array.isArray(rawValue) ? rawValue : [rawValue];
+            value = step.options
+              .filter(o => selectedCodes.includes(String(o.codeItem)))
+              .map(o => {
+                if (o.requiresPrecision) return { val: { codeItem: o.codeItem, label: o.label }, precision: precisionValue || '' };
+                return { codeItem: o.codeItem, label: o.label };
+              });
+            break;
+          }
         case 'autocomplete':
           try {
             value = JSON.parse(rawValue); // doit être envoyé comme JSON depuis le front
