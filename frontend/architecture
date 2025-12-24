@@ -11,6 +11,10 @@
 // │   │
 // │   ├── routes/                     # Définition des routes Express
 // │   │   └── survey.routes.js        # Routes API gestion du questionnaire-
+// │   ├── middlewares/               
+// │   ├── logger.js                    # log des requêtes
+// │   ├── noCache.js                    # désactive le cache
+// │   └── checkCompleted.js            # bloque le retour en arrière si questionnaire terminé
 // │   │
 // │   ├── app.js                       # Configuration d'Express (middlewares, views, static, routes)
 // │   ├── db.js                       #connection mongodb

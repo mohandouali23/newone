@@ -6,6 +6,8 @@ import connectDB from './db.js';
 import surveyRoutes from './routes/survey.routes.js';
 import responseRoutes from './routes/response.routes.js';
 import dotenv from 'dotenv';
+import logger from './middlewares/logger.js';
+import noCache from './middlewares/noCache.js';
 dotenv.config();
 
 const app = express();
@@ -22,9 +24,12 @@ app.set('views', path.resolve('frontend/views'));
 app.use('/assets', express.static(path.resolve('frontend/public')));
 
 // Middleware pour parser POST
-/* FORMS */
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+// Middleware global
+app.use(logger);
+app.use(noCache);
 
 /* ROUTES */
 app.use('/survey', surveyRoutes);          // afficher questions
