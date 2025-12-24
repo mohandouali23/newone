@@ -37,3 +37,46 @@
 
   <button type="submit">Suivant</button>
 </form>
+
+
+
+<h2>{{step.title}}</h2>
+<p>{{step.label}}</p>
+
+<form method="POST" action="/api/responses/{{survey.id}}/{{step.id}}">
+  <input type="hidden" name="responseId" value="{{responseId}}">
+
+  <div class="matrix">
+    <table class="matrix-table">
+      <thead>
+        <tr>
+          <th></th>
+          {{#step.columns}}
+            <th>{{label}}</th>
+          {{/step.columns}}
+        </tr>
+      </thead>
+
+      <tbody>
+        {{#step.rows}}
+          <tr>
+            <th scope="row">{{label}}</th>
+
+            {{#columns}}
+              <td>
+                <input
+                  type="{{#../rules.onePerRow}}radio{{/../rules.onePerRow}}{{^../rules.onePerRow}}checkbox{{/../rules.onePerRow}}"
+                  name="value[{{../id}}]{{#../rules.onePerRow}}{{/../rules.onePerRow}}"
+                  value="{{value}}"
+                >
+              </td>
+            {{/columns}}
+
+          </tr>
+        {{/step.rows}}
+      </tbody>
+    </table>
+  </div>
+
+  <button type="submit">Suivant</button>
+</form>

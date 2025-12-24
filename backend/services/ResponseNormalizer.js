@@ -66,28 +66,40 @@ export default class ResponseNormalizer {
             value = rawValue || null;
           }
           break;
-          case 'grid':
-  value = [];
-  const rowIds = Object.keys(rawValue || {});
-  rowIds.forEach((rowIndex, i) => {
-    const vals = Array.isArray(rawValue[rowIndex]) ? rawValue[rowIndex] : (rawValue[rowIndex] ? [rawValue[rowIndex]] : []);
-    const row = step.rows[i]; // on prend la ligne correspondante par index
-    const rowLabel = row ? row.label : rowIndex;
+  //         case 'grid':
+  // // rawValue = { rowId: [values] }
+  // value = [];
+  // for (const [rowId, vals] of Object.entries(rawValue || {})) {
+  //   const arr = Array.isArray(vals) ? vals : (vals ? [vals] : []);
+  //   arr.forEach(v => {
+  //     const col = step.columns.find(c => String(c.value) === String(v));
+  //     value.push({
+  //       rowId,
+  //       value: v,
+  //       label: col ? col.label : v
+  //     });
+  //   });
+  // }
+  // break;
 
-    vals.forEach(v => {
-      const col = step.columns.find(c => String(c.value) === String(v));
-      value.push({
-        rowLabel,
-        value: v,
-        label: col ? col.label : v
+  case 'grid':
+    value = [];
+    const rowIds = Object.keys(rawValue || {});
+    rowIds.forEach((rowIndex, i) => {
+      const vals = Array.isArray(rawValue[rowIndex]) ? rawValue[rowIndex] : (rawValue[rowIndex] ? [rawValue[rowIndex]] : []);
+      const row = step.rows[i]; // on prend la ligne correspondante par index
+      const rowLabel = row ? row.label : rowIndex;
+  
+      vals.forEach(v => {
+        const col = step.columns.find(c => String(c.value) === String(v));
+        value.push({
+          rowLabel,
+          value: v,
+          label: col ? col.label : v
+        });
       });
     });
-  });
-  break;
-
-
-
-          
+    break;    
   
         default:
           value = rawValue;
