@@ -67,24 +67,24 @@ export default class ResponseNormalizer {
           }
           break;
           case 'grid':
-  // rawValue = { rowId: [values] }
   value = [];
-  for (const [rowId, vals] of Object.entries(rawValue || {})) {
-    const arr = Array.isArray(vals) ? vals : (vals ? [vals] : []);
-    // Trouver le label correspondant au rowId
-    const row = step.rows.find(r => r.id === rowId);
-    const rowLabel = row ? row.label : rowId;
+  const rowIds = Object.keys(rawValue || {});
+  rowIds.forEach((rowIndex, i) => {
+    const vals = Array.isArray(rawValue[rowIndex]) ? rawValue[rowIndex] : (rawValue[rowIndex] ? [rawValue[rowIndex]] : []);
+    const row = step.rows[i]; // on prend la ligne correspondante par index
+    const rowLabel = row ? row.label : rowIndex;
 
-    arr.forEach(v => {
+    vals.forEach(v => {
       const col = step.columns.find(c => String(c.value) === String(v));
       value.push({
-        rowLabel,         // <-- ici on met le label de la ligne
+        rowLabel,
         value: v,
         label: col ? col.label : v
       });
     });
-  }
+  });
   break;
+
 
 
           
