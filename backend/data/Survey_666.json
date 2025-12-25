@@ -40,7 +40,7 @@
               "label": "Utilisez-vous le bus ?",
               "required": true,
               "options": [
-                { "codeItem": 1, "label": "Oui" },
+                { "codeItem": 1, "label": "Oui" , "requiresPrecision": true},
                 { "codeItem": 2, "label": "Non" }
               ]
             },
@@ -52,16 +52,34 @@
             }
           ]
         },
+        {
+          "id": "section_Pays U.E",
+          "title": "Pays U.E",
+          "questions": [
+            {
+              "id": "q10_3",
+              "type": "multiple_choice",
+              "label": "",
+              "required": true,
+              "options": [
+                { "codeItem": 1, "value": "France", "label": "France"},
+                { "codeItem": 2, "value": "Allemagne", "label": "Allemagne"},
+                { "codeItem": 3, "value": "Royaume-Uni", "label": "Royaume-Uni"},
+                { "codeItem": 4, "value": "Belgique", "label": "Belgique"}
+              ]
+            }
+          ]
+        },
     
         {
           "id": "section_train",
           "title": "Train",
           "questions": [
             {
-              "id": "q10_3",
+              "id": "q10_4",
               "type": "spinner",
               "label": "Fréquence d’utilisation",
-              "options": ["Tous les jours", "Hebdomadaire", "Rarement"],
+              "options": ["","Tous les jours", "Hebdomadaire", "Rarement"],
               "required": true
             }
           ]

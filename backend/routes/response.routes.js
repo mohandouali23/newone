@@ -57,6 +57,7 @@ router.post('/:surveyId/:stepId', async (req, res) => {
 
 if (step.type === 'accordion') {
   rawValue = req.body; // on passe TOUT
+  console.log('RAW Accordion Value:', rawValue);
 } else {
   rawValue = req.body.value;
 }

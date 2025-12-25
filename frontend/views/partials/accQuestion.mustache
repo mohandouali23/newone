@@ -16,16 +16,16 @@
   {{#isSingleChoice}}
     {{#options}}
       <label>
-        <input type="radio" name="{{../id}}" value="{{codeItem}}">
+        <input type="radio" name="{{id}}" value="{{codeItem}}">
         {{label}}
-      </label>
+      </label><br>
     {{/options}}
   {{/isSingleChoice}}
 
   {{#isMultipleChoice}}
     {{#options}}
       <label>
-        <input type="checkbox" name="{{../id}}" value="{{codeItem}}">
+        <input type="checkbox" name="{{id}}" value="{{codeItem}}">
         {{label}}
       </label>
     {{/options}}
