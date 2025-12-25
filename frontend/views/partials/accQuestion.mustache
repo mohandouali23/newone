@@ -1,0 +1,33 @@
+<div class="question" data-id="{{id}}" data-type="{{type}}">
+  <label>{{label}}</label>
+
+  {{#isText}}
+    <input type="text" name="{{id}}" placeholder="{{placeholder}}">
+  {{/isText}}
+
+  {{#isSpinner}}
+    <select name="{{id}}">
+      {{#options}}
+        <option value="{{.}}">{{.}}</option>
+      {{/options}}
+    </select>
+  {{/isSpinner}}
+
+  {{#isSingleChoice}}
+    {{#options}}
+      <label>
+        <input type="radio" name="{{../id}}" value="{{codeItem}}">
+        {{label}}
+      </label>
+    {{/options}}
+  {{/isSingleChoice}}
+
+  {{#isMultipleChoice}}
+    {{#options}}
+      <label>
+        <input type="checkbox" name="{{../id}}" value="{{codeItem}}">
+        {{label}}
+      </label>
+    {{/options}}
+  {{/isMultipleChoice}}
+</div>

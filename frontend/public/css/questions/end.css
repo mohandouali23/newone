@@ -1,0 +1,44 @@
+
+/****************************************** PAGE END*********************************** */
+.end-survey {
+    background: #fff;
+    width: 100%;
+    max-width: 520px;
+    padding: 40px 32px;
+    border-radius: 14px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    animation: fadeIn 0.4s ease-in-out;
+  }
+  
+  .end-survey h2 {
+    font-size: 24px;
+    color: #1f2937;
+    margin-bottom: 12px;
+  }
+  
+  .end-survey p {
+    font-size: 16px;
+    color: #6b7280;
+    margin-bottom: 20px;
+  }
+  
+  .end-survey a {
+    display: inline-block;
+    text-decoration: none;
+    background: #2563eb;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: background 0.2s, transform 0.1s;
+  }
+  
+  .end-survey a:hover {
+    background: #1d4ed8;
+  }
+  
+  .end-survey a:active {
+    transform: scale(0.98);
+  }
+  

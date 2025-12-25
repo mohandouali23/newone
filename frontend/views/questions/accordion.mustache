@@ -1,0 +1,45 @@
+<form method="POST" action="/api/responses/{{survey.id}}/{{step.id}}">
+  <input type="hidden" name="responseId" value="{{responseId}}">
+
+  <div class="accordion-question">
+    <h3>{{step.title}} {{step.label}}</h3>
+
+    {{#step.sections}}
+      <div class="accordion-section">
+        <div class="accordion-header">
+          {{title}}
+        </div>
+
+        <div class="accordion-body">
+          {{#questions}}
+            {{> partials/accQuestion }}
+          {{/questions}}
+        </div>
+      </div>
+    {{/step.sections}}
+  </div>
+
+  <button type="submit">Suivant</button>
+</form>
+
+<script>
+document.querySelectorAll('.accordion-header').forEach(header => {
+  header.addEventListener('click', () => {
+     const body = header.nextElementSibling;
+    const section = header.parentElement;
+
+    // fermer toutes les autres sections
+    document.querySelectorAll('.accordion-section').forEach(sec => {
+      if (sec !== section) {
+        sec.querySelector('.accordion-header').classList.remove('open');
+        sec.querySelector('.accordion-body').classList.remove('open');
+      }
+    });
+
+    // basculer la section cliquée
+   // basculer la section cliquée
+    header.classList.toggle('open');
+    body.classList.toggle('open');
+  });
+});
+</script>

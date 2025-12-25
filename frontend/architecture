@@ -25,15 +25,25 @@
 // │   │   ├── layout.mustache          # Template principal (structure HTML de base, head/body)
 // │   │   ├── partials/                # Templates partiels réutilisables
 // │   │   │   └── header.mustache      # Header commun à toutes les pages
+// │   │   │   └── accQuestion.mustache      # Header commun à toutes les pages
 // │   │   │
 // │   │   └── questions/               # Templates pour chaque type de question
 // │   │       ├── text.mustache        # Template pour question texte
 // │   │       ├── single_choice.mustache  # Template pour question à choix unique
 // │   │       ├── multiple_choice.mustache # Template pour question à choix multiples
+// │   │       ├── accordian.mustache      
 // │   │
 // │   └── public/                      # Fichiers statiques accessibles côté client
 // │       ├── css/
 // │       │   └── app.css              # Styles globaux de l’application
+// │       │   └── partials/               
+// │       │       ├── accQuestion.css       
+// │       │   └── questions/               
+// │       │       ├── text.css       
+// │       │       ├── single_choice.css  
+// │       │       ├── multiple_choice.css 
+// │       │       ├── accordian.css      
+// │       │
 // │       └── js/
 // │           └── app.js               # Logique frontend (interactions, gestion des réponses, console.log)
 // │

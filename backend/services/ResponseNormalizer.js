@@ -1,16 +1,33 @@
 export default class ResponseNormalizer {
-
-    /**
-     * Normalise la réponse d'une question selon le type
-     * @param {Object} step - objet question
-     * @param {any} rawValue - valeur brute envoyée par le formulaire
-     * @returns {Object} réponse normalisée { questionId, type, value }
-     */
     static normalize(step, rawValue, precisionValue = null) {
       let value;
   
       switch(step.type) {
   
+        case 'accordion': {
+          value = [];
+        
+          step.sections.forEach(section => {
+            const sectionAnswers = [];
+        
+            section.questions.forEach(q => {
+              const raw = rawValue?.[q.id];
+        
+              if (raw !== undefined) {
+                const normalized = ResponseNormalizer.normalize(q, raw, precisionValue);
+                sectionAnswers.push(normalized);
+              }
+            });
+        
+            value.push({
+              sectionId: section.id,
+              answers: sectionAnswers
+            });
+          });
+        
+          break;
+        }
+        
         case 'text':
         case 'spinner':
           value = rawValue;

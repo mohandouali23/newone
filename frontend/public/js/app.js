@@ -7,6 +7,13 @@ if (stepType) {
   document.head.appendChild(link);
 }
 
+
+
+
+
+
+
+
 // import SurveyManager from './SurveyManager.js';
 
 // // Initialiser le manager

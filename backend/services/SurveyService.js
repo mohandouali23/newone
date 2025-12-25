@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import NavigationRuleService from './NavigationRuleService.js';
+
 export default class SurveyService {
 
   static loadSurvey(surveyId) {
@@ -12,26 +13,21 @@ export default class SurveyService {
     return survey.steps.find(s => s.id === stepId);
   }
 
-  // static getNextStep(step) {
-  //   if (step.redirection === 'FIN') return null;
-  //   return step.redirection;
-  // }
-static getNextStep(survey, step, answerValue) {
-  const next = NavigationRuleService.resolve(
-    step,
-    answerValue,
-    survey.steps
-  );
+  static getNextStep(survey, step, answerValue) {
+    const next = NavigationRuleService.resolve(
+      step,
+      answerValue,
+      survey.steps
+    );
 
-  if (next === 'FIN') return null;
-  return next;
-}
-  // Charger dynamiquement une table JSON
+    if (next === 'FIN') return null;
+    return next;
+  }
+
   static loadTable(tableName) {
     try {
       const filePath = path.resolve(`backend/data/${tableName}.json`);
       const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-      console.log("data auto",data)
       return data[tableName] || [];
     } catch (e) {
       console.error(`Impossible de charger la table ${tableName}`, e);

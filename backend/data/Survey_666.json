@@ -13,13 +13,63 @@
       "label": "Quel est votre moyen de transport principal ?",
       "placeholder": "Ex : Bus, Train, Voiture...",
       "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
-      "redirection": "q5",
+      "redirection": "q33",
       "input_cond": "",
       "output_cond": "value.length > 0",
       "required": true,
       "isSubQuestion": false,
       "page": 1
     },
+    {
+      "id": "q33",
+      "type": "accordion",
+      "title": "Q33.",
+      "label": "Informations complémentaires sur vos transports",
+      "page": 4,
+      "required": true,
+      "redirection": "q2",
+    
+      "sections": [
+        {
+          "id": "section_bus",
+          "title": "Bus",
+          "questions": [
+            {
+              "id": "q10_1",
+              "type": "single_choice",
+              "label": "Utilisez-vous le bus ?",
+              "required": true,
+              "options": [
+                { "codeItem": 1, "label": "Oui" },
+                { "codeItem": 2, "label": "Non" }
+              ]
+            },
+            {
+              "id": "q10_2",
+              "type": "text",
+              "label": "Quelle ligne utilisez-vous ?",
+              "required": false
+            }
+          ]
+        },
+    
+        {
+          "id": "section_train",
+          "title": "Train",
+          "questions": [
+            {
+              "id": "q10_3",
+              "type": "spinner",
+              "label": "Fréquence d’utilisation",
+              "options": ["Tous les jours", "Hebdomadaire", "Rarement"],
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    
+    
     {
       "id": "q2",
       "title": "Q2.",
@@ -47,7 +97,18 @@
       "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
       "redirection": "q3",
       "required": true,
-      "isSubQuestion": false
+      "isSubQuestion": false,
+      "navigation": {
+        "rules": [
+          {
+            "if": { "operator": "NOT_EQUALS",
+            "field": "codeItem",
+             "value":2},
+            "then": { "goTo": "q6" }
+          }
+        ],
+        "default": "redirection"
+      }
     },
 
 
@@ -158,7 +219,18 @@
       "required": true,
       "output_cond": "value.length > 0",
       "redirection": "q4",
-      "isSubQuestion": false
+      "isSubQuestion": false,
+      "navigation": {
+    "rules": [
+      {
+        "if": { "operator": "EQUALS",
+        "field": "codeItem",
+         "value":5},
+        "then": { "goTo": "q6" }
+      }
+    ],
+    "default": "redirection"
+  }
     },
     {
       "id": "q4",
@@ -178,7 +250,21 @@
       "input_cond": "",
       "output_cond": "value !== null",
       "required": true,
-      "isSubQuestion": false
+      "isSubQuestion": false,
+      "navigation": {
+  "rules": [
+    {
+      "if": {
+        "operator": "IN",
+        "field": "commune",
+        "values": ["Kouba", "Alger Centre"]
+      },
+      "then": { "goTo": "q14" }
+    }
+  ],
+  "default": "redirection"
+}
+
     },
     {
       "id": "q5",
@@ -214,13 +300,9 @@
       "isSubQuestion": false
     },
    
-
-
-
-    
     {
-      "id": "q6",
-      "title": "Q6bis.",
+      "id": "q7",
+      "title": "Q7bis.",
       "type": "spinner",
       "label": "Choisissez votre région",
       "options": ["Nord22", "Sud35", "Est5", "Ouest8", "Centre87"],
@@ -229,8 +311,8 @@
       "isSubQuestion": true
     },
     {
-      "id": "q7",
-      "title": "Q7bis.",
+      "id": "q6",
+      "title": "Q6bis.",
       "type": "text",
       "label": "Quel est votre moyen de transport principal  bus?",
       "placeholder": "uu",
@@ -289,6 +371,70 @@
       "output_cond": "value !== null",
       "required": true,
       "isSubQuestion": true
+    },{
+      "id": "q30",
+      "type": "accordion",
+      "title": "Q30.",
+      "label": "Détails sur vos moyens de transport",
+      "page": 8,
+      "required": true,
+      "redirection": "q2",
+    
+      "sections": [
+        {
+          "id": "acc_bus",
+          "title": "Bus",
+          "required": false,
+    
+          "questions": [
+            {
+              "id": "q30_1",
+              "type": "single_choice",
+              "label": "Utilisez-vous le bus ?",
+              "required": true,
+              "options": [
+                { "codeItem": 1, "label": "Oui" },
+                { "codeItem": 2, "label": "Non" }
+              ],
+    
+              "subQuestions": [
+                {
+                  "if": {
+                    "operator": "EQUALS",
+                    "field": "codeItem",
+                    "value": 1
+                  },
+                  "questions": [
+                    {
+                      "id": "q30_1a",
+                      "type": "spinner",
+                      "label": "Fréquence d’utilisation",
+                      "options": ["Tous les jours", "Hebdomadaire", "Rarement"],
+                      "required": true
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+    
+        {
+          "id": "acc_train",
+          "title": "Train",
+          "required": true,
+    
+          "questions": [
+            {
+              "id": "q30_2",
+              "type": "text",
+              "label": "Pourquoi utilisez-vous le train ?",
+              "required": true
+            }
+          ]
+        }
+      ]
     }
+    
   ]
 }

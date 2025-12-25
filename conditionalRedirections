@@ -95,3 +95,91 @@ Un moteur de règles lit le JSON et décide de la prochaine étape
     "default": "q5"
   }
 }
+--------------------------------accordion-----------------------------------
+Une section = un groupe logique
+section {
+  id,
+  title,
+  required,
+  questions[]
+}
+required: true → au moins une question valide
+required: false → section optionnelle
+
+structure de reponse 
+{
+  "questionId": "q30",
+  "type": "accordion",
+  "sections": [
+    {
+      "sectionId": "acc_bus",
+      "answers": [
+        {
+          "questionId": "q30_1",
+          "type": "single_choice",
+          "value": {
+            "codeItem": 1,
+            "label": "Oui"
+          },
+          "subAnswers": [
+            {
+              "questionId": "q30_1a",
+              "type": "spinner",
+              "value": "Tous les jours"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sectionId": "acc_train",
+      "answers": [
+        {
+          "questionId": "q30_2",
+          "type": "text",
+          "value": "Rapide et économique"
+        }
+      ]
+    }
+  ]
+}
+ou
+
+{
+  "questionId": "qAccordion1",
+  "type": "accordion",
+  "sections": [
+    {
+      "sectionId": "section_bus",
+      "answers": [
+        {
+          "questionId": "q10_1",
+          "type": "single_choice",
+          "value": { "codeItem": 1, "label": "Oui" }
+        },
+        {
+          "questionId": "q10_2",
+          "type": "text",
+          "value": "Ligne 12"
+        }
+      ]
+    },
+    {
+      "sectionId": "section_train",
+      "answers": [
+        {
+          "questionId": "q10_3",
+          "type": "spinner",
+          "value": "Hebdomadaire"
+        }
+      ]
+    }
+  ]
+}
+
+Accordion
+ ├─ Section
+ │   ├─ Question
+ │   ├─ Question
+ ├─ Section
+     ├─ Question

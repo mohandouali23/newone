@@ -1,0 +1,36 @@
+.accordion-question {
+  margin: 20px 0;
+}
+
+.accordion-section {
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  overflow: hidden; /* pour animation */
+  transition: all 0.3s ease;
+}
+
+.accordion-header {
+  background: #f5f5f5;
+  padding: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  user-select: none;
+  transition: background 0.3s ease;
+}
+
+.accordion-header.open {
+  background: #e0e0e0;
+}
+
+.accordion-body {
+  max-height: 0;
+  padding: 0 10px;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.accordion-body.open {
+  max-height: 500px; /* valeur assez grande pour contenir le contenu */
+  padding: 10px;
+}
