@@ -26,23 +26,21 @@ let step = SurveyService.getStep(survey, stepId);
 
   // ✅ Préparation GRID générique (colonnes + flags)
 if (step.type === 'gridA' && Array.isArray(step.rows) && Array.isArray(step.columns)) {
-
-  // Préparer les colonnes (flags Mustache)
-  const preparedColumns = step.columns.map(col => ({
-    ...col,
-    isSingleChoice: col.type === 'single_choice',
-    isMultipleChoice: col.type === 'multiple_choice',
-    isText: col.type === 'text',
-    isSpinner: col.type === 'spinner',
-    options: col.options || []
-  }));
-
-  // Injecter les colonnes préparées dans chaque ligne
   step.rows = step.rows.map(row => ({
     ...row,
-    columns: preparedColumns
+    columns: step.columns.map(col => ({
+      ...col,
+      idCol: col.id,   // id de la colonne
+      idRow: row.id,   // id de la ligne
+      isSingleChoice: col.type === 'single_choice',
+      isMultipleChoice: col.type === 'multiple_choice',
+        isText: col.type === 'text',
+    isSpinner: col.type === 'spinner',
+    options: col.options || []
+    }))
   }));
 }
+
 
  //  Injection des colonnes dans chaque ligne (GRID)
  if (step.type === 'grid' && Array.isArray(step.rows) && Array.isArray(step.columns)) {

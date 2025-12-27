@@ -1,4 +1,5 @@
 <form method="POST" action="/api/responses/{{survey.id}}/{{step.id}}">
+<input type="hidden" name="responseId" value="{{responseId}}">
 
 <table class="grid-table">
   <thead>
@@ -11,34 +12,34 @@
   </thead>
 
   <tbody>
-    {{#step.rows}}
-    <tr>
-      <td class="row-label">{{label}}</td>
+   {{#step.rows}}
+<tr>
+  <td class="row-label">{{label}}</td>
 
-      {{#columns}}
-      <td>
+  {{#columns}}
+  <td>
+    {{#isMultipleChoice}}
+      <input
+        type="checkbox"
+        name="value[{{idRow}}][{{idCol}}][]"  
+        value="{{idRow}}"           
+      >
+    {{/isMultipleChoice}}
 
-        {{#isMultipleChoice}}
-          <input
-            type="checkbox"
-            name="value[{{../id}}][]"
-            value="{{id}}"
-          >
-        {{/isMultipleChoice}}
+    {{#isSingleChoice}}
+      <input
+        type="radio"
+        name="value[{{idRow}}][{{idCol}}]"    
+        value="{{idRow}}"           
+      >
+    {{/isSingleChoice}}
+  </td>
+  {{/columns}}
+</tr>
+{{/step.rows}}
 
-        {{#isSingleChoice}}
-          <input
-            type="radio"
-            name="value[{{../id}}]"
-            value="{{id}}"
-          >
-        {{/isSingleChoice}}
 
-      </td>
-      {{/columns}}
 
-    </tr>
-    {{/step.rows}}
   </tbody>
 </table>
 

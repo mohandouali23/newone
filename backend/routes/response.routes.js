@@ -47,6 +47,7 @@ router.get('/all', async (req, res) => {
 router.post('/:surveyId/:stepId', async (req, res) => {
   const { surveyId, stepId } = req.params;
   let { responseId } = req.body;
+
   const userId = req.body.userId || 'anonymous';
 
   const survey = SurveyService.loadSurvey(surveyId);
@@ -76,11 +77,14 @@ if (step.type === 'multiple_choice') {
 }
 
 if (step.type === 'single_choice') {
+  rawValue = req.body[step.id]; 
+  console.log("rawvalue",rawValue)
   const key = `precision_${rawValue}`;
   if (req.body[key]) {
     precisionMap[rawValue] = req.body[key];
   }
 }
+ console.log("rawvalue",rawValue)
   // Normalisation
   const answer = ResponseNormalizer.normalize(step, rawValue, precisionMap);
 
@@ -91,8 +95,9 @@ if (step.type === 'single_choice') {
       response = await ResponseService.createResponse(surveyId, userId, answer);
     } else {
       // Document existant → ajouter la réponse
+console.log('test',responseId,answer)
       response = await ResponseService.addAnswer(responseId, answer);
-      console.log('test',response)
+      
     }
     responseId = response._id;
   } catch (err) {

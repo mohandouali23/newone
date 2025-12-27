@@ -6,7 +6,7 @@
  
   {{#step.options}}
     <label>
-      <input type="radio" name="{{../id}}" value="{{codeItem}}" required 
+      <input type="radio" name="{{step.id}}" value="{{codeItem}}" required 
       data-requires-precision="{{requiresPrecision}}">
       
       {{label}}
@@ -19,7 +19,7 @@
 </form>
 <script>
   // Afficher le champ précision si nécessaire
-  document.querySelectorAll('input[type=radio][name=value]').forEach(radio => {
+  document.querySelectorAll('input[type=radio][name={{step.id}}]').forEach(radio => {
     radio.addEventListener('change', function() {
       document.querySelectorAll('.precision-input').forEach(i => i.style.display='none');
       if(this.dataset.requiresPrecision === 'true'){
