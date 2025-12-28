@@ -1,9 +1,85 @@
 export default class ResponseNormalizer {
     static normalize(step, rawValue, precisionValue = null) {
       let value;
-  
+  console.log("rawvalue normlize",rawValue)
       switch(step.type) {
-  
+        
+        case 'gridB': {
+          value = {};
+          console.log('step.columns:', step.columns);
+        
+          // Initialisation
+          step.rows.forEach(row => {
+            step.columns.forEach(col => {
+              if (col.input?.type === 'checkbox' && col.input.axis === 'row') {
+                value[row.id] = []; // initialisation par ligne
+              }
+              if (col.input?.type === 'radio' && col.input.axis === 'row') {
+                value[row.id] = null; // initialisation par ligne
+              }
+              if (col.input?.type === 'checkbox' && col.input.axis === 'column') {
+                if (!value[col.id]) value[col.id] = []; // initialisation par colonne
+              }
+              if (col.input?.type === 'radio' && col.input.axis === 'column') {
+                value[col.id] = null; // initialisation par colonne
+              }
+            });
+          });
+        
+          console.log('value init', value);
+        
+          // Remplissage
+          step.rows.forEach(row => {
+            step.columns.forEach(col => {
+              const cellValue = rawValue?.[row.id];
+        
+              if (col.input?.type === 'checkbox' && col.input.axis === 'row') {
+                const cellValue = rawValue?.[row.id]; // ex: { daily: ['bus'], weekly: ['bus'] }
+                if (!cellValue) return;
+              
+                Object.keys(cellValue).forEach(colId => {
+                  const vals = Array.isArray(cellValue[colId]) ? cellValue[colId] : [cellValue[colId]];
+                  vals.forEach(v => {
+                    value[row.id].push({ value: colId, label: step.columns.find(c => c.id === colId)?.label });
+                  });
+                });
+              }
+              
+        
+              if (col.input?.type === 'radio' && col.input.axis === 'row') {
+                if (cellValue === col.id) {
+                  value[row.id] = { value: col.id, label: col.label };
+                }
+              }
+        
+              if (col.input?.type === 'checkbox' && col.input.axis === 'column') {
+                const colValue = rawValue?.[row.id]?.[col.id];
+                if (!colValue) return;
+        
+                const vals = Array.isArray(colValue) ? colValue : [colValue];
+                vals.forEach(v => {
+                  if (!value[col.id].some(a => a.value === v)) {
+                    value[col.id].push({ value: v, label: row.label });
+                  }
+                });
+              }
+        
+              if (col.input?.type === 'radio' && col.input.axis === 'column') {
+                const selectedRowId = rawValue?.[col.id];
+                if (!selectedRowId) return;
+        
+                const rowLabel = step.rows.find(r => r.id === selectedRowId)?.label;
+                if (!rowLabel) return;
+        
+                value[col.id] = { value: selectedRowId, label: rowLabel };
+              }
+            });
+          });
+        
+          console.log('value final', value);
+          break;
+        }
+        
 case 'gridA': {
   value = {};
 

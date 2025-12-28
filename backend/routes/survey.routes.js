@@ -53,6 +53,10 @@ if (step.type === 'gridA' && Array.isArray(step.rows) && Array.isArray(step.colu
 if (step.type === 'gridA') {
   step = SurveyService.prepareGrid(step);
 }
+if (step.type === 'gridB') {
+  step = SurveyService.prepareGridB(step);
+  console.log('gridB',step)
+}
 
  //  Préparation des flags pour le step
 if (step.type === 'accordion' && Array.isArray(step.sections)) {

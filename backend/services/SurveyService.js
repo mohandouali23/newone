@@ -45,5 +45,76 @@ export default class SurveyService {
   
     return step;
   }
+
+  static prepareGridB(step, existingAnswer = null) {
+    if (!Array.isArray(step.rows) || !Array.isArray(step.columns)) return step;
+  
+    step.rows = step.rows.map(row => {
+      const columns = step.columns.map(col => {
+        const input = col.input || {};
+        const isRadio = input.type === 'radio';
+        const isCheckbox = input.type === 'checkbox';
+  
+        let name;
+        let value;
+        let checked = false;
+  
+        // RADIO
+        if (isRadio) {
+          if (input.axis === 'column') {
+            // 1 réponse par colonne
+            name = `value[${col.id}]`;
+            value = row.id;
+  
+            if (existingAnswer?.[col.id]?.value === row.id) {
+              checked = true;
+            }
+          }
+  
+          if (input.axis === 'row') {
+            // 1 réponse par ligne
+            name = `value[${row.id}]`;
+            value = col.id;
+  
+            if (existingAnswer?.[row.id] === col.id) {
+              checked = true;
+            }
+          }
+        }
+  
+        // CHECKBOX
+        if (isCheckbox) {
+          name = `value[${row.id}][${col.id}][]`;
+          value = row.id;
+  
+          if (
+            Array.isArray(existingAnswer?.[col.id]) &&
+            existingAnswer[col.id].some(v => v.value === row.id)
+          ) {
+            checked = true;
+          }
+        }
+  
+        return {
+          ...col,
+          rowId: row.id,
+          colId: col.id,
+          isRadio,
+          isCheckbox,
+          name,
+          value,
+          checked
+        };
+      });
+  
+      return {
+        ...row,
+        columns
+      };
+    });
+  
+    return step;
+  }
+  
   
 }

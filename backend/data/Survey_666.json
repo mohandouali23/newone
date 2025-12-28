@@ -13,13 +13,145 @@
       "label": "Quel est votre moyen de transport principal ?",
       "placeholder": "Ex : Bus, Train, Voiture...",
       "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
-      "redirection": "q12",
+      "redirection": "q13",
       "input_cond": "",
       "output_cond": "value.length > 0",
       "required": true,
       "isSubQuestion": false,
       "page": 1
     },
+    {
+      "id": "q13",
+      "type": "gridB",
+      "title": "Q13.",
+      "label": "Activités pratiquées et motivation principale du séjour",
+      "required": true,
+      "redirection": "q14",
+      "rows": [
+        { "id": "walk", "label": "Se promener, flâner" },
+        { "id": "museum", "label": "Visites de musées, monuments" },
+        { "id": "nature", "label": "Parcs, jardins, sites naturels" },
+        { "id": "guided", "label": "Visites guidées de quartiers" }
+      ],
+    
+      "columns": [
+        {
+          "id": "activity",
+          "label": "Activités pratiquées",
+          "input": {
+            "type": "checkbox",
+            "axis": "column",
+            "validation": {
+              "min": 1
+            }
+          }
+        },
+        {
+          "id": "reason",
+          "label": "Motivation principale du séjour",
+          "input": {
+            "type": "radio",
+            "axis": "column",
+            "validation": {
+              "required": true,
+              "max": 1
+            }
+          }
+        }
+      ]
+    }
+,    
+{
+  "id": "q14",
+  "type": "gridB",
+  "title": "Q14.",
+  "label": "À quelle fréquence utilisez-vous les moyens de transport suivants ?",
+  "required": true,
+"redirection": "q15",
+  "rows": [
+        { "id": "bus", "label": "Bus" },
+        { "id": "train", "label": "Train" },
+        { "id": "metro", "label": "Métro" }
+      ],
+
+  "columns": [
+    {
+      "id": "daily",
+      "label": "Tous les jours",
+      "input": {
+        "type": "checkbox",
+        "axis": "row",
+        "validation": {
+          "min": 1
+        }
+      }
+    },
+    {
+      "id": "weekly",
+      "label": "Quelques fois par semaine",
+      "input": {
+        "type": "checkbox",
+        "axis": "row",
+        "validation": {
+          "required": true,
+          "min": 1
+        }
+      }
+    },
+    {
+      "id": "rarely",
+      "label": "Rarement",
+      "input": {
+        "type": "checkbox",
+        "axis": "row",
+        "validation": {
+          "required": true,
+          "min": 1
+        }
+      }
+    }
+  ]
+}
+,    
+{
+  "id": "q15",
+  "type": "gridB",
+  "title": "Q15.",
+  "label": "Quels services utilisez-vous dans votre ville ? (plusieurs réponses possibles)",
+  "required": true,
+"rows": [
+        { "id": "transport", "label": "Transports en commun" },
+        { "id": "parking", "label": "Parking public" },
+        { "id": "velib", "label": "Vélos en libre-service" }
+      ],
+
+  "columns": [
+    {
+      "id": "yes",
+      "label": "oui",
+      "input": {
+        "type": "radio",
+        "axis": "row",
+        "validation": {
+          "min": 1
+        }
+      }
+    },
+    {
+      "id": "no",
+      "label": "Non",
+      "input": {
+        "type": "radio",
+        "axis": "row",
+        "validation": {
+          "required": true,
+          "min": 1
+        }
+      }
+    }
+  ]
+}
+,    
     {
       "id": "q33",
       "type": "accordion",
