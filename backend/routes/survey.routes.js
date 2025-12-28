@@ -72,7 +72,7 @@ let step = SurveyService.getStep(survey, stepId);
     options = AutoCompleteUtils.getAutocompleteOptions(step);
   }
 
-if (step.type === 'gridB') {
+if (step.type === 'grid') {
   step = SurveyService.prepareGridB(step);
   console.log('gridB',step)
 }

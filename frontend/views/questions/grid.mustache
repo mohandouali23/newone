@@ -1,40 +1,47 @@
-<h2>{{step.title}}</h2>
-<p>{{step.label}}</p>
-
 <form method="POST" action="/api/responses/{{survey.id}}/{{step.id}}">
   <input type="hidden" name="responseId" value="{{responseId}}">
 
-  <div class="matrix">
-    <table class="matrix-table">
-      <thead>
-        <tr>
-          <th></th>
-          {{#step.columns}}
-            <th>{{label}}</th>
-          {{/step.columns}}
-        </tr>
-      </thead>
+  <table class="grid-table">
+    <thead>
+      <tr>
+        <th></th>
+        {{#step.reponses}}
+          <th>{{label}}</th>
+        {{/step.reponses}}
+      </tr>
+    </thead>
 
-      <tbody>
-        {{#step.rows}}
-          <tr>
-            <th scope="row">{{label}}</th>
- {{#columns}}
-        <td>
-          <input
-                  type="checkbox"
-                  name="value[{{id}}][]"   
-                  value="{{value}}"
-                >
+    <tbody>
+      {{#step.questions}}  <!-- rows -->
+      <tr>
+        <td class="row-label">{{label}}</td>
+
+        {{#columns}}  <!-- columns générés par prepareGridB -->
+        <td class="grid-cell">
+          {{#isRadio}}
+            <input
+              type="radio"
+              name="{{name}}"
+              value="{{value}}"
+              {{#checked}}checked{{/checked}}
+            >
+          {{/isRadio}}
+
+          {{#isCheckbox}}
+            <input
+              type="checkbox"
+              name="{{name}}"
+              value="{{value}}"
+              {{#checked}}checked{{/checked}}
+            >
+          {{/isCheckbox}}
         </td>
-      {{/columns}}
-           
-          </tr>
-        {{/step.rows}}
-      </tbody>
-    </table>
-  </div>
+        {{/columns}}
+
+      </tr>
+      {{/step.questions}}
+    </tbody>
+  </table>
 
   <button type="submit">Suivant</button>
 </form>
-

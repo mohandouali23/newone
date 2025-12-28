@@ -47,10 +47,10 @@ export default class SurveyService {
   }
 
   static prepareGridB(step, existingAnswer = null) {
-    if (!Array.isArray(step.rows) || !Array.isArray(step.columns)) return step;
+    if (!Array.isArray(step.questions) || !Array.isArray(step.reponses)) return step;
   
-    step.rows = step.rows.map(row => {
-      const columns = step.columns.map(col => {
+    step.questions = step.questions.map(row => {
+      const columns = step.reponses.map(col => {
         const input = col.input || {};
         const isRadio = input.type === 'radio';
         const isCheckbox = input.type === 'checkbox';
