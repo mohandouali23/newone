@@ -143,16 +143,16 @@ export default class SurveyService {
     const subSteps = survey.steps.filter(s => s.repeatFor === mainQuestionId);
 
     // Pour chaque option sélectionnée dans la principale
-    selectedArray.forEach(optionCode => {
+    selectedArray.forEach((optionCode, index) => {
       const optionObj = mainStep.options.find(o => o.codeItem.toString() === optionCode.toString());
 
       if (!optionObj) return;
 
       subSteps.forEach(subStep => {
-         // 🔹 Cloner la step pour ne pas écraser l’original
+         //  Cloner la step pour ne pas écraser l’original
       const stepClone = { ...subStep };
 
-      // 🔹 Remplacer TRANSPORT par le label réel
+      //  Remplacer TRANSPORT par le label réel
       stepClone.label = stepClone.label.replace("TRANSPORT", optionObj.label);
 
         // Copier la step et ajouter contexte
@@ -161,6 +161,7 @@ export default class SurveyService {
           parent: mainQuestionId,
           optionCode: optionObj.codeItem,
           optionLabel: optionObj.label,
+          optionIndex: index + 1,  //  index pour suffixe
           step: stepClone // conserve toute la structure originale si besoin
         });
       });

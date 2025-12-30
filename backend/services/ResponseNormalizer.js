@@ -1,6 +1,6 @@
 export default class ResponseNormalizer {
-  static normalize(step, rawValue) {
-    const idDB = step.id_db;
+  static normalize(step, rawValue, optionIndex=null) {
+    const idDB = optionIndex ? `${step.id_db}_${optionIndex}` : step.id_db;
     let value;
 
     switch(step.type) {
@@ -10,7 +10,7 @@ export default class ResponseNormalizer {
         if (!rawValue || typeof rawValue !== 'object') break;
       
         step.sections.forEach(section => {
-          const sectionId = section.id_sect;
+          const sectionId = optionIndex ? `${section.id_sect}_${optionIndex}` : section.id_sect;
           value[sectionId] = {};
       
           section.questions.forEach(question => {
@@ -18,7 +18,7 @@ export default class ResponseNormalizer {
             if (answer === undefined) return;
       
             // Appel récursif
-            const normalized = ResponseNormalizer.normalize(question, answer);
+            const normalized = ResponseNormalizer.normalize(question, answer, optionIndex);
       
             // Prendre la première valeur de l'objet retourné (il n'y a qu'une clé)
             const firstKey = Object.keys(normalized)[0];
