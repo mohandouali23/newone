@@ -15,6 +15,7 @@
 
       {{#columns}}  
       <td class="grid-cell">
+       {{#enabled}}
         {{#isRadio}}
           <input
             type="radio"
@@ -23,7 +24,8 @@
             {{#checked}}checked{{/checked}}
           >
         {{/isRadio}}
-
+         {{/enabled}}
+ {{#enabled}}
         {{#isCheckbox}}
           <input
             type="checkbox"
@@ -32,6 +34,7 @@
             {{#checked}}checked{{/checked}}
           >
         {{/isCheckbox}}
+         {{/enabled}}
       </td>
       {{/columns}}
 

@@ -13,16 +13,16 @@ export default class SurveyService {
     return survey.steps.find(s => s.id === stepId);
   }
 
-  static getNextStep(survey, step, answerValue) {
-    const next = NavigationRuleService.resolve(
-      step,
-      answerValue,
-      survey.steps
-    );
+  // static getNextStep(survey, step, answerValue) {
+  //   const next = NavigationRuleService.resolve(
+  //     step,
+  //     answerValue,
+  //     survey.steps
+  //   );
 
-    if (next === 'FIN') return null;
-    return next;
-  }
+  //   if (next === 'FIN') return null;
+  //   return next;
+  // }
 
   static loadTable(tableName) {
     try {
@@ -35,16 +35,7 @@ export default class SurveyService {
     }
   }
 
-  static prepareGrid(step) {
-    step.columns = step.columns.map(col => ({
-      ...col,
-      isMultipleChoice: col.type === 'multiple_choice',
-      isSingleChoice: col.type === 'single_choice',
-      options: col.options || []
-    }));
-  
-    return step;
-  }
+
 
   static prepareGridB(step, existingAnswer = null) {
     if (!Array.isArray(step.questions) || !Array.isArray(step.reponses)) return step;
@@ -55,9 +46,25 @@ export default class SurveyService {
         const isRadio = input.type === 'radio';
         const isCheckbox = input.type === 'checkbox';
   
-        let name;
-        let value;
-        let checked = false;
+       //  NOUVEAU : état de la cellule
+      const cellConfig = row.cells?.[col.id];
+      const enabled = cellConfig?.enabled !== false;
+
+      let name = null;
+      let value = null;
+      let checked = false;
+
+       //  cellule désactivée → rien à préparer
+       if (!enabled) {
+        return {
+          ...col,
+          rowId: row.id,
+          colId: col.id,
+          enabled: false,
+          isRadio,
+          isCheckbox
+        };
+      }
   
         // RADIO
         if (isRadio) {
@@ -99,6 +106,7 @@ export default class SurveyService {
           ...col,
           rowId: row.id,
           colId: col.id,
+          enabled, 
           isRadio,
           isCheckbox,
           name,
@@ -116,5 +124,49 @@ export default class SurveyService {
     return step;
   }
   
+  static generateRotationQueue(survey, mainQuestionId, answers) {
+    const mainStep = survey.steps.find(s => s.id === mainQuestionId);
+    if (!mainStep) return [];
+
+    const selectedOptions = answers[mainQuestionId];
+    if (!selectedOptions) return [];
+
+    // Si c'est multiple_choice, transformer en array
+    const selectedArray = Array.isArray(selectedOptions)
+      ? selectedOptions
+      : [selectedOptions];
+
+
+    const rotationQueue = [];
+
+    // Récupérer toutes les sous-questions qui dépendent de la question principale
+    const subSteps = survey.steps.filter(s => s.repeatFor === mainQuestionId);
+
+    // Pour chaque option sélectionnée dans la principale
+    selectedArray.forEach(optionCode => {
+      const optionObj = mainStep.options.find(o => o.codeItem.toString() === optionCode.toString());
+
+      if (!optionObj) return;
+
+      subSteps.forEach(subStep => {
+         // 🔹 Cloner la step pour ne pas écraser l’original
+      const stepClone = { ...subStep };
+
+      // 🔹 Remplacer TRANSPORT par le label réel
+      stepClone.label = stepClone.label.replace("TRANSPORT", optionObj.label);
+
+        // Copier la step et ajouter contexte
+        rotationQueue.push({
+          id: subStep.id,
+          parent: mainQuestionId,
+          optionCode: optionObj.codeItem,
+          optionLabel: optionObj.label,
+          step: stepClone // conserve toute la structure originale si besoin
+        });
+      });
+    });
+
+    return rotationQueue;
+  }
   
 }

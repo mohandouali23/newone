@@ -8,9 +8,13 @@
 // │   │
 // │   ├── services/                   # Logique métier / services
 // │   │   └── SurveyService.js        # Service pour gérer les sondages (lecture, écriture, manipulation)
+// │   │   └── ResponseService.js        # Service pour gérer les sondages (lecture, écriture, manipulation)
+// │   │   └── ResponseNormalizer.js        # Service pour gérer les sondages (lecture, écriture, manipulation)
+
 // │   │
 // │   ├── routes/                     # Définition des routes Express
 // │   │   └── survey.routes.js        # Routes API gestion du questionnaire-
+// │   │   └── response.routes.js        # Routes API gestion du questionnaire-
 // │   ├── middlewares/               
 // │   ├── logger.js                    # log des requêtes
 // │   ├── noCache.js                    # désactive le cache

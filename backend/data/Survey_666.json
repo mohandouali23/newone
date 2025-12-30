@@ -85,10 +85,28 @@
       "redirection": "q13",
       "page": 2,
       "questions": [
-        { "id_db_qst": "Y1UEG9_q14_1","id": "q14_1", "label": "Se promener, flâner" },
-        { "id_db_qst": "Y1UEG9_q14_2","id": "q14_2", "label": "Visites de musées, monuments" },
-        { "id_db_qst": "Y1UEG9_q14_3","id": "q14_3", "label": "Parcs, jardins, sites naturels" },
-        { "id_db_qst": "Y1UEG9_q14_4","id": "q14_4", "label": "Visites guidées de quartiers" }
+        { "id_db_qst": "Y1UEG9_q14_1",
+        "id": "q14_1",
+         "label": "Se promener, flâner",
+         "cells": {
+          "R1": { "enabled": true },
+          "R2": { "enabled": true }
+        }
+         },
+        { "id_db_qst": "Y1UEG9_q14_2",
+        "id": "q14_2", 
+        "label": "Visites de musées, monuments" ,
+        "cells": {
+          "R1": { "enabled": true },
+          "R2": { "enabled": false }
+        }},
+        { "id_db_qst": "Y1UEG9_q14_3",
+        "id": "q14_3",
+         "label": "Parcs, jardins, sites naturels",
+         "cells": {
+          "R1": { "enabled": true },
+          "R2": { "enabled": true }
+        } }
       ],
     
       "reponses": [
@@ -128,10 +146,30 @@
       "required": true,
       "redirection": "q15",
       "questions": [
-        { "id_db_qst": "Y1UEGY_q13_1", "id": "q13_1", "label": "Se promener, flâner" },
-        { "id_db_qst": "Y1UEGY_q13_2","id": "q13_2", "label": "Visites de musées, monuments" },
-        { "id_db_qst": "Y1UEGY_q13_3","id": "q13_3", "label": "Parcs, jardins, sites naturels" },
-        { "id_db_qst": "Y1UEGY_q13_4","id": "q13_4", "label": "Visites guidées de quartiers" }
+        { "id_db_qst": "Y1UEGY_q13_1",
+         "id": "q13_1", "label": "Se promener, flâner" },
+        { "id_db_qst": "Y1UEGY_q13_2",
+        "id": "q13_2",
+         "label": "Visites de musées, monuments" ,
+         "cells": {
+          "R1": { "enabled": false },
+          "R2": { "enabled": true}
+        }
+        },
+        { "id_db_qst": "Y1UEGY_q13_3",
+        "id": "q13_3",
+         "label": "Parcs, jardins, sites naturels",
+        "cells": {
+          "R1": { "enabled": true },
+          "R2": { "enabled": false }
+        } },
+        { "id_db_qst": "Y1UEGY_q13_4", 
+        "id": "q13_4", 
+        "label": "Visites guidées de quartiers" ,
+      "cells": {
+          "R1": { "enabled": false },
+          "R2": { "enabled": true }
+        }}
       ],
     
       "reponses": [

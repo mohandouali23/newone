@@ -1,0 +1,327 @@
+{
+    "id": "survey_333",
+    "title": "Enquête Questionnaire",
+    "title_app": "Enquête Questionnaire_ARP",
+    "version": "1.0",
+    "mode_enqueteur": "Enqueteur",
+   "description": "Collecte des informations sur les transports",
+    "steps": [
+      {
+        "id_db": "04W4LP",
+        "id": "q1",
+        "title": "Q1.",
+        "type": "text",
+        "label": "Quel est votre moyen de transport principal ttt ?",
+        "placeholder": "Ex : Bus, Train, Voiture...",
+        "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
+        "redirection": "q2",
+        "input_cond": "",
+        "output_cond": "value.length > 0",
+        "required": true,
+        "isSubQuestion": false,
+        "page": 1
+        
+      },
+      
+      {
+         "id_db": "UPI3DQ",
+        "id": "q2",
+        "title": "Q2.",
+        "type": "single_choice",
+        "label": "Fréquence d’utilisation du transport en commun",
+        "page": 2,
+        "input_cond": "",
+        "output_cond": "value.length > 0",
+        "options": [
+          {
+            "codeItem": 1,
+            "label": "Tous les jours"
+          },
+          {
+            "codeItem": 2,
+            "label": "Quelques fois par semaine"
+          },
+          {
+            "codeItem": 5,
+            "label": "Autre",
+            "requiresPrecision": true
+          }
+        ],
+        "placeholder": "",
+        "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
+        "redirection": "q3",
+        "required": true,
+        "isSubQuestion": false
+      },
+      {
+        "id_db": "ER8136",
+        "id": "q3",
+        "title": "Q3.",
+        "type": "multiple_choice",
+        "label": "Quels transports utilisez-vous ?",
+        "page": 3,
+        "options": [
+          {
+            "codeItem": 1,
+            "label": "Bus"
+          },
+          {
+            "codeItem": 2,
+            "label": "Train",
+            "requiresPrecision": true
+          },
+          {
+            "codeItem": 3,
+            "label": "Voiture"
+          },
+          {
+            "codeItem": 4,
+            "label": "Vélo"
+          },
+          {
+            "codeItem": 5,
+            "label": "Marche"
+          },
+          {
+            "codeItem": 6,
+            "label": "Aucun",
+            "exclusive": true
+          }
+        ],
+        "required": true,
+        "rotationTemplate": ["q3_1", "q3_2", "q3_3"],
+        "output_cond": "value.length > 0",
+        "redirection": "q4",
+        "isSubQuestion": false,
+        "navigation": {
+          "rules": [
+            {
+              "if": {
+                "operator": "EQUALS",
+                "field": "codeItem",
+                "value": 5
+              },
+              "then": {
+                "goTo": "q6"
+              }
+            }
+          ],
+          "default": "redirection"
+        }
+      },
+
+      {
+       "id_db": "ER8137",
+       "id": "q3_1",
+       "title": "Q3.1",
+       "type": "single_choice",
+       "label": "À quelle fréquence utilisez-vous le TRANSPORT ?",
+       "page": 0,
+       "repeatFor": "q3",
+       "input_cond": "",
+       "output_cond": "value.length > 0",
+       "options": [
+    { "codeItem": 1, "label": "Tous les jours 1" },
+    { "codeItem": 2, "label": "Quelques fois par semaine2" },
+    { "codeItem": 3, "label": "Rarement33" }
+  ],
+       "placeholder": "",
+       "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
+       "redirection": "",
+       "required": true,
+       "isSubQuestion": false
+     },
+
+     {
+        "id_db": "ER8138",
+  "id": "q3_2",
+  "title": "Q3.2",
+  "type": "text",
+  "repeatFor": "q3",
+  "label": "Précisez les lignes ou destinations que vous utilisez en TRANSPORT :",
+        "placeholder": "Ex : b12 b15...",
+        "help_text": "",
+        "redirection": "",
+        "input_cond": "",
+        "output_cond": "value.length > 0",
+        "required": true,
+        "isSubQuestion": false,
+        "page": 0
+        
+      },
+
+      {
+        "id_db": "ER8139",
+  "id": "q3_3",
+  "title": "Q3.3",
+  "repeatFor": "q3",
+  "type": "single_choice",
+  "label": "Pour quels motifs utilisez-vous la TRANSPORT ?",
+        "page": 0,
+        "input_cond": "",
+        "output_cond": "value.length > 0",
+       "options": [
+    { "codeItem": 1, "label": "Travail" },
+    { "codeItem": 2, "label": "Loisirs" },
+    { "codeItem": 3, "label": "Courses / Déplacements quotidiens" }
+  ],
+        "placeholder": "",
+        "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
+        "redirection": "",
+        "required": true,
+        "isSubQuestion": false
+      },
+      {
+        "id_db": "YP3O0G",
+        "id": "q4",
+        "title": "Q4.",
+        "type": "autocomplete",
+        "label": "Votre commune de résidence",
+        "page": 7,
+        "table": "communes",
+        "columns": [
+          {
+            "name": "commune",
+            "displayInList": true,
+            "displayInInput": true,
+            "saveInDB": true
+          },
+          {
+            "name": "cp",
+            "displayInList": true,
+            "displayInInput": false,
+            "saveInDB": false
+          },
+          {
+            "name": "_id",
+            "displayInList": false,
+            "displayInInput": false,
+            "saveInDB": true
+          }
+        ],
+        "placeholder": "Tapez pour rechercher votre commune",
+        "help_text": "Commencez à taper et sélectionnez la commune correspondante",
+        "redirection": "q5",
+        "input_cond": "",
+        "output_cond": "value !== null",
+        "required": true,
+        "isSubQuestion": false,
+        "navigation": {
+          "rules": [
+            {
+              "if": {
+                "operator": "IN",
+                "field": "commune",
+                "values": [
+                  "Kouba",
+                  "Alger Centre"
+                ]
+              },
+              "then": {
+                "goTo": "q14"
+              }
+            }
+          ],
+          "default": "redirection"
+        }
+        
+      },
+      {
+        "id_db": "5Z10ZZ",
+        "id": "q5",
+        "title": "Q5.",
+        "type": "spinner",
+        "label": "Choisissez votre région",
+        "page": 8,
+        "options": [
+          {
+            "codeItem": 1,
+            "label": "Sud"
+          },
+          {
+            "codeItem": 2,
+            "label": "Est"
+          },
+          {
+            "codeItem": 3,
+            "label": "Ouest"
+          },
+          {
+            "codeItem": 4,
+            "label": "Centre"
+          }
+          
+        ],
+        "placeholder": "Sélectionnez une option",
+        "required": true,
+        "redirection": "FIN",
+        "isSubQuestion": false,
+        "navigation": {
+          "rules": [
+            {
+              "if": {
+                "operator": "IN",
+                "values": [
+                  "Sud",
+                  "Ouest"
+                ]
+              },
+              "then": {
+                "goTo": "q3"
+              }
+            }
+          ],
+          "default": "redirection"
+        }
+        
+      },
+
+      
+
+      {
+        "id": "q6",
+        "title": "Q6bis.",
+        "type": "text",
+        "page": 2,
+        "label": "Quel est votre moyen de transport principal  bus?",
+        "placeholder": "uu",
+        "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
+        "input_cond": "",
+        "output_cond": "value.length > 0",
+        "required": true,
+        "isSubQuestion": true,
+        "id_db": "8KTVIW"
+      },
+      {
+        "id": "q8",
+        "title": "Q8bis.",
+        "type": "multiple_choice",
+        "label": "Quels transports utilisez-vous ?",
+        "page": 2,
+        "options": [
+          {
+            "codeItem": 1,
+            "label": "Bus"
+          },
+          {
+            "codeItem": 2,
+            "label": "Train",
+            "requiresPrecision": true
+          },
+          {
+            "codeItem": 3,
+            "label": "Voiture"
+          },
+          {
+            "codeItem": 6,
+            "label": "Aucun",
+            "exclusive": true
+          }
+        ],
+        "required": true,
+        "output_cond": "value.length > 0",
+        "isSubQuestion": false,
+        "id_db": "KO3HT8"
+      }
+    ]
+  }

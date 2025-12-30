@@ -64,26 +64,34 @@ export default class ResponseNormalizer {
         }
         
         case 'grid': {
+          const isCellEnabled = (question, responseId) => {
+            return question.cells?.[responseId]?.enabled !== false;
+          };
+          
           value = {};
           if (!rawValue || typeof rawValue !== 'object') break;
+          
           const data = rawValue.value || rawValue; // <-- prendre la vraie valeur
 
           const responsesById = {};
           step.reponses.forEach(r => (responsesById[r.id] = r));
-        
+
+         const questionsById = {};
+         step.questions.forEach(q => (questionsById[q.id] = q));
+
+/* ***************************par ligne ***********************/
           step.questions.forEach(question => {
             const rawAnswer = data[question.id];
             if (rawAnswer === undefined) return;
         
-            /* ===========================
-               AXE ROW + RADIO
-               =========================== */
+         /* ---------- RADIO / AXE ROW ---------- */
             if (typeof rawAnswer === 'string') {
               const response = responsesById[rawAnswer];
               if (
                 response &&
                 response.input.axis === 'row' &&
-                response.input.type === 'radio'
+                response.input.type === 'radio' &&
+                isCellEnabled(question, rawAnswer)
               ) {
                 value[question.id] = rawAnswer;
               }
@@ -97,7 +105,9 @@ export default class ResponseNormalizer {
               Object.keys(rawAnswer).forEach(responseId => {
                 const response = responsesById[responseId];
                 if (!response) return;
-        
+
+         if (!isCellEnabled(question, responseId)) return;
+
                 const axis = response.input.axis;
         
                 // ----- AXE ROW -----
@@ -117,18 +127,25 @@ export default class ResponseNormalizer {
             }
           });
         
-          /* ===========================
-             RADIO + AXE COLUMN (racine)
-             =========================== */
-          Object.keys(data).forEach(key => {
-            const response = responsesById[key];
-            if (
-              response &&
-              response.input.axis === 'column' &&
-              response.input.type === 'radio'
-            ) {
-              value[key] = data[key];
-            }
+          
+        /* ===========================
+     RADIO + AXE COLUMN (racine)
+     =========================== */
+  Object.keys(data).forEach(responseId => {
+    const response = responsesById[responseId];
+    if (
+      response &&
+      response.input.axis === 'column' &&
+      response.input.type === 'radio'
+    ) {
+      const questionId = data[responseId];
+      const question = questionsById[questionId];
+
+      //  cellule désactivée
+      if (!question || !isCellEnabled(question, responseId)) return;
+
+      value[responseId] = questionId;
+    }
           });
         
           break;

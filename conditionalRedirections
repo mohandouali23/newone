@@ -227,3 +227,8 @@ Accordion
 
   <button type="submit">Suivant</button>
 </form>
+
+
+rotationTemplate = séquence de sous-questions à parcourir pour chaque option choisie.
+page: 0 → sera généré dynamiquement par le backend.
+TRANSPORT dans les labels sera remplacé par le label réel de l’option choisie.

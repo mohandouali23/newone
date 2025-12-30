@@ -70,25 +70,24 @@ router.get('/:surveyId/run', async (req, res) => {
   const { surveyId } = req.params;
   const survey = SurveyService.loadSurvey(surveyId);
 
-  // Toujours initialiser une nouvelle session
-  if (!req.session.pageNumber) {
-    req.session.pageNumber = survey.steps[0].page;
-  }
 
-  //  TOUJOURS créer un nouveau document au démarrage
-  if (!req.session.responseId) {
-    const response = await ResponseService.createSurveyDocument(
-      surveyId,
-      'anonymous',
-      {}
-    );
-    req.session.responseId = response._id;
-    console.log('🆕 Nouveau responseId:', response._id);
-  }
+  if (!req.session.pageNumber) req.session.pageNumber = 1;
+  if (!req.session.answers) req.session.answers = {};
 
   const pageNumber = req.session.pageNumber;
 
-  const stepsOnPage = survey.steps.filter(step => step.page === pageNumber);
+  let stepsOnPage = survey.steps.filter(step => step.page === pageNumber);
+ // console.log('stepOnpage',stepsOnPage)
+
+   // Rotation
+   if (req.session.rotationQueue && req.session.rotationQueue.length) {
+    stepsOnPage = [req.session.rotationQueue[0].step];
+    console.log("req.session.rotationQueue",req.session.rotationQueue)
+    //console.log('stepOnpage rotation',stepsOnPage)
+  }else{
+    stepsOnPage = survey.steps.filter(step => step.page === pageNumber);
+  }
+ // console.log('stepOnpage fin rotatin',stepsOnPage)
   let options = [];
   const preparedSteps = stepsOnPage.map(step => {
     

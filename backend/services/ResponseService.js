@@ -7,7 +7,8 @@ export default class ResponseService {
     const response = new Response({
       surveyId,
       userId,
-      answers: new Map(Object.entries(initialAnswer)) // initialise comme Map
+      answers: new Map(Object.entries(initialAnswer)), // initialise comme Map
+      
     });
     await response.save();
     return response;
