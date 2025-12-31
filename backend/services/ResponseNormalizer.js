@@ -4,6 +4,7 @@ export default class ResponseNormalizer {
     let value;
 
     switch(step.type) {
+     
       case 'accordion': {
         value = {};
       
@@ -11,24 +12,29 @@ export default class ResponseNormalizer {
       
         step.sections.forEach(section => {
           const sectionId = optionIndex ? `${section.id_sect}_${optionIndex}` : section.id_sect;
-          value[sectionId] = {};
       
           section.questions.forEach(question => {
-            const answer = rawValue[question.id];
-            if (answer === undefined) return;
+            const answerForQuestion = rawValue[question.id];
+            if (answerForQuestion === undefined) return;
       
-            // Appel récursif
-            const normalized = ResponseNormalizer.normalize(question, answer, optionIndex);
+            // Normaliser la question individuellement
+            const normalized = ResponseNormalizer.normalize(question, { [question.id]: answerForQuestion }, optionIndex);
       
-            // Prendre la première valeur de l'objet retourné (il n'y a qu'une clé)
-            const firstKey = Object.keys(normalized)[0];
-            value[sectionId][question.id] = normalized[firstKey];
+            // Récupérer la clé (idDB) et la valeur
+            const qId = Object.keys(normalized)[0];
+            let val = normalized[qId];
+      
+            // Si val est un objet avec une seule clé (comme { q10_2: 'b12' }), extraire directement la valeur
+            if (typeof val === 'object' && val !== null && Object.keys(val).length === 1) {
+              val = Object.values(val)[0];
+            }
+      
+            value[`${sectionId}:${qId}`] = val;
           });
         });
       
         break;
       }
-      
       
       case 'text':
       case 'spinner':
@@ -46,7 +52,9 @@ export default class ResponseNormalizer {
         break;
 
         case 'single_choice': {
+         
           const selectedValue = rawValue[step.id];
+          console.log("selected value single",selectedValue)
           value = selectedValue;
         
           const result = {

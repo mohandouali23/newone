@@ -53,23 +53,23 @@ console.log("sessiondestroy")
 
 
 
-// Route pour gérer le bouton Précédent
-router.get('/:surveyId/prev', async (req, res) => {
-  const { surveyId } = req.params;
-  const survey = SurveyService.loadSurvey(surveyId);
+// // Route pour gérer le bouton Précédent
+// router.get('/:surveyId/prev', async (req, res) => {
+//   const { surveyId } = req.params;
+//   const survey = SurveyService.loadSurvey(surveyId);
 
-  if (!req.session.pageNumber) {
-    req.session.pageNumber = 1;
-  }
+//   if (!req.session.pageNumber) {
+//     req.session.pageNumber = 1;
+//   }
 
-  const pages = [...new Set(survey.steps.map(s => s.page))].sort((a, b) => a - b);
-  const index = pages.indexOf(req.session.pageNumber);
+//   const pages = [...new Set(survey.steps.map(s => s.page))].sort((a, b) => a - b);
+//   const index = pages.indexOf(req.session.pageNumber);
 
-  // Aller à la page précédente
-  req.session.pageNumber = pages[Math.max(0, index - 1)];
+//   // Aller à la page précédente
+//   req.session.pageNumber = pages[Math.max(0, index - 1)];
 
-  res.redirect(`/survey/${surveyId}/run`);
-});
+//   res.redirect(`/survey/${surveyId}/run`);
+// });
 
 
 // ------------------ Route pages dynamiques ------------------

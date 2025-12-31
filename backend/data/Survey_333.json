@@ -247,7 +247,224 @@
         
         
       },
-
+      {
+        "id_db": "14R4LP",
+        "id": "q16",
+        "type": "accordion",
+        "title": "Q16.",
+        "label": "Informations complémentaires sur vos transports",
+        "page": 7,
+        "required": true,
+        "redirection": "q14",
+      
+        "sections": [
+          {"id_db_sect": "14R400",
+            "id_sect": "q16_sect1",
+            "title": "Bus",
+            "questions": [
+              {"id_db": "A2R4LO",
+                "id": "q10_1",
+                "type": "single_choice",
+                "label": "Utilisez-vous le bus ?",
+                "required": true,
+                "options": [
+                  { "codeItem": 1, "label": "Oui" },
+                  { "codeItem": 2, "label": "Non" }
+                ]
+              },
+              {"id_db": "A2R7LP",
+                "id": "q10_2",
+                "type": "text",
+                "label": "Quelle ligne utilisez-vous ?",
+                "required": false
+              }
+            ]
+          },
+          {"id_db_sect": "B7RL2O",
+            "id_sect": "q16_sect2",
+            "title": "Pays U.E",
+            "questions": [
+              {"id_db": "A2M7LP",
+                "id": "q10_3",
+                "type": "multiple_choice",
+                "label": "",
+                "required": true,
+                "options": [
+                  { "codeItem": 1,  "label": "France"},
+                  { "codeItem": 2, "label": "Allemagne"},
+                  { "codeItem": 3, "label": "Royaume-Uni"},
+                  { "codeItem": 4,  "label": "Belgique"}
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id_db": "Y1UEG9",
+        "id": "q14",
+        "type": "grid",
+        "title": "Q14.",
+        "label": "Activités pratiquées et motivation principale du séjour",
+        "required": true,
+        "redirection": "q13",
+        "page": 8,
+        "questions": [
+          { "id_db_qst": "Y1UEG9_q14_1",
+          "id": "q14_1",
+           "label": "Se promener, flâner",
+           "cells": {
+            "R1": { "enabled": true },
+            "R2": { "enabled": true }
+          }
+           },
+          { "id_db_qst": "Y1UEG9_q14_2",
+          "id": "q14_2", 
+          "label": "Visites de musées, monuments" ,
+          "cells": {
+            "R1": { "enabled": true },
+            "R2": { "enabled": false }
+          }},
+          { "id_db_qst": "Y1UEG9_q14_3",
+          "id": "q14_3",
+           "label": "Parcs, jardins, sites naturels",
+           "cells": {
+            "R1": { "enabled": true },
+            "R2": { "enabled": true }
+          } }
+        ],
+      
+        "reponses": [
+          {"id_db_rps":"Y1UEG9_R1",
+            "id": "R1",
+            "label": "oui",
+            "input": {
+              "type": "radio",
+              "axis": "row",
+              "validation": {
+                "min": 1
+              }
+            }
+          },
+          {
+            "id_db_rps":"Y1UEG9_R2",
+            "id": "R2",
+            "label": "non",
+            "input": {
+              "type": "radio",
+              "axis": "row",
+              "validation": {
+                "required": true,
+                "min": 1
+              }
+            }
+          }
+        ]
+      }, 
+      {
+        "id_db": "Y1UEGY",
+        "id": "q13",
+        "type": "grid",
+        "title": "Q13.",
+        "page": 9,
+        "label": "Activités pratiquées et motivation principale du séjour",
+        "required": true,
+        "redirection": "q15",
+        "questions": [
+          { "id_db_qst": "Y1UEGY_q13_1",
+           "id": "q13_1", "label": "Se promener, flâner" },
+          { "id_db_qst": "Y1UEGY_q13_2",
+          "id": "q13_2",
+           "label": "Visites de musées, monuments" ,
+           "cells": {
+            "R1": { "enabled": false },
+            "R2": { "enabled": true}
+          }
+          },
+          { "id_db_qst": "Y1UEGY_q13_3",
+          "id": "q13_3",
+           "label": "Parcs, jardins, sites naturels",
+          "cells": {
+            "R1": { "enabled": true },
+            "R2": { "enabled": false }
+          } },
+          { "id_db_qst": "Y1UEGY_q13_4", 
+          "id": "q13_4", 
+          "label": "Visites guidées de quartiers" ,
+        "cells": {
+            "R1": { "enabled": false },
+            "R2": { "enabled": true }
+          }}
+        ],
+      
+        "reponses": [
+          {"id_db_rps":"Y1UEGY_R1",
+            "id": "R1",
+            "label": "Activités pratiquées",
+            "input": {
+              "type": "checkbox",
+              "axis": "column",
+              "validation": {
+                "min": 1
+              }
+            }
+          },
+          {"id_db_rps":"Y1UEGY_R2",
+            "id": "R2",
+            "label": "Motivation principale du séjour",
+            "input": {
+              "type": "radio",
+              "axis": "column",
+              "validation": {
+                "required": true,
+                "max": 1
+              }
+            }
+          }
+        ]
+      }, 
+      {
+        "id_db": "Y1U3FY",
+        "id": "q15",
+        "type": "grid",
+        "title": "Q15.",
+        "page": 10,
+        "label": "Activités pratiquées et motivation principale du séjour",
+        "required": true,
+        "redirection": "q2",
+        "questions": [
+          { "id_db_qst": "Y1U3FY_q15_1", "id": "q15_1", "label": "Se promener, flâner" },
+          { "id_db_qst": "Y1U3FY_q15_2","id": "q15_2", "label": "Visites de musées, monuments" },
+          { "id_db_qst": "Y1U3FY_q15_3","id": "q15_3", "label": "Parcs, jardins, sites naturels" },
+          { "id_db_qst": "Y1U3FY_q15_4","id": "q15_4", "label": "Visites guidées de quartiers" }
+        ],
+      
+        "reponses": [
+          {"id_db_rps":"Y1U3FY_R1",
+            "id": "R1",
+            "label": "rarely",
+            "input": {
+              "type": "checkbox",
+              "axis": "row",
+              "validation": {
+                "min": 1
+              }
+            }
+          },
+          {"id_db_rps":"Y1U3FY_R2",
+            "id": "R2",
+            "label": "never",
+            "input": {
+              "type": "checkbox",
+              "axis": "row",
+              "validation": {
+                "required": true,
+                "max": 1
+              }
+            }
+          }
+        ]
+      }, 
       
 
       {

@@ -19,9 +19,9 @@
 
   
   <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-     <button type="button" id="prevBtn" style="background-color:#6c757d; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; font-size:16px;">
-    Précédent
-  </button>
+    <button type="submit" name="action" value="prev" style="background-color:#6c757d; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; font-size:16px;">
+      Précédent
+    </button>
 
     <button type="submit" name="action" value="next"  style="background-color:#007bff; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; font-size:16px;">
       Suivant
@@ -41,10 +41,5 @@ const formData = new FormData(this);
   for (let [name, value] of formData.entries()) {
      console.log(name, ":", value); 
      } 
-});
-// Gestion du bouton Précédent
-document.getElementById('prevBtn').addEventListener('click', function() {
-  // Redirection vers la route serveur qui gère la page précédente
-  window.location.href = `/survey/{{survey.id}}/prev`;
 });
 </script>

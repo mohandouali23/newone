@@ -19,7 +19,6 @@ router.post('/:surveyId/run', async (req, res) => {
   if (!req.session.rotationQueueDone) req.session.rotationQueueDone = {};
   
   let pageNumber = req.session.pageNumber;
-
   /* ======================================================
      1 Créer le document réponse (UNE SEULE FOIS)
      ====================================================== */
@@ -34,6 +33,7 @@ router.post('/:surveyId/run', async (req, res) => {
   }
 
   const responseId = req.session.responseId;
+
 
   /* ======================================================
      2 Déterminer le STEP COURANT
@@ -51,24 +51,20 @@ router.post('/:surveyId/run', async (req, res) => {
   /* ======================================================
      3 Sauvegarder la réponse si elle existe
      ====================================================== */
+     if (action === 'next') {
      for (const stepWrapper of stepsOnPage)  {
       const stepToNormalize = stepWrapper.step || stepWrapper;
     let rawValue = req.body[stepToNormalize.id];
 
-    if (stepToNormalize.type === 'accordion' 
-      || stepToNormalize.type === 'grid'
-      || stepToNormalize.type === 'single_choice'
-      || stepToNormalize.type === 'multiple_choice') {
+    if (['accordion','grid','single_choice','multiple_choice'].includes(stepToNormalize.type)) {
       rawValue = req.body;
     }
 
     if (rawValue !== undefined) {
-      // const context = {
-      //   optionCode: stepToNormalize.optionCode,
-      //   optionLabel: stepToNormalize.optionLabel
-      // };
    console.log("rawvalue",rawValue)
       const normalized = ResponseNormalizer.normalize(stepToNormalize, rawValue,stepWrapper.optionIndex);
+      console.log("normlize response",normalized)
+
       await ResponseService.addAnswer(responseId, normalized);
 
       // Mémoriser réponse principale (pour rotation)
@@ -83,6 +79,7 @@ router.post('/:surveyId/run', async (req, res) => {
       console.log(` Réponse sauvegardée: ${stepToNormalize.id}_${stepWrapper.optionIndex || ''}`);
     }
   }
+}
 /* ===============================================
          4 Consommer UNE question de rotation
          =============================================== */
