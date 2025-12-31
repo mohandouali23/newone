@@ -82,6 +82,13 @@ export default class ResponseNormalizer {
        
 
         case 'multiple_choice': {
+          // console.log('🔍 Normalizing multiple_choice:', {
+          //   stepId: step.id,
+          //   stepId_db: step.id_db,
+          //   rawValue: rawValue,
+          //   rawValue_stepId: rawValue[step.id]
+          // });
+
           if (!rawValue) {
             return { [step.id_db]: null };
           }

@@ -2,7 +2,8 @@
 {{#options}}
   <label>
     <input type="radio" name="{{id}}" value="{{codeItem}}" 
-           data-requires-precision="{{requiresPrecision}}">
+           data-requires-precision="{{requiresPrecision}}"
+           {{#isSelected}}checked{{/isSelected}}>
     {{label}}
   </label><br>
   <input type="text" name="precision_{{codeItem}}" class="precision-input" style="display:none;" placeholder="Précisez..." />

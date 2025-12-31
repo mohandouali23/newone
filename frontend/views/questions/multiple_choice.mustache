@@ -1,11 +1,19 @@
 {{#options}}
   <label>
-    <input type="checkbox" name="{{id}}[]" value="{{codeItem}}"
+    <input type="checkbox" 
+    name="{{id}}[]" 
+    value="{{codeItem}}"
+     {{#isSelected}}checked{{/isSelected}}
            data-requires-precision="{{requiresPrecision}}"
            data-exclusive="{{exclusive}}">
     {{label}}
   </label>
-  <input type="text" name="precision_{{id}}_{{codeItem}}" class="precision-input" style="display:none;" placeholder="Précisez..." />
+  <input type="text" name="precision_{{id}}_{{codeItem}}"
+   class="precision-input" 
+   value="{{precisionValue}}"
+       style="{{#isSelected}}display:inline-block;{{/isSelected}}{{^isSelected}}display:none;{{/isSelected}}"
+       
+   placeholder="Précisez..." />
 
   {{#requiresSubQst}}
     <div class="sub-question" style="display:none;">

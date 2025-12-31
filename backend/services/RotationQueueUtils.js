@@ -14,20 +14,20 @@ export default class RotationQueueUtils {
     ? selectedOptions.map(Number)
     : selectedOptions.toString().split('/').map(Number);
   
-      console.log("selected",selectedArray)
+      //console.log("selected",selectedArray)
 
       /* ==========================================
      1 Vérifier option exclusive
      ========================================== */
   const hasExclusive = selectedArray.some(code => {
-    console.log("code",code)
+   // console.log("code",code)
     const opt = mainStep.options.find(o => o.codeItem === code);
-    console.log("opt",opt)
+    //console.log("opt",opt)
     return opt?.exclusive === true;
   });
-  console.log("exclusive",hasExclusive)
+ // console.log("exclusive",hasExclusive)
   if (hasExclusive) {
-    console.log(' Option exclusive détectée → pas de rotation');
+    //console.log(' Option exclusive détectée → pas de rotation');
     return [];
   }
 

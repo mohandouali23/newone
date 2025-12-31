@@ -99,7 +99,7 @@ router.post('/:surveyId/run', async (req, res) => {
           req.session.answers
         );
         req.session.rotationQueueDone[step.repeatFor] = true; // rotation générée
-        console.log(' Rotation générée pour', step.repeatFor, req.session.rotationQueue.map(s => s.id));
+      //  console.log(' Rotation générée pour', step.repeatFor, req.session.rotationQueue.map(s => s.id));
         break; // ne générer qu’une rotation à la fois
       }
     }

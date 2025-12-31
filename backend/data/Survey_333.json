@@ -23,14 +23,43 @@
         
       },
     
-      
+      {
+        "id_db": "UPI98Q",
+       "id": "q2",
+       "title": "Q72.",
+       "type": "single_choice",
+       "label": "Fréquence d’utilisation du transport en commun",
+       "page": 2,
+       "input_cond": "",
+       "output_cond": "value.length > 0",
+       "options": [
+         {
+           "codeItem": 1,
+           "label": "Tous les jours44"
+         },
+         {
+           "codeItem": 2,
+           "label": "Quelques fois par semaine mm"
+         },
+         {
+           "codeItem": 7,
+           "label": "Autre 88",
+           "requiresPrecision": true
+         }
+       ],
+       "placeholder": "",
+       "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
+       "redirection": "q3",
+       "required": true,
+       "isSubQuestion": false
+     },
       {
          "id_db": "UPI3DQ",
         "id": "q2",
         "title": "Q2.",
         "type": "single_choice",
         "label": "Fréquence d’utilisation du transport en commun",
-        "page": 2,
+        "page": 99,
         "input_cond": "",
         "output_cond": "value.length > 0",
         "options": [
@@ -471,7 +500,7 @@
         "id": "q6",
         "title": "Q6bis.",
         "type": "text",
-        "page": 2,
+        "page": 99,
         "label": "Quel est votre moyen de transport principal  bus?",
         "placeholder": "uu",
         "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
@@ -486,7 +515,7 @@
         "title": "Q8bis.",
         "type": "multiple_choice",
         "label": "Quels transports utilisez-vous ?",
-        "page": 2,
+        "page": 99,
         "options": [
           {
             "codeItem": 1,
