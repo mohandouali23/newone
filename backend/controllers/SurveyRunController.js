@@ -13,6 +13,12 @@ export default class SurveyRunController {
         session: req.session
       });
 
+      // console.log("SurveyRunService.run,surveyId,", surveyId,
+      //   ",action",action,
+      //   ",body: req.body",req.body,
+      //   ",session",req.session
+      // ) 
+        
       if (result.finished) {
         req.session.destroy();
         return res.redirect(`/survey/${surveyId}/end`);

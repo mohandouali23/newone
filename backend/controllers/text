@@ -1,0 +1,46 @@
+req.body:
+text :{ q1: 'test', action: 'next' }
+multiple :{
+    precision_q3_1: '',
+    precision_q3_2: '',
+    precision_q3_3: '',
+    precision_q3_4: '',
+    precision_q3_5: '',
+    q3: [ '6' ],
+    precision_q3_6: '',
+    action: 'next'
+  }
+  single :{
+    precision_1: '',
+    q2: '2',
+    precision_2: '',
+    precision_5: '',
+    action: 'next'
+  }
+autocomplete :{ q4: '{"commune":"Alger Centre","_id":1}', action: 'next' }
+spinner : { q5: '1', action: 'next' }
+accordion : { q10_1: '1', q10_2:'b12', q10_3: [ '1', '2' ], action: 'next' }
+grid : {
+    value: { q13_1: { R1: [Array] }, R2: 'q13_2', q13_3: { R1: [Array] } },
+    action: 'next'
+  }
+session:req.session:
+answers{
+    text :q1: 'test' 
+    multiple: q3: [ '6'  ]
+    single :q2: '2'
+    autocomplete : q4: '{"commune":"Alger Centre","_id":1}'
+    spinner : q5: '1'
+    accordion : q16: { q10_1: '1', q10_2: 'b12', q10_3: [ '1', '2' ], action: 'next' }
+    grid :  q13: { value: [Object], action: 'next' }
+}
+
+history{
+    text :{ id: 'q1', isRotation: false }
+    multiple :{ id: 'q3', isRotation: false }
+    single : { id: 'q2', isRotation: false }
+    auto:{ id: 'q4', isRotation: false }
+    spinner :{ id: 'q5', isRotation: false }
+    accordion : { id: 'q16', isRotation: false }
+    grid:  { id: 'q13', isRotation: false }
+}

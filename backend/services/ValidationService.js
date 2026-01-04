@@ -30,10 +30,17 @@ console.log('answer',answer)
         case 'multiple_choice':
           if (!answer || answer.length === 0 || answer === '') missingFields.push(question.label || question.id);
           break;
-
           case 'accordion':
+             {
+              const realValue = answer; 
+              if (!realValue || !Object.values(realValue).some(v => v !== null && v !== '' && v !== undefined)) {
+                missingFields.push(question.label || question.id);
+              }
+              break;
+            }
+          
             case 'grid': {
-              const realValue = answer?.value || answer; 
+              const realValue = answer?.value ; 
               if (!realValue || !Object.values(realValue).some(v => v !== null && v !== '' && v !== undefined)) {
                 missingFields.push(question.label || question.id);
               }

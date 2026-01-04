@@ -34,6 +34,7 @@ export default class SurveyRunService {
         isInRotation
       });
   //  Vérifier la step avant navigation
+  console.log("isStepValid",currentStep," session.answers", session.answers,"currentStepWrapper",currentStepWrapper)
   const isStepValid = ValidationService.validateStep(currentStep, session.answers, currentStepWrapper);
   if (!isStepValid) {
     // Stop navigation si invalid
