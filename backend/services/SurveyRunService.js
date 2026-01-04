@@ -113,31 +113,77 @@ export default class SurveyRunService {
     return session.responseId;
   }
 
-  static savePageAnswers({ steps, wrappers, body, responseId, session, isInRotation }) {
-    steps.forEach((step, i) => {
-      const wrapper = wrappers?.[i];
-      let rawValue = ['grid','accordion','single_choice','multiple_choice'].includes(step.type)
-        ? body
-        : body[step.id];
+ static savePageAnswers({ steps, wrappers, body, responseId, session, isInRotation }) {
+  steps.forEach((step, i) => {
+    const wrapper = wrappers?.[i];
+    let rawValue;
 
-      if (rawValue === undefined) return;
+    // Déterminer rawValue selon le type
+    if (['grid', 'accordion', 'single_choice', 'multiple_choice'].includes(step.type)) {
+      rawValue = body;
+    } else {
+      rawValue = body[step.id];
+    }
 
-      const normalized = ResponseNormalizer.normalize(step, rawValue, wrapper?.optionIndex);
-      ResponseService.addAnswer(responseId, normalized);
+    if (rawValue === undefined) return;
 
-      if (!step.isSubQuestion) {
-        const mainValue = step.type === 'multiple_choice' ? body[step.id] || [] :
-                          step.type === 'single_choice' ? body[step.id] || '' :
-                          rawValue;
+    // Normaliser et sauvegarder dans la base
+    const normalized = ResponseNormalizer.normalize(step, rawValue, wrapper?.optionIndex);
+    ResponseService.addAnswer(responseId, normalized);
 
-        if (isInRotation && wrapper?.optionIndex !== undefined) {
-          session.answers[`${step.id}_${wrapper.optionIndex}`] = mainValue;
-        } else {
-          session.answers[step.id] = mainValue;
+    if (!step.isSubQuestion) {
+      // Valeur principale
+      let mainValue;
+      switch(step.type) {
+        case 'multiple_choice':
+  // Si body[step.id] est undefined → tableau vide
+  mainValue = Array.isArray(body[step.id]) ? body[step.id].filter(v => v && v.trim() !== '') : [];
+  break;
+
+        case 'single_choice':
+          mainValue = body[step.id] || '';
+          break;
+        case 'accordion':
+        case 'grid':
+          mainValue = rawValue;
+          break;
+        default:
+          mainValue = rawValue;
+      }
+
+      // Clé pour session.answers
+      const answerKey = isInRotation && wrapper?.optionIndex !== undefined
+        ? `${step.id}_${wrapper.optionIndex}`
+        : step.id;
+
+      // 🔹 Sauvegarder la valeur principale
+      session.answers[answerKey] = mainValue;
+
+      // 🔹 Gérer la précision pour single_choice
+      if (step.type === 'single_choice') {
+        const selectedOption = step.options?.find(opt => opt.codeItem?.toString() === mainValue?.toString());
+        if (selectedOption?.requiresPrecision) {
+          const precisionValue = rawValue[`precision_${mainValue}`];
+          if (precisionValue && precisionValue.trim() !== '') {
+            session.answers[`${step.id}_pr_${mainValue}`] = precisionValue.trim();
+          }
         }
       }
-    });
-  }
+
+      // 🔹 Gérer les précisions pour multiple_choice
+      if (step.type === 'multiple_choice') {
+        mainValue.forEach(codeItem => {
+          const precisionKey = `precision_${step.id}_${codeItem}`;
+          const precisionValue = rawValue[precisionKey];
+          if (precisionValue && precisionValue.trim() !== '') {
+            session.answers[`${step.id}_pr_${codeItem}`] = precisionValue.trim();
+          }
+        });
+      }
+    }
+  });
+}
+
 
    // 🔹 Historique
    static pushCurrentStepToHistory(session, step, isRotation) {

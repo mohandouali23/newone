@@ -229,14 +229,50 @@ export default class ValidationService {
         case 'text':
         case 'spinner':
         case 'autocomplete':
-        case 'single_choice':
           if (!answer || answer.trim?.() === '') missingFields.push(question.label || question.id);
           break;
+case 'single_choice':
+  console.log('answer for single_choice:', answers);
 
-        case 'multiple_choice':
-          if (!answer || answer.length === 0 || answer === '') missingFields.push(question.label || question.id);
+
+          if (!answer || answer.trim?.() === '') {
+            missingFields.push(question.label || question.id);
+          } else {
+            // Vérifier si l'option sélectionnée a un champ de précision requis
+            const selectedOption = question.options?.find(
+              opt => opt.codeItem?.toString() === answer?.toString()
+            );
+            if (selectedOption?.requiresPrecision) {
+              console.log('precision key:', `precision_${answer}`);
+
+              const precisionValue = answers[`${question.id}_pr_${answer}`] || answers[`precision_${answer}`];
+              console.log('precision value:', precisionValue);
+              if (!precisionValue || precisionValue.trim() === '') {
+                missingFields.push(`Précision pour "${selectedOption.label}"`);
+              }
+            }
+          }
           break;
+       case 'multiple_choice': {
+  const selectedArray = Array.isArray(answer) ? answer.filter(v => v && v.trim() !== '') : [];
+  
+  if (selectedArray.length === 0) {
+    missingFields.push(question.label || question.id);
+  } else {
+    selectedArray.forEach(codeItem => {
+      const precisionKey = `${question.id}_pr_${codeItem}`;
+      const precisionValue = answers[precisionKey];
 
+      const selectedOption = question.options?.find(
+        opt => opt.codeItem?.toString() === codeItem?.toString()
+      );
+      if (selectedOption?.requiresPrecision && (!precisionValue || precisionValue.trim() === '')) {
+        missingFields.push(`Précision pour "${selectedOption.label}"`);
+      }
+    });
+  }
+  break;
+}
         case 'accordion':
           if (!ValidationService.hasRealAnswer(answer)) missingFields.push(question.label || question.id);
           break;
