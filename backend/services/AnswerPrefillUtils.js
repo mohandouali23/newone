@@ -5,11 +5,11 @@ export default class AnswerPrefillUtils {
     // ---------------- Text / Spinner ----------------
     static text(step, sessionAnswers) {
       const saved = sessionAnswers[step.id];
-      return saved ? saved : '';
+      return step.value= saved ? saved : '';
     }
   
     // ---------------- Single Choice ----------------
-    static singleChoice(step, sessionAnswers) {
+    static single_choice(step, sessionAnswers) {
         // console.log('🔍 Pré-remplissage single_choice:', {
         //   stepId: step.id,
         //   stepId_db: step.id_db,
@@ -43,7 +43,7 @@ export default class AnswerPrefillUtils {
       }
       
     // ---------------- Multiple Choice ----------------
-    static multipleChoice(step, sessionAnswers) {
+    static multiple_choice(step, sessionAnswers) {
         const saved = sessionAnswers[step.id];
         
         if (!saved) {

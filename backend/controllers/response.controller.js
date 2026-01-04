@@ -1,6 +1,6 @@
 import SurveyRunService from '../services/SurveyRunService.js';
 
-export default class SurveyRunController {
+export default class ResponseController {
   static async run(req, res) {
     const { surveyId } = req.params;
     const action = req.body.action || 'next';

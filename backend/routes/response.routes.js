@@ -5,14 +5,14 @@ navigation normale ou conditionnelle
 fin du questionnaire*/
 
 import express from 'express';
-import SurveyRunController from '../controllers/SurveyRunController.js';
+import ResponseController from '../controllers/response.controller.js';
 
 const router = express.Router();
 
 // Route principale pour exécuter le survey
 router.post('/:surveyId/run', async (req, res) => {
   // On délègue tout au controller
-  await SurveyRunController.run(req, res);
+  await ResponseController.run(req, res);
 });
 
 export default router;
