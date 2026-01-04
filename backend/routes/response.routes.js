@@ -8,10 +8,7 @@ import express from 'express';
 import ResponseController from '../controllers/response.controller.js';
 
 const router = express.Router();
-
-// Route principale pour exécuter le survey
 router.post('/:surveyId/run', async (req, res) => {
-  // On délègue tout au controller
   await ResponseController.run(req, res);
 });
 
