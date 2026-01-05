@@ -52,127 +52,231 @@ export default class ValidationService {
       });
     });
   }
+
+  static validateGridStep(step, answers) {
+    const answer = answers[step.id];
+    const realValue = answer?.value;
+  
+    console.log('GRID realValue', realValue);
+  
+    // Vérification initiale
+    if (!realValue || Object.keys(realValue).length === 0) {
+      ToastService.show(
+        `Veuillez répondre à la question obligatoire : ${step.label || step.id}`,
+        { type: 'error' }
+      );
+      return false;
+    }
+  
+    const missingRows = [];
+    const missingColumns = [];
+  
+    // ===========================
+    // VALIDATION LIGNES (required)
+    // ===========================
+    (step.questions || []).forEach(question => {
+      if (question.required === true) {
+        const questionAnswer = realValue[question.id];
+        let hasAnswer = false;
+  
+        if (typeof questionAnswer === 'string') {
+          hasAnswer = questionAnswer.trim() !== '';
+        } 
+        else if (Array.isArray(questionAnswer)) {
+          hasAnswer = questionAnswer.length > 0;
+        }
+  
+        if (!hasAnswer) {
+          missingRows.push(question.label || question.id);
+        }
+      }
+    });
+  
+    // ===========================
+    // VALIDATION COLONNES (axis=column)
+    // ===========================
+    (step.reponses || []).forEach(response => {
+      if (response.input?.axis === 'column' && response.input?.required === true) {
+        const responseId = response.id;
+        let hasAnswer = false;
+  
+        // CAS 1 — RADIO COLUMN (clé = colonne)
+        if (
+          typeof realValue[responseId] === 'string' &&
+          realValue[responseId].trim() !== ''
+        ) {
+          hasAnswer = true;
+        }
+  
+        // CAS 2 — CHECKBOX COLUMN (clé = ligne)
+        (step.questions || []).forEach(question => {
+          const rowAnswer = realValue[question.id];
+          if (!rowAnswer) return;
+  
+          // cellule désactivée
+          if (question.cells?.[responseId]?.enabled === false) return;
+  
+          if (Array.isArray(rowAnswer) && rowAnswer.includes(responseId)) {
+            hasAnswer = true;
+          }
+        });
+  
+        if (!hasAnswer) {
+          missingColumns.push(response.label || responseId);
+        }
+      }
+    });
+  
+    // ===========================
+    // MESSAGE ERREUR
+    // ===========================
+    if (missingRows.length > 0 || missingColumns.length > 0) {
+      let message = '';
+  
+      if (missingRows.length > 0) {
+        message += `Veuillez répondre à chaque ligne obligatoire :<br>${missingRows
+          .map(r => `• ${r}`)
+          .join('<br>')}<br>`;
+      }
+  
+      if (missingColumns.length > 0) {
+        message += `Veuillez répondre à chaque colonne obligatoire :<br>${missingColumns
+          .map(c => `• ${c}`)
+          .join('<br>')}`;
+      }
+  
+      ToastService.show(message, { type: 'error' });
+      return false;
+    }
+  
+    return true;
+  }
+  
   
   static validateStep(step, answers, wrapper = null) {
     //  validation spéciale pour grid au niveau step
-    if (step.type === 'grid') {
-      const answer = answers[step.id];
-      const realValue = answer?.value;
+//     if (step.type === 'grid') {
+//       const answer = answers[step.id];
+//       const realValue = answer?.value;
     
-      console.log('GRID realValue', realValue);
+//       console.log('GRID realValue', realValue);
     
-      // Vérification initiale
-      if (!realValue || Object.keys(realValue).length === 0) {
-        const message = `Veuillez répondre à la question obligatoire : ${step.label || step.id}`;
-        ToastService.show(message, { type: 'error' });
-        return false;
-      }
+//       // Vérification initiale
+//       if (!realValue || Object.keys(realValue).length === 0) {
+//         const message = `Veuillez répondre à la question obligatoire : ${step.label || step.id}`;
+//         ToastService.show(message, { type: 'error' });
+//         return false;
+//       }
       
-      console.log("step grid", step);
+//       console.log("step grid", step);
       
-      // Vérification des lignes obligatoires
-      if (step.questions && step.questions.length > 0) {
-        const missingRows = [];
-        const missingColumns = [];
+//       // Vérification des lignes obligatoires
+//       if (step.questions && step.questions.length > 0) {
+//         const missingRows = [];
+//         const missingColumns = [];
       
-// ===========================
-  // VALIDATION LIGNES (required)
-  // ===========================
-        step.questions.forEach(question => {
-          if (question.required === true) {
-            const questionId = question.id;
-            const questionLabel = question.label || questionId;
-            const questionAnswer = realValue[questionId];     
-            let hasAnswer = false;
+// // ===========================
+//   // VALIDATION LIGNES (required)
+//   // ===========================
+//         step.questions.forEach(question => {
+//           if (question.required === true) {
+//             const questionId = question.id;
+//             const questionLabel = question.label || questionId;
+//             const questionAnswer = realValue[questionId];     
+//             let hasAnswer = false;
 
-            if (questionAnswer) {
-              if (typeof questionAnswer === 'string') {
-                // Cas radio: string non vide
-                hasAnswer = questionAnswer.trim() !== '';
-              } else if (Array.isArray(questionAnswer)) {
-                // CHECKBOX
-                hasAnswer = questionAnswer.length > 0;
-              }
-              // else if (typeof questionAnswer === 'object') {
-              //   // Cas checkbox: objet avec des tableaux
-              //   // Vérifier si au moins un tableau n'est pas vide
-              //   for (const key in questionAnswer) {
-              //     const value = questionAnswer[key];
-              //     if (Array.isArray(value) && value.length > 0) {
-              //       hasAnswer = true;
-              //       break;
-              //     }
-              //   }
-              // }
-            }
+//             if (questionAnswer) {
+//               if (typeof questionAnswer === 'string') {
+//                 // Cas radio: string non vide
+//                 hasAnswer = questionAnswer.trim() !== '';
+//               } else if (Array.isArray(questionAnswer)) {
+//                 // CHECKBOX
+//                 hasAnswer = questionAnswer.length > 0;
+//               }
+//               // else if (typeof questionAnswer === 'object') {
+//               //   // Cas checkbox: objet avec des tableaux
+//               //   // Vérifier si au moins un tableau n'est pas vide
+//               //   for (const key in questionAnswer) {
+//               //     const value = questionAnswer[key];
+//               //     if (Array.isArray(value) && value.length > 0) {
+//               //       hasAnswer = true;
+//               //       break;
+//               //     }
+//               //   }
+//               // }
+//             }
             
-            if (!hasAnswer) {
-              missingRows.push(questionLabel);
-            }
-          }
-        });
-  // ===========================
-// VALIDATION COLONNES (axis=column)
-// ===========================
-step.reponses.forEach(response => {
-  if (response.input?.axis === 'column' && response.input?.required === true) {
-    const responseId = response.id;
-    let hasAnswer = false;
+//             if (!hasAnswer) {
+//               missingRows.push(questionLabel);
+//             }
+//           }
+//         });
+//   // ===========================
+// // VALIDATION COLONNES (axis=column)
+// // ===========================
+// step.reponses.forEach(response => {
+//   if (response.input?.axis === 'column' && response.input?.required === true) {
+//     const responseId = response.id;
+//     let hasAnswer = false;
 
-    // CAS 1 — RADIO COLUMN (clé = colonne)
-    if (
-      typeof realValue[responseId] === 'string' &&
-      realValue[responseId].trim() !== ''
-    ) {
-      hasAnswer = true;
-    }
+//     // CAS 1 — RADIO COLUMN (clé = colonne)
+//     if (
+//       typeof realValue[responseId] === 'string' &&
+//       realValue[responseId].trim() !== ''
+//     ) {
+//       hasAnswer = true;
+//     }
 
-    // CAS 2 — CHECKBOX COLUMN (clé = ligne)
-    step.questions.forEach(question => {
-      const rowAnswer = realValue[question.id];
-      if (!rowAnswer) return;
+//     // CAS 2 — CHECKBOX COLUMN (clé = ligne)
+//     step.questions.forEach(question => {
+//       const rowAnswer = realValue[question.id];
+//       if (!rowAnswer) return;
 
-      // cellule désactivée
-      if (question.cells?.[responseId]?.enabled === false) return;
+//       // cellule désactivée
+//       if (question.cells?.[responseId]?.enabled === false) return;
 
-      if (Array.isArray(rowAnswer) && rowAnswer.includes(responseId)) {
-        hasAnswer = true;
-      }
-    });
+//       if (Array.isArray(rowAnswer) && rowAnswer.includes(responseId)) {
+//         hasAnswer = true;
+//       }
+//     });
 
-    if (!hasAnswer) {
-      missingColumns.push(response.label || responseId);
-    }
-  }
-});
+//     if (!hasAnswer) {
+//       missingColumns.push(response.label || responseId);
+//     }
+//   }
+// });
 
   
         
-  // ===========================
-  // MESSAGE ERREUR
-  // ===========================
-  if (missingRows.length > 0 || missingColumns.length > 0) {
-    let message = '';
+//   // ===========================
+//   // MESSAGE ERREUR
+//   // ===========================
+//   if (missingRows.length > 0 || missingColumns.length > 0) {
+//     let message = '';
 
-    if (missingRows.length > 0) {
-      message += `Veuillez répondre à chaque ligne obligatoire :<br>${missingRows
-        .map(r => `• ${r}`)
-        .join('<br>')}<br>`;
-    }
+//     if (missingRows.length > 0) {
+//       message += `Veuillez répondre à chaque ligne obligatoire :<br>${missingRows
+//         .map(r => `• ${r}`)
+//         .join('<br>')}<br>`;
+//     }
 
-    if (missingColumns.length > 0) {
-      message += `Veuillez répondre à chaque colonne obligatoire :<br>${missingColumns
-        .map(c => `• ${c}`)
-        .join('<br>')}`;
-    }
+//     if (missingColumns.length > 0) {
+//       message += `Veuillez répondre à chaque colonne obligatoire :<br>${missingColumns
+//         .map(c => `• ${c}`)
+//         .join('<br>')}`;
+//     }
 
-    ToastService.show(message, { type: 'error' });
-    return false;
-  }
-      }
+//     ToastService.show(message, { type: 'error' });
+//     return false;
+//   }
+//       }
     
-      return true; // Grid validée
-    }
+//       return true; // Grid validée
+//     }
+
+if (step.type === 'grid') {
+  return ValidationService.validateGridStep(step, answers);
+}
 
     let isValid = true;
     const missingFields = [];

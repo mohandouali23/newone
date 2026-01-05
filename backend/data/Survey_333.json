@@ -14,7 +14,7 @@
         "label": "Quel est votre moyen de transport principal ttt ?",
         "placeholder": "Ex : Bus, Train, Voiture...",
         "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
-        "redirection": "q14",
+        "redirection": "q3",
         "input_cond": "",
         "output_cond": "value.length > 0",
         "required": true,
@@ -415,7 +415,7 @@
         "title": "Q14.",
         "label": "Activités pratiquées et motivation principale du séjour",
         "required": true,
-        "redirection": "q15",
+        "redirection": "q13",
         "page": 9,
         "questions": [
           { "id_db_qst": "Y1UEG9_q14_1",
@@ -480,7 +480,7 @@
         "page":10,
         "label": "Activités pratiquées et motivation principale du séjour",
         "required": true,
-        "redirection": "FIN",
+        "redirection": "q15",
         "questions": [
           { "id_db_qst": "Y1UEGY_q13_1",
            "id": "q13_1", "label": "Se promener, flâner" },
@@ -538,7 +538,7 @@
         "page": 11,
         "label": "Activités pratiquées et motivation principale du séjour",
         "required": true,
-        "redirection": "q13",
+        "redirection": "q2",
         "questions": [
           { "id_db_qst": "Y1U3FY_q15_1", "id": "q15_1", "label": "Se promener, flâner","required": true },
           { "id_db_qst": "Y1U3FY_q15_2","id": "q15_2", "label": "Visites de musées, monuments" ,"required": true},
