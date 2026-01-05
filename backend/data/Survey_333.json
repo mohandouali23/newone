@@ -515,9 +515,7 @@
             "input": {
               "type": "checkbox",
               "axis": "column",
-              "validation": {
-                "min": 1
-              }
+              "required": false
             }
           },
           {"id_db_rps":"Y1UEGY_R2",
@@ -526,10 +524,8 @@
             "input": {
               "type": "radio",
               "axis": "column",
-              "validation": {
-                "required": true,
-                "max": 1
-              }
+              "required": true
+              
             }
           }
         ]

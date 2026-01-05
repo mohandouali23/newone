@@ -73,17 +73,18 @@ export default class ValidationService {
       // Vérification des lignes obligatoires
       if (step.questions && step.questions.length > 0) {
         const missingRows = [];
-        // Déterminer l'axe (row ou column) depuis les réponses
-        const axis = step.reponses?.[0]?.input?.axis || 'row'; // Par défaut 'row'
-        console.log("axr grid", axis);
-
+        const missingColumns = [];
+      
+// ===========================
+  // VALIDATION LIGNES (required)
+  // ===========================
         step.questions.forEach(question => {
           if (question.required === true) {
             const questionId = question.id;
             const questionLabel = question.label || questionId;
             const questionAnswer = realValue[questionId];     
-            
             let hasAnswer = false;
+
             if (questionAnswer) {
               if (typeof questionAnswer === 'string') {
                 // Cas radio: string non vide
@@ -110,12 +111,64 @@ export default class ValidationService {
             }
           }
         });
+  // ===========================
+// VALIDATION COLONNES (axis=column)
+// ===========================
+step.reponses.forEach(response => {
+  if (response.input?.axis === 'column' && response.input?.required === true) {
+    const responseId = response.id;
+    let hasAnswer = false;
+
+    // CAS 1 — RADIO COLUMN (clé = colonne)
+    if (
+      typeof realValue[responseId] === 'string' &&
+      realValue[responseId].trim() !== ''
+    ) {
+      hasAnswer = true;
+    }
+
+    // CAS 2 — CHECKBOX COLUMN (clé = ligne)
+    step.questions.forEach(question => {
+      const rowAnswer = realValue[question.id];
+      if (!rowAnswer) return;
+
+      // cellule désactivée
+      if (question.cells?.[responseId]?.enabled === false) return;
+
+      if (Array.isArray(rowAnswer) && rowAnswer.includes(responseId)) {
+        hasAnswer = true;
+      }
+    });
+
+    if (!hasAnswer) {
+      missingColumns.push(response.label || responseId);
+    }
+  }
+});
+
+  
         
-        if (missingRows.length > 0) {
-          const message = `Veuillez répondre à chaque ligne obligatoire :<br>${missingRows.map(row => `• ${row}`).join('<br>')}`;
-          ToastService.show(message, { type: 'error' });
-          return false;
-        }
+  // ===========================
+  // MESSAGE ERREUR
+  // ===========================
+  if (missingRows.length > 0 || missingColumns.length > 0) {
+    let message = '';
+
+    if (missingRows.length > 0) {
+      message += `Veuillez répondre à chaque ligne obligatoire :<br>${missingRows
+        .map(r => `• ${r}`)
+        .join('<br>')}<br>`;
+    }
+
+    if (missingColumns.length > 0) {
+      message += `Veuillez répondre à chaque colonne obligatoire :<br>${missingColumns
+        .map(c => `• ${c}`)
+        .join('<br>')}`;
+    }
+
+    ToastService.show(message, { type: 'error' });
+    return false;
+  }
       }
     
       return true; // Grid validée
