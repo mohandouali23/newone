@@ -152,42 +152,93 @@ static spinner(step, sessionAnswers) {
    static grid(step, sessionAnswers) {
     const savedWrapper = sessionAnswers[step.id];
     if (!savedWrapper || !savedWrapper.value) return;
-    const saved = savedWrapper.value;
-    step.questions.forEach(question => {
-      const rowValue = saved[question.id];
-      question.columns.forEach(col => {
-        col.checked = false;
-        if (!rowValue || col.value == null) return;
-        const colKey = col.value.toString();
   
-        // CAS 1 : rowValue est string → radio simple par ligne
+    const saved = savedWrapper.value;
+  
+    step.questions.forEach(question => {
+      const rowId = question.id;
+      const rowValue = saved[rowId];
+  
+      question.columns.forEach(col => {
+      //  const colId = col.value?.toString();
+      const colId = col.colId?.toString();
+
+        col.checked = false;
+  
+        if (!colId) return;
+  
+        // ===========================
+        // CAS 1 — CHECKBOX / RADIO ROW
+        // ===========================
         if (typeof rowValue === 'string') {
-          col.checked = rowValue === colKey;
-          return;
-        }
-        // CAS 2 : rowValue est tableau → multiple checkbox par ligne
-        if (Array.isArray(rowValue)) {
-          col.checked = rowValue.map(v => v.toString()).includes(colKey);
-          return;
-        }
-        // CAS 3 : rowValue est objet → row ou column multi
-        if (typeof rowValue === 'object') {
-          // vérifier si cette colonne correspond directement à une clé
-          if (rowValue[colKey]) {
+          // radio par ligne
+          if (rowValue === colId) {
             col.checked = true;
             return;
           }
-          // sinon, si la valeur est un array, regarder dedans
-          for (const key of Object.keys(rowValue)) {
-            const val = rowValue[key];
-            if (Array.isArray(val) && val.map(v => v.toString()).includes(colKey)) {
-              col.checked = true;
-              break;
-            }
+        }
+  
+        if (Array.isArray(rowValue)) {
+          // checkbox par ligne
+          if (rowValue.map(v => v.toString()).includes(colId)) {
+            col.checked = true;
+            return;
           }
+        }
+  
+        // ===========================
+        // CAS 2 — RADIO COLUMN (clé = colonne)
+        // ===========================
+        const columnValue = saved[colId];
+        if (typeof columnValue === 'string' && columnValue === rowId) {
+          col.checked = true;
+          return;
         }
       });
     });
   }
+  
+  //  static grid(step, sessionAnswers) {
+  //   const savedWrapper = sessionAnswers[step.id];
+  //   if (!savedWrapper || !savedWrapper.value) return;
+  //   const saved = savedWrapper.value;
+  //   step.questions.forEach(question => {
+  //     const rowValue = saved[question.id];
+  //     question.columns.forEach(col => {
+  //       col.checked = false;
+  //       if (!rowValue || col.value == null) return;
+  //       const colKey = col.value.toString();
+  
+  //       // CAS 1 : rowValue est string → radio simple par ligne
+  //       if (typeof rowValue === 'string') {
+  //         col.checked = rowValue === colKey;
+  //         return;
+  //       }
+  //       // CAS 2 : rowValue est tableau → multiple checkbox par ligne
+  //       if (Array.isArray(rowValue)) {
+  //         col.checked = rowValue.map(v => v.toString()).includes(colKey);
+  //         return;
+  //       }
+  //       // CAS 3 : rowValue est objet → row ou column multi
+  //       if (typeof rowValue === 'object') {
+  //         // vérifier si cette colonne correspond directement à une clé
+  //         if (rowValue[colKey]) {
+  //           col.checked = true;
+  //           return;
+  //         }
+  //         // sinon, si la valeur est un array, regarder dedans
+  //         for (const key of Object.keys(rowValue)) {
+  //           const val = rowValue[key];
+  //           if (Array.isArray(val) && val.map(v => v.toString()).includes(colKey)) {
+  //             col.checked = true;
+  //             break;
+  //           }
+  //         }
+  //       }
+  //     });
+  //   });
+  // }
+
+
   }
   
