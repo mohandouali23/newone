@@ -8,11 +8,11 @@
            data-exclusive="{{exclusive}}">
     {{label}}
   </label>
-  <input type="text" name="precision_{{id}}_{{codeItem}}"
+  <input type="text"
+   name="precision_{{id}}_{{codeItem}}"
    class="precision-input" 
    value="{{precisionValue}}"
-       style="{{#isSelected}}display:inline-block;{{/isSelected}}{{^isSelected}}display:none;{{/isSelected}}"
-       
+  style="{{#showPrecision}}display:inline-block;{{/showPrecision}}{{^showPrecision}}display:none;{{/showPrecision}}"
    placeholder="Précisez..." />
 
   {{#requiresSubQst}}
@@ -58,6 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
       }
     });
+if (!cb.dataset.requiresPrecision) return;
 
     // afficher le champ de précision si déjà sélectionné
     if(cb.checked && cb.dataset.requiresPrecision==='true'){

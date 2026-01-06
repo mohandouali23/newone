@@ -62,7 +62,7 @@ static prepareStepForPage(step) {
   
       if (option.hasSubQuestions) {
         option.subQuestions = option.subQuestions.map(q => {
-          // ⚠ sécuriser tous les champs obligatoires
+          //  sécuriser tous les champs obligatoires
           if (!q || !q.id || !q.type) return null;
   
           return {

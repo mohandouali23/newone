@@ -80,28 +80,18 @@ export default class ResponseNormalizer {
    // --- Sous-questions récursives ---
   if (selectedOption?.subQuestions) {
     selectedOption.subQuestions.forEach(subQ => {
-      const subAnswerKey = `${step.id}_${selectedValue}_${subQ.id}`; // clé format step.id + optionCode + subId
-
       // normalisation récursive
       const normalizedSubQ = ResponseNormalizer.normalize(subQ, rawValue);
-
-      // fusionner dans le résultat avec clé uniforme
-      // Object.keys(normalizedSubQ).forEach(subKey => {
-      //   // On remplace la clé originale par le format voulu :
-      //   // <id_db_question_principale>_<codeItem_option>_<id_db_sous_question>
-      //   const keyParts = subKey.split('_'); 
-      //   const subQIdDB = `${step.id_db}_${selectedValue}_${subQ.id_db}`;
-      //   result[subQIdDB] = normalizedSubQ[subKey];
-      // });
-       //  haddi non fusionner avec la clé format session.answers
-       Object.keys(normalizedSubQ).forEach(k => {
-        result[subAnswerKey] = normalizedSubQ[k];
+     // fusionner dans le résultat avec clé uniforme
+      Object.keys(normalizedSubQ).forEach(subKey => {
+        // <id_db_question_principale>_<codeItem_option>_<id_db_sous_question>
+        const subQIdDB = `${step.id_db}_${selectedValue}_${subQ.id_db}`;
+        result[subQIdDB] = normalizedSubQ[subKey];
       });
+      
     });
   }
-
           return result;
-         
         }
         
        

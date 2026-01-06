@@ -140,24 +140,13 @@ export default class SurveyRunService {
 
     // Normaliser et sauvegarder dans la base
     const normalized = ResponseNormalizer.normalize(step, rawValue, wrapper?.optionIndex);
-console.log('normlized',normalized)
- // 🔹 hadi oui  Fusionner toutes les réponses normalisées (sous-questions incluses) dans session.answers
-//  Object.keys(normalized).forEach(key => {
-//   //session.answers[answerKey] = mainValue;
-//   session.answers[key] = normalized[key];
-// });
+    console.log('normlized',normalized)
+ 
    //  Calcul des clés à supprimer
 let selectedOptions = [];
 if (step.type === 'multiple_choice') {
   selectedOptions = Array.isArray(body[step.id]) ? body[step.id] : [];
 }
-const keysToDelete = this.computePrecisionKeysToDelete(step, session.answers, selectedOptions);
-this.cleanupSessionPrecisions(step, session.answers, selectedOptions);
-   // Sauvegarde dans la base 
-ResponseService.addAnswer(responseId, normalized,keysToDelete);
-// --- Valeur principale (pour la navigation) ---
-    if (!step.isSubQuestion) {
-      // Valeur principale
       let mainValue;
       switch(step.type) {
         case 'multiple_choice':
@@ -175,31 +164,85 @@ ResponseService.addAnswer(responseId, normalized,keysToDelete);
         default:
           mainValue = rawValue;
       }
-
-      // Clé pour session.answers
-      const answerKey = isInRotation && wrapper?.optionIndex !== undefined
-        ? `${step.id}_${wrapper.optionIndex}`
-        : step.id;
-
-      //  Sauvegarder la valeur principale
-      session.answers[answerKey] = mainValue;
-      // hadi non  Fusionner toutes les réponses normalisées (sous-questions incluses)
-Object.keys(normalized).forEach(key => {
-  // remplacer la clé DB par clé "answerKey" + suffixe si sous-question
-  if (key !== step.id_db) {
-    const subKey = key.replace(step.id_db, answerKey);
-    session.answers[subKey] = normalized[key];
-  }
-});
-// 🔹 Sauvegarde des précisions
-this.saveStepPrecisions({ step, rawValue, mainValue, sessionAnswers: session.answers });
-
-        
-
      
-    }
+//  Nettoyage des sous-questions si changement d’option
+let subQuestionDbKeysToDelete = [];
+let subQuestionSessionKeysToDelete = [];
+
+if (step.type === 'single_choice') {
+  const cleanup = this.computeSubQuestionKeysToDelete({
+    step,
+    sessionAnswers: session.answers,
+    newValue: mainValue
+  });
+
+  subQuestionDbKeysToDelete = cleanup.dbKeysToDelete;
+  subQuestionSessionKeysToDelete = cleanup.sessionKeysToDelete;
+
+  //  Nettoyage session
+  subQuestionSessionKeysToDelete.forEach(k => {
+    delete session.answers[k];
   });
 }
+const keysToDelete = this.computePrecisionKeysToDelete(step, session.answers, selectedOptions);
+this.cleanupSessionPrecisions(step, session.answers, selectedOptions);
+const allKeysToDelete = [
+  ...keysToDelete,
+  ...subQuestionDbKeysToDelete
+];
+
+// Sauvegarde DB
+ResponseService.addAnswer(responseId, normalized, allKeysToDelete);
+this.saveSessionAnswers({
+  step,
+  normalized,
+  mainValue,
+  session,
+  wrapper,
+  isInRotation
+});
+//  Sauvegarde des précisions
+this.saveStepPrecisions({ step, rawValue, mainValue, sessionAnswers: session.answers });
+
+
+  });
+}
+
+
+
+
+static saveSessionAnswers({ step, normalized, mainValue, session, wrapper, isInRotation }) {
+  // 🔹 clé principale
+  const answerKey =
+    isInRotation && wrapper?.optionIndex !== undefined
+      ? `${step.id}_${wrapper.optionIndex}`
+      : step.id;
+
+  // valeur principale
+  session.answers[answerKey] = mainValue;
+
+  // 🔹 sous-questions
+  Object.keys(normalized).forEach(dbKey => {
+    if (dbKey === step.id_db) return;
+
+    // format DB : id_db_parent_codeItem_id_db_sub
+    const parts = dbKey.split('_');
+    const codeItem = parts[1];
+    const subIdDb = parts.slice(2).join('_');
+
+    const subQ = step.options
+      ?.flatMap(o => o.subQuestions || [])
+      ?.find(sq => sq.id_db === subIdDb);
+
+    if (!subQ) return;
+
+    // 🔹 format SESSION (sans point)
+    const sessionKey = `${step.id}_${codeItem}_${subQ.id}`;
+
+    session.answers[sessionKey] = normalized[dbKey];
+  });
+}
+
 
 static saveStepPrecisions({ step, rawValue, mainValue, sessionAnswers }) {
   if (!step || !rawValue || !sessionAnswers) return;
@@ -225,6 +268,41 @@ static saveStepPrecisions({ step, rawValue, mainValue, sessionAnswers }) {
       }
     });
   }
+}
+
+static computeSubQuestionKeysToDelete({ step, sessionAnswers, newValue }) {
+  const dbKeysToDelete = [];
+  const sessionKeysToDelete = [];
+
+  const oldValue = sessionAnswers[step.id];
+
+  // si pas de changement → rien à faire
+  if (!oldValue || oldValue === newValue) {
+    return { dbKeysToDelete, sessionKeysToDelete };
+  }
+
+  // retrouver l’ancienne option
+  const oldOption = step.options?.find(
+    opt => opt.codeItem?.toString() === oldValue?.toString()
+  );
+
+  if (!oldOption?.subQuestions) {
+    return { dbKeysToDelete, sessionKeysToDelete };
+  }
+
+  oldOption.subQuestions.forEach(subQ => {
+    // 🔹 DB
+    dbKeysToDelete.push(
+      `${step.id_db}_${oldValue}_${subQ.id_db}`
+    );
+
+    // 🔹 SESSION
+    sessionKeysToDelete.push(
+      `${step.id}_${oldValue}_${subQ.id}`
+    );
+  });
+
+  return { dbKeysToDelete, sessionKeysToDelete };
 }
 
 static computePrecisionKeysToDelete(step, sessionAnswers, selectedOptions = []) {

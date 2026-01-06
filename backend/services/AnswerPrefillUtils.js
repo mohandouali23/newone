@@ -1,6 +1,18 @@
 // backend/services/AnswerPrefill.js
 
 export default class AnswerPrefillUtils {
+  static getSubQuestionValue({ parentStep, subQuestion, sessionAnswers }) {
+    console.log("parentStep",parentStep)
+    console.log("subQuestion",subQuestion)
+    console.log("sessionAnswers",sessionAnswers)
+
+    const selectedValue = sessionAnswers[parentStep.id];
+    if (!selectedValue) return undefined;
+  
+    const key = `${parentStep.id}_${selectedValue}_${subQuestion.id}`;
+    return sessionAnswers[key];
+  }
+
   
     // ---------------- Text / Spinner ----------------
     static text(step, sessionAnswers) {
@@ -27,6 +39,27 @@ export default class AnswerPrefillUtils {
         // Sélection radio
         opt.isSelected = selectedValue?.toString() === optValue;
     
+// 🔹 Pré-remplir les sous-questions
+if (opt.isSelected && opt.subQuestions) {
+  opt.subQuestions.forEach(subQ => {
+    const subValue = AnswerPrefillUtils.getSubQuestionValue({
+      parentStep: step,
+      subQuestion: subQ,
+      sessionAnswers
+    });
+
+    if (subValue !== undefined) {
+      // Injecter la valeur comme si c'était une question normale
+      const fakeSession = { [subQ.id]: subValue };
+
+      if (typeof AnswerPrefillUtils[subQ.type] === 'function') {
+        AnswerPrefillUtils[subQ.type](subQ, fakeSession);
+      }
+    }
+  });
+}
+
+
         // ✅ CLÉ RÉELLE DE PRÉCISION
         const precisionKey = `${step.id}_pr_${optValue}`;
         console.log('pr key', precisionKey);
@@ -66,8 +99,15 @@ export default class AnswerPrefillUtils {
             // Checkbox cochée ou non
             opt.isSelected = savedStrings.includes(codeStr);
         //  récupération de la précision
-    const precisionKey = `${step.id_db}_pr_${codeStr}`;
-    opt.precisionValue = sessionAnswers[precisionKey] || '';
+    const precisionKey = `${step.id}_pr_${codeStr}`;
+    const precisionValue = sessionAnswers[precisionKey] ;
+     // 🔑 FLAG UNIQUE pour Mustache
+  opt.showPrecision =
+  opt.isSelected === true &&
+  opt.requiresPrecision === true;
+
+// Valeur (si existe)
+opt.precisionValue = precisionValue || '';
 });
       }
   

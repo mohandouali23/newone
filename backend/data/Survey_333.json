@@ -615,6 +615,7 @@
             "exclusive": true
           }
         ],
+        "redirection": "q3",
         "required": true,
         "output_cond": "value.length > 0",
         "isSubQuestion": false,
@@ -625,7 +626,7 @@
         "id": "q24",
         "type": "single_choice",
         "label": "Fréquence d’utilisation du transport en commun",
-        "redirection": "q3",
+        "redirection": "q8",
         "required": true,
         "options": [
           {
@@ -659,7 +660,7 @@
             "label": "Quelques fois par semaine",
             "subQuestions": [
               {"id_db": "KO3A5U",
-                "id": "q24_2",
+                "id": "q24_77",
                 "type": "single_choice",
                 "label": "  sub qst?",
                 "options": [
