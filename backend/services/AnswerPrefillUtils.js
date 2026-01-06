@@ -130,7 +130,7 @@ export default class AnswerPrefillUtils {
   }
 
   // ---------------- Accordion ----------------
-  static accordion(step, sessionAnswers) {
+  static accordion(step, sessionAnswers,keyOverride) {
     const key = keyOverride || step.id;
     const saved = sessionAnswers[key];
     if (!saved) return;

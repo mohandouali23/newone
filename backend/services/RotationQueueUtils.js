@@ -68,6 +68,38 @@ export default class RotationQueueUtils {
     if (!session.rotationQueue) return null;
     return session.rotationQueue.find(wrapper => wrapper.step.id === stepId) || null;
   }
-
+// NOUVELLE FONCTION MANQUANTE
+  static getAllRotationsForParent(session, parentId) {
+    if (!session.surveyCache) {
+      console.warn('surveyCache non disponible dans la session');
+      return [];
+    }
+    
+    // Pour recréer la rotationQueue complète, on a besoin:
+    // 1. Du survey (peut être stocké dans session.surveyCache)
+    // 2. De la réponse à la question parent (session.answers[parentId])
+    // 3. De générer la queue complète
+    
+    const survey = session.surveyCache;
+    if (!survey) {
+      console.warn('Survey non trouvé dans le cache');
+      return [];
+    }
+    
+    const answers = session.answers;
+    
+    // Régénérer la rotationQueue complète comme à l'initialisation
+    return this.generateRotationQueue(survey, parentId, answers);
+  }
+  
+  // Alternative si vous n'avez pas session.surveyCache
+  static getRotationQueueFromHistory(session, parentId) {
+    // Récupérer toutes les rotations pour ce parent depuis l'history
+    const rotationHistory = session.history
+      .filter(h => h.isRotation && h.wrapper?.parent === parentId)
+      .map(h => h.wrapper);
+    
+    return rotationHistory;
+  }
   }
   

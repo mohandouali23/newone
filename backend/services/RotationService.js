@@ -59,7 +59,7 @@ export default class RotationService {
         //  rotation normale
         session.rotationQueue = queue;
         session.currentStepId = queue[0].step.id;
-// ✅ AJOUT ICI
+// AJOUT ICI
 session.history.push({
   id: queue[0].step.id,
   isRotation: true,
