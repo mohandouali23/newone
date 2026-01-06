@@ -13,23 +13,23 @@ export default class SurveyService {
     return survey.steps.find(s => s.id === stepId);
   }
 
-  static resolveNextStep({ survey, step, answers }) {
-    if (!step) return null;
+  // static resolveNextStep({ survey, step, answers }) {
+  //   if (!step) return null;
   
-    const answerValue = answers[step.id];
+  //   const answerValue = answers[step.id];
   
-    const nextStepId = NavigationRuleService.resolve(
-      step,
-      answerValue,
-      survey.steps
-    );
+  //   const nextStepId = NavigationRuleService.resolve(
+  //     step,
+  //     answerValue,
+  //     survey.steps
+  //   );
   
-    if (!nextStepId || nextStepId === 'FIN') {
-      return null;
-    }
+  //   if (!nextStepId || nextStepId === 'FIN') {
+  //     return null;
+  //   }
   
-    return nextStepId;
-  }
+  //   return nextStepId;
+  // }
   
   static loadTable(tableName) {
     try {

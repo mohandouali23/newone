@@ -44,7 +44,7 @@ export default class RotationService {
         !session.rotationQueueDone[step.repeatFor]
       ) {
         const queue = RotationQueueUtils.generateRotationQueue(survey, step.repeatFor, answers);
-
+//console.log('queue',queue)
         session.rotationQueueDone[step.repeatFor] = true;
 
         //  exclusive → pas de rotation
@@ -59,7 +59,12 @@ export default class RotationService {
         //  rotation normale
         session.rotationQueue = queue;
         session.currentStepId = queue[0].step.id;
-
+// ✅ AJOUT ICI
+session.history.push({
+  id: queue[0].step.id,
+  isRotation: true,
+  wrapper: queue[0]
+});
         return {
           type: 'ROTATION_STARTED',
           nextStepId: queue[0].step.id
