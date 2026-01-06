@@ -236,6 +236,7 @@ export default class SurveyRunService {
         isRotation: !!isRotation,
         wrapper: isRotation ? wrapper : null });
       }
+
       static handlePrevious(session) {
   if (!session.history?.length) return null;
 
@@ -244,7 +245,7 @@ export default class SurveyRunService {
   console.log('📦 rotationQueue:', session.rotationQueue?.map(w => w.id));
   console.log('📍 currentStepId:', session.currentStepId);
 
-  // Retirer la question actuelle du history si elle correspond
+  // Retirer la question actuelle si elle correspond
   let lastIndex = session.history.length - 1;
   if (session.history[lastIndex].id === session.currentStepId) {
     session.history.pop();
@@ -253,25 +254,66 @@ export default class SurveyRunService {
 
   if (lastIndex < 0) return null;
 
-  // On récupère la question précédente
   const previousStep = session.history[lastIndex];
-
   if (!previousStep) return null;
 
-  // Si la question précédente est une rotation
+  // Gestion des rotations
   if (previousStep.isRotation && previousStep.wrapper) {
     const parentId = previousStep.wrapper.parent;
+    // On récupère TOUTES les rotations du parent
     const allRotations = RotationQueueUtils.getAllRotationsForParent(session, parentId);
-    const index = allRotations.findIndex(r => r.id === previousStep.id);
-    session.rotationQueue = index >= 0 ? allRotations.slice(index) : allRotations;
+
+    // On trouve l'index exact de cette instance dans allRotations
+    const rotationIndex = allRotations.findIndex(r => r.id === previousStep.id 
+        && r.optionCode === previousStep.wrapper.optionCode);
+
+    // On remet la rotationQueue à partir de cette instance
+    session.rotationQueue = rotationIndex >= 0 ? allRotations.slice(rotationIndex) : allRotations;
   } else {
-    // Si la question précédente est hors rotation
     delete session.rotationQueue;
   }
 
   session.currentStepId = previousStep.id;
   return previousStep.id;
 }
+
+//   hada ba9i probleme  ta3 2 option
+//     static handlePrevious(session) {
+//   if (!session.history?.length) return null;
+
+//   console.log('⬅️ PREV CLIQUÉ');
+//   console.log('📜 history:', session.history.map(h => h.id));
+//   console.log('📦 rotationQueue:', session.rotationQueue?.map(w => w.id));
+//   console.log('📍 currentStepId:', session.currentStepId);
+
+//   // Retirer la question actuelle du history si elle correspond
+//   let lastIndex = session.history.length - 1;
+//   if (session.history[lastIndex].id === session.currentStepId) {
+//     session.history.pop();
+//     lastIndex--;
+//   }
+
+//   if (lastIndex < 0) return null;
+
+//   // On récupère la question précédente
+//   const previousStep = session.history[lastIndex];
+
+//   if (!previousStep) return null;
+
+//   // Si la question précédente est une rotation
+//   if (previousStep.isRotation && previousStep.wrapper) {
+//     const parentId = previousStep.wrapper.parent;
+//     const allRotations = RotationQueueUtils.getAllRotationsForParent(session, parentId);
+//     const index = allRotations.findIndex(r => r.id === previousStep.id);
+//     session.rotationQueue = index >= 0 ? allRotations.slice(index) : allRotations;
+//   } else {
+//     // Si la question précédente est hors rotation
+//     delete session.rotationQueue;
+//   }
+
+//   session.currentStepId = previousStep.id;
+//   return previousStep.id;
+// }
 
       //hadi li rahi temchi talya 
       // static handlePrevious(session) {
