@@ -163,34 +163,95 @@ export default class AnswerPrefillUtils {
       section.questions.forEach(q => prefillQuestion(q, section.id_sect));
     });
   }
+// ---------------- Grid pré-remplissage ----------------
+static grid(step, sessionAnswers, keyOverride) {
+  const key = keyOverride || step.id;
+  const savedWrapper = sessionAnswers[key];
+  if (!savedWrapper || !savedWrapper.value) return;
+  const saved = savedWrapper.value;
 
-  // ---------------- Grid ----------------
-  static grid(step, sessionAnswers,keyOverride) {
-    const key = keyOverride || step.id;
-    const savedWrapper = sessionAnswers[key];
-    if (!savedWrapper || !savedWrapper.value) return;
-    const saved = savedWrapper.value;
+  step.questions.forEach(question => {
+    const rowId = question.id;
+    const rowValue = saved[rowId];
 
-    step.questions.forEach(question => {
-      const rowValue = saved[question.id];
+    question.columns.forEach(col => {
+      const colId = col.colId?.toString();
+      col.checked = false;
+      if (!colId) return;
 
-      question.columns.forEach(col => {
-        const colId = col.colId?.toString();
-        col.checked = false;
-        if (!colId) return;
+      // ===========================
+      // CAS 1 — ROW
+      // ===========================
+      if (typeof rowValue === 'string') {
+        if (rowValue === colId) col.checked = true;
+      } else if (Array.isArray(rowValue)) {
+        if (rowValue.map(v => v.toString()).includes(colId)) col.checked = true;
+      } else if (typeof rowValue === 'object' && rowValue !== null) {
+        // parcourir toutes les clés de rowValue
+        for (const key of Object.keys(rowValue)) {
+          const val = rowValue[key];
+          if (!val) continue;
 
-        if (typeof rowValue === 'string') col.checked = rowValue === colId;
-        else if (Array.isArray(rowValue)) col.checked = rowValue.map(v => v.toString()).includes(colId);
-        else if (typeof rowValue === 'object') {
-          if (rowValue[colId]) col.checked = true;
-          else for (const key of Object.keys(rowValue)) {
-            const val = rowValue[key];
-            if (Array.isArray(val) && val.map(v => v.toString()).includes(colId)) col.checked = true;
+          if (typeof val === 'string') {
+            // valeur simple ou concat "/"
+            const parts = val.includes('/') ? val.split('/') : [val];
+            if (parts.includes(colId)) {
+              col.checked = true;
+              break;
+            }
+          } else if (Array.isArray(val)) {
+            if (val.map(v => v.toString()).includes(colId)) {
+              col.checked = true;
+              break;
+            }
           }
         }
-      });
+      }
+
+      // ===========================
+      // CAS 2 — COLUMN
+      // ===========================
+      const columnValue = saved[colId];
+      if (!columnValue) return;
+
+      if (typeof columnValue === 'string') {
+        const parts = columnValue.includes('/') ? columnValue.split('/') : [columnValue];
+        if (parts.includes(rowId)) col.checked = true;
+      } else if (Array.isArray(columnValue)) {
+        if (columnValue.map(v => v.toString()).includes(rowId)) col.checked = true;
+      }
     });
-  }
+  });
+}
+
+  // ---------------- Grid ----------------
+  // static grid(step, sessionAnswers,keyOverride) {
+  //   console.log("session answer grid",sessionAnswers)
+  //   const key = keyOverride || step.id;
+  //   const savedWrapper = sessionAnswers[key];
+  //   if (!savedWrapper || !savedWrapper.value) return;
+  //   const saved = savedWrapper.value;
+
+  //   step.questions.forEach(question => {
+  //     const rowValue = saved[question.id];
+
+  //     question.columns.forEach(col => {
+  //       const colId = col.colId?.toString();
+  //       col.checked = false;
+  //       if (!colId) return;
+
+  //       if (typeof rowValue === 'string') col.checked = rowValue === colId;
+  //       else if (Array.isArray(rowValue)) col.checked = rowValue.map(v => v.toString()).includes(colId);
+  //       else if (typeof rowValue === 'object') {
+  //         if (rowValue[colId]) col.checked = true;
+  //         else for (const key of Object.keys(rowValue)) {
+  //           const val = rowValue[key];
+  //           if (Array.isArray(val) && val.map(v => v.toString()).includes(colId)) col.checked = true;
+  //         }
+  //       }
+  //     });
+  //   });
+  // }
 }
 
 

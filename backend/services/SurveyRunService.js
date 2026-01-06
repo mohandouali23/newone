@@ -93,6 +93,7 @@ export default class SurveyRunService {
         if (rawValue === undefined) return;
         
         const normalized = ResponseNormalizer.normalize(step, rawValue, wrapper?.optionIndex);
+        console.log("norlize",normalized)
         const mainValue = this.getMainValue(step, body, rawValue);
         
         // this.cleanupSession(step, session.answers, mainValue, body);
