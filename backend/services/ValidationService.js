@@ -145,10 +145,15 @@ export default class ValidationService {
           break;
           
           case 'multiple_choice':
-          if (!Array.isArray(value) || value.filter(v => v && v.trim() !== '').length === 0) {
-            missingFields.push(`${section.title} > ${question.label || question.id}`);
-          }
-          break;
+            if (
+              (!Array.isArray(value) && !value) || // ni tableau ni string
+              (Array.isArray(value) && value.filter(v => v && v.trim() !== '').length === 0) || // tableau vide
+              (typeof value === 'string' && value.trim() === '') // string vide
+            ) {
+              missingFields.push(`${section.title} > ${question.label || question.id}`);
+            }
+            break;
+          
           
           default:
             if (q.options?.length) {

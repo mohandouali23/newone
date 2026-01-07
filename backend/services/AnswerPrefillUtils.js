@@ -1,5 +1,35 @@
 export default class AnswerPrefillUtils {
-  
+  // ---------------- Reset générique ----------------
+
+  static resetQuestionState(q) {
+    if (q.type === 'single_choice') {
+      q.value = undefined;
+    q.options?.forEach(opt => {
+      opt.isSelected = false;
+      opt.precisionValue = '';
+      opt.showPrecision = false;
+      
+      if (opt.subQuestions) {
+        opt.subQuestions.forEach(subQ => this.resetQuestionState(subQ));
+      }
+    });
+    }
+    if (q.type === 'multiple_choice') {
+      q.value = undefined;
+      q.options?.forEach(o => {
+        o.isSelected = false;
+        o.precisionValue = '';
+        o.showPrecision = false;
+      });
+      if (q.options) {
+        q.options.forEach(opt => {
+          if (opt.subQuestions) {
+            opt.subQuestions.forEach(subQ => this.resetQuestionState(subQ));
+          }
+        });
+      }
+    }
+  }
   // ---------------- Helper clés session ----------------
   static getPrecisionKey(stepId, codeItem) {
     return `${stepId}_pr_${codeItem}`;
@@ -76,18 +106,16 @@ export default class AnswerPrefillUtils {
       // Sous-questions
       if ( opt.subQuestions) {
         opt.subQuestions.forEach(subQ => {
+          //  RESET TOUJOURS
+          this.resetQuestionState(subQ);
           const subValue = this.getSubQuestionValue({ parentStep: step, subQuestion: subQ, sessionAnswers });
-          //  Si sub-question single_choice et valeur undefined, ne rien cocher
-          if (subQ.type === 'single_choice' && (subValue === undefined || subValue === null || subValue === '')) {
-            subQ.options.forEach(o => {
-              o.isSelected = false;
-              o.precisionValue = '';
-              o.showPrecision = false;
-            });
-            subQ.value = undefined;
+          
+          
+          //  S'il n'y a PAS de valeur → on s'arrête ici
+          if (subValue === undefined || subValue === null || subValue === '') {
             return;
           }
-          if (subValue !== undefined) {
+          
             let fakeValue = subValue;
             if (subQ.type === 'multiple_choice' && typeof subValue === 'string' && subValue.includes('/')) {
               fakeValue = subValue.split('/');
@@ -96,7 +124,7 @@ export default class AnswerPrefillUtils {
             if (typeof this[subQ.type] === 'function') {
               this[subQ.type](subQ, fakeSession);
             }
-          }
+          
         });
       }
       
@@ -115,16 +143,8 @@ export default class AnswerPrefillUtils {
         opt.precisionValue = '';
         opt.showPrecision = false;
         if (opt.subQuestions) {
-          opt.subQuestions.forEach(subQ => {
-            subQ.value = undefined;
-            if (subQ.options) {
-              subQ.options.forEach(o => {
-                o.isSelected = false;
-                o.precisionValue = '';
-                o.showPrecision = false;
-              });
-            }
-          });
+          opt.subQuestions.forEach(subQ => this.resetQuestionState(subQ));
+
         }
       });
       return;
@@ -146,28 +166,40 @@ export default class AnswerPrefillUtils {
       this.fillPrecision(opt, key, sessionAnswers);
       
       // Pré-remplissage des sous-questions si l'option est sélectionnée
-      if (opt.isSelected && opt.subQuestions) {
+      if (opt.subQuestions) {
         opt.subQuestions.forEach(subQ => {
-          // Récupérer la valeur de la sous-question depuis sessionAnswers
+          
+          //  RESET TOUJOURS pour les sous-questions single_choice
+          if (subQ.type === 'single_choice') {
+            this.resetQuestionState(subQ);
+          }
+          
+          // Si l'option parent n'est PAS sélectionnée → on sort
+          if (!opt.isSelected) return;
+          
           const subValue = this.getSubQuestionValue({ 
             parentStep: step, 
             subQuestion: subQ, 
             sessionAnswers 
           });
-          if (subValue !== undefined) {
-            // Transformer la valeur en tableau si c'est multiple_choice
-            let fakeValue = subValue;
-            if (subQ.type === 'multiple_choice' && typeof subValue === 'string' && subValue.includes('/')) {
-              fakeValue = subValue.split('/');
-            }
-            // Créer un objet session temporaire pour cette sous-question
-            const fakeSession = { [subQ.id]: fakeValue };
-            if (typeof this[subQ.type] === 'function') {
-              this[subQ.type](subQ, fakeSession);
-            }
+          
+          //  Pas de valeur → on s'arrête après reset
+          if (subValue === undefined || subValue === null || subValue === '') {
+            return;
+          }
+          
+          let fakeValue = subValue;
+          if (subQ.type === 'multiple_choice' && typeof subValue === 'string' && subValue.includes('/')) {
+            fakeValue = subValue.split('/');
+          }
+          
+          const fakeSession = { [subQ.id]: fakeValue };
+          if (typeof this[subQ.type] === 'function') {
+            this[subQ.type](subQ, fakeSession);
           }
         });
       }
+      
     });
   }
   
