@@ -1,18 +1,27 @@
 export default class AnswerPrefillUtils {
+  static hasRealAnswer(value) {
+    if (value === null || value === undefined) return false;
+    if (typeof value === 'string') return value.trim() !== '' && value !== '/';
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === 'object')
+      return Object.values(value).some(v => AnswerPrefillUtils.hasRealAnswer(v));
+    return true;
+  }
+  
   // ---------------- Reset générique ----------------
-
+  
   static resetQuestionState(q) {
     if (q.type === 'single_choice') {
       q.value = undefined;
-    q.options?.forEach(opt => {
-      opt.isSelected = false;
-      opt.precisionValue = '';
-      opt.showPrecision = false;
-      
-      if (opt.subQuestions) {
-        opt.subQuestions.forEach(subQ => this.resetQuestionState(subQ));
-      }
-    });
+      q.options?.forEach(opt => {
+        opt.isSelected = false;
+        opt.precisionValue = '';
+        opt.showPrecision = false;
+        
+        if (opt.subQuestions) {
+          opt.subQuestions.forEach(subQ => this.resetQuestionState(subQ));
+        }
+      });
     }
     if (q.type === 'multiple_choice') {
       q.value = undefined;
@@ -52,6 +61,7 @@ export default class AnswerPrefillUtils {
     if (Array.isArray(selectedValue)) {
       for (const val of selectedValue) {
         const key = this.getSubQuestionKey(parentStep.id, val, subQuestion.id);
+        console.log("sessionAnswers[key] ",sessionAnswers[key] )
         if (sessionAnswers[key] !== undefined) return sessionAnswers[key];
       }
       return undefined;
@@ -116,14 +126,14 @@ export default class AnswerPrefillUtils {
             return;
           }
           
-            let fakeValue = subValue;
-            if (subQ.type === 'multiple_choice' && typeof subValue === 'string' && subValue.includes('/')) {
-              fakeValue = subValue.split('/');
-            }
-            const fakeSession = { [subQ.id]: fakeValue };
-            if (typeof this[subQ.type] === 'function') {
-              this[subQ.type](subQ, fakeSession);
-            }
+          let fakeValue = subValue;
+          if (subQ.type === 'multiple_choice' && typeof subValue === 'string' && subValue.includes('/')) {
+            fakeValue = subValue.split('/');
+          }
+          const fakeSession = { [subQ.id]: fakeValue };
+          if (typeof this[subQ.type] === 'function') {
+            this[subQ.type](subQ, fakeSession);
+          }
           
         });
       }
@@ -144,7 +154,7 @@ export default class AnswerPrefillUtils {
         opt.showPrecision = false;
         if (opt.subQuestions) {
           opt.subQuestions.forEach(subQ => this.resetQuestionState(subQ));
-
+          
         }
       });
       return;
@@ -183,10 +193,13 @@ export default class AnswerPrefillUtils {
             sessionAnswers 
           });
           
-          //  Pas de valeur → on s'arrête après reset
-          if (subValue === undefined || subValue === null || subValue === '') {
+          //AUCUNE reconstruction si pas de réponse
+          if (subValue === undefined) {
+            // reset explicite pour éviter héritage UI
+            this.resetQuestionState(subQ);
             return;
           }
+          
           
           let fakeValue = subValue;
           if (subQ.type === 'multiple_choice' && typeof subValue === 'string' && subValue.includes('/')) {

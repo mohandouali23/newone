@@ -773,7 +773,8 @@
     "title": "Q25_8.",
     "type": "multiple_choice",
     "label": "Quels transports utilisez-vous  sub qst?",
-    
+    "required": false,
+
     "options": [
       {
         "codeItem": 1,
