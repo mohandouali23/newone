@@ -12,7 +12,10 @@ export default class ResponseController {
         body: req.body,
         session: req.session
       });
-      
+      // if (result?.validationError) {
+      //   // on reste sur la même page
+      //   return res.redirect(`/survey/${surveyId}/run`);
+      // }
       // console.log("SurveyRunService.run,surveyId,", surveyId,
       //   ",action",action,
       //   ",body: req.body",req.body,

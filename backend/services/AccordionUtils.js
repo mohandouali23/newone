@@ -1,4 +1,3 @@
-// AccordionUtils.js
 export default class AccordionUtils {
     // Prépare les flags pour toutes les questions (Mustache)
     static prepareQuestionFlags(q) {

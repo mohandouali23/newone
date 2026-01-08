@@ -5,12 +5,12 @@ export default class NavigationRuleService {
     const extracted = this.extractValue(answerValue, rule.field);
        const values = Array.isArray(extracted) ? extracted : [extracted];
 
-    console.log("NAV DEBUG", {
-  answerValue,
-  extracted,
-  rule,
-  values
-});
+//     console.log("NAV DEBUG", {
+//   answerValue,
+//   extracted,
+//   rule,
+//   values
+// });
 
     
    // const values = Array.isArray(extracted) ? extracted : [extracted];
@@ -54,11 +54,11 @@ export default class NavigationRuleService {
   }
   //  Évaluer plusieurs conditions AND sur plusieurs questions
  static evaluateConditions(conditions, sessionAnswers, stepId) {
-  console.log("evaluateCondition DEBUG", {
-    conditions,
-    stepId,
-    sessionAnswers
-  });
+  // console.log("evaluateCondition DEBUG", {
+  //   conditions,
+  //   stepId,
+  //   sessionAnswers
+  // });
 
   const accordionAnswers = sessionAnswers[stepId] || {};
 
@@ -70,7 +70,7 @@ export default class NavigationRuleService {
 
   //  Résout la navigation d'une étape (accordion ou simple question)
  static resolve(step, sessionAnswers, steps) {
-  console.log("resolveDEBUG", { step, sessionAnswers });
+ // console.log("resolveDEBUG", { step, sessionAnswers });
 
   const navigation = step.navigation;
 
@@ -78,10 +78,10 @@ export default class NavigationRuleService {
     for (const rule of navigation.rules) {
       let match = false;
 
-      // ✅ 1. GRID
+      //  1. GRID
       if (rule.if?.type === 'GRID') {
         match = this.evaluateGridRule(rule.if, sessionAnswers[step.id]);
-        console.log("GRID match", match);
+        //console.log("GRID match", match);
       }
 
       // ✅ 2. MULTI-CONDITIONS (accordion, etc.)
@@ -91,14 +91,14 @@ export default class NavigationRuleService {
           sessionAnswers,
           step.id
         );
-        console.log("CONDITIONS match", match);
+       //console.log("CONDITIONS match", match);
       }
 
       // ✅ 3. SIMPLE RULE
       else {
         const answerValue = sessionAnswers[step.id];
         match = this.evaluateRule(rule.if, answerValue);
-        console.log("SIMPLE match", match);
+      //  console.log("SIMPLE match", match);
       }
 
       if (match) return rule.then.goTo;

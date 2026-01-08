@@ -37,6 +37,24 @@ export default class ResponseService {
     await response.save();
     return response;
   }
+  static async deleteAnswers(responseId, keys = []) {
+    if (!responseId || !keys.length) return;
+  
+    const response = await Response.findById(responseId);
+    if (!response) return;
+  
+    // Convert Map en objet pour faciliter la suppression
+    const answersObj = Object.fromEntries(response.answers);
+  
+    // Supprimer les clés
+    keys.forEach(key => delete answersObj[key]);
+  
+    // Remettre à jour la Map
+    response.answers = new Map(Object.entries(answersObj));
+  
+    await response.save();
+    console.log(' Suppression effectuée pour:', keys);
+  }
   
   // Obtenir le dernier document pour un user
   static async getLatestResponse(surveyId, userId) {

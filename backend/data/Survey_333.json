@@ -14,7 +14,7 @@
       "label": "Quel est votre moyen de transport principal ttt ?",
       "placeholder": "Ex : Bus, Train, Voiture...",
       "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
-      "redirection": "q25",
+      "redirection": "q3",
       "input_cond": "",
       "output_cond": "value.length > 0",
       "required": true,
@@ -825,7 +825,8 @@
 "options": [
 {
   "codeItem": 1,
-  "label": "avion"
+  "label": "avion",
+  "requiresPrecision": true
 },
 {
   "codeItem": 2,

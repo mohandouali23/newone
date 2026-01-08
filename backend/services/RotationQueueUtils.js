@@ -49,7 +49,7 @@ export default class RotationQueueUtils {
           parent: mainQuestionId,
           optionCode: optionObj.codeItem,
           optionLabel: optionObj.label,
-          optionIndex: index + 1,  //  index pour suffixe
+          optionIndex: optionObj.codeItem,  //  index pour suffixe
           step: stepClone // conserve toute la structure originale si besoin
         });
       });

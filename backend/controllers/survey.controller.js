@@ -60,6 +60,13 @@ export const runSurveyPage = (req, res) => {
   renderSurveyPage(res, survey, currentPage, preparedSteps, options);
 };
 
+
+
+
+
+
+
+
 /** ---------- Fonctions utilitaires ---------- **/
 
 // Initialiser la session answers si vide
@@ -100,8 +107,7 @@ function prepareSteps(steps, sessionAnswers, options, rotationQueue = []) {
         optionLabel: rotationItem.optionLabel
       };
       //step.wrapper = rotationItem;
-      console.log('  step.wrapper = rotationItem',rotationItem)
-      // Assurer que optionIndex est défini
+      //console.log('  step.wrapper = rotationItem',rotationItem)
       if (step.wrapper.optionIndex === undefined && step.wrapper.optionCode !== undefined) {
         step.wrapper.optionIndex = step.wrapper.optionCode;
       }
