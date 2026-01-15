@@ -1,60 +1,74 @@
 // survey-app/
 // │
-// ├── backend/                        # Partie serveur (Node.js + Express)
-// │   ├── data/                       # Stockage des données JSON du sondage
-// │   │   └── survey-667.json         # Exemple de fichier de sondage
-// |   |models/           → définition des modèles Mongoose (schéma de données)
-// |   └─ Response.js
+// ├── backend/                         # Backend : moteur du questionnaire (Node.js + Express)
 // │   │
-// │   ├── services/                   # Logique métier / services
-// │   │   └── SurveyService.js        # Service pour gérer les sondages (lecture, écriture, manipulation)
-// │   │   └── ResponseService.js        # Service pour gérer les sondages (lecture, écriture, manipulation)
-// │   │   └── ResponseNormalizer.js        # Service pour gérer les sondages (lecture, écriture, manipulation)
-
+// │   ├── controllers/                # Contrôleurs HTTP (routes → logique métier)
+// │   │   ├── survey.controller.js    # Gestion affichage questionnaire, fin et export Excel
+// │   │   └── response.controller.js  # Réception des réponses et exécution du moteur
 // │   │
-// │   ├── routes/                     # Définition des routes Express
-// │   │   └── survey.routes.js        # Routes API gestion du questionnaire-
-// │   │   └── response.routes.js        # Routes API gestion du questionnaire-
-// │   ├── middlewares/               
-// │   ├── logger.js                    # log des requêtes
-// │   ├── noCache.js                    # désactive le cache
-// │   └── checkCompleted.js            # bloque le retour en arrière si questionnaire terminé
+// │   ├── data/                       # Données statiques du projet
+// │   │   ├── survey_333.json         # Définition complète du questionnaire (questions, règles, navigation)
+// │   │   └── communes.json           # Données pour l’autocomplétion (ex : communes)
+// │   │   └── logo.json  
 // │   │
-// │   ├── app.js                       # Configuration d'Express (middlewares, views, static, routes)
-// │   ├── db.js                       #connection mongodb
-// │   └── server.js                    # Point d’entrée du serveur (écoute sur un port)
+// │   │
+// │   ├── models/                     # Modèles de données MongoDB (Mongoose)
+// │   │   └── Response.js             # Schéma des réponses utilisateur (surveyId, answers, dates)
+// │   │
+// │   ├── services/                   # Logique métier principale
+// │   │   ├── AccordionUtils.js       # Utilitaires pour questions accordion
+// │   │   ├── AnswerPrefillUtils.js   # Pré-remplissage des réponses depuis la session
+// │   │   ├── AutoCompleteUtils.js    # Préparation des données autocomplete
+// │   │   ├── ExcelService.js         # Export des réponses en fichier Excel
+// │   │   ├── NavigationRulesService.js # Règles de navigation conditionnelle
+// │   │   ├── ResponseNormalizer.js   # Normalisation des réponses avant sauvegarde
+// │   │   ├── ResponseService.js      # Gestion des réponses persistées (MongoDB)
+// │   │   ├── ResponseService.mock.js # Version mock pour tests sans base de données
+// │   │   ├── RotationQueueUtils.js   # Génération et gestion des files de rotation
+// │   │   ├── RotationService.js      # Gestion du cycle de rotation (start, next, end)
+// │   │   ├── SurveyRunService.js     # Cœur du moteur : navigation, validation, sauvegarde
+// │   │   ├── SurveyService.js        # Chargement et préparation du questionnaire
+// │   │   ├── ToastService.js         # Affichage des messages utilisateur (erreurs, infos)
+// │   │   └── ValidationService.js    # Validation des réponses (obligatoires, grilles, précisions)
+// │   │
+// │   ├── middlewares/                # Middlewares Express
+// │   │   └── logger.js               # Journalisation des requêtes HTTP
+// │   │
+// │   ├── app.js                      # Configuration Express (sessions, vues, routes)
+// │   ├── db.js                       # Connexion à MongoDB
+// │   └── server.js                   # Point d’entrée du serveur (listen port)
 // │
-// ├── frontend/                       # Partie client (interface utilisateur)
-// │   ├── views/                       # Templates Mustache pour les pages
-// │   │   ├── layout.mustache          # Template principal (structure HTML de base, head/body)
-// │   │   ├── partials/                # Templates partiels réutilisables
-// │   │   │   └── header.mustache      # Header commun à toutes les pages
-// │   │   │   └── accQuestion.mustache      # Header commun à toutes les pages
-// │   │   │
-// │   │   └── questions/               # Templates pour chaque type de question
-// │   │       ├── text.mustache        # Template pour question texte
-// │   │       ├── single_choice.mustache  # Template pour question à choix unique
-// │   │       ├── multiple_choice.mustache # Template pour question à choix multiples
-// │   │       ├── accordian.mustache      
-// │   │       ├── spinner.mustache
-// │   │       ├── grid.mustache   
-// │   │       ├── autocomplete.mustache      
-// │   │       ├── page.mustache   
+// ├── frontend/                       # Interface utilisateur (Mustache + CSS + JS)
 // │   │
-// │   └── public/                      # Fichiers statiques accessibles côté client
-// │       ├── css/
-// │       │   └── app.css              # Styles globaux de l’application
-// │       │   └── partials/               
-// │       │       ├── accQuestion.css       
-// │       │   └── questions/               
-// │       │       ├── text.css       
-// │       │       ├── single_choice.css  
-// │       │       ├── multiple_choice.css 
-// │       │       ├── accordian.css      
+// │   ├── views/                      # Templates Mustache
+// │   │   ├── layout.mustache         # Layout HTML principal
+// │   │   ├── end.mustache            # Page de fin du questionnaire
+// │   │   │
+// │   │   ├── partials/               # Composants réutilisables
+// │   │   │   ├── header.mustache     # En-tête commun
+// │   │   │   └── accQuestion.mustache# Structure d’une question accordion
+// │   │   │
+// │   │   └── questions/              # Templates par type de question
+// │   │       ├── text.mustache       # Question texte
+// │   │       ├── single_choice.mustache # Choix unique
+// │   │       ├── multiple_choice.mustache # Choix multiples
+// │   │       ├── accordion.mustache  # Accordion
+// │   │       ├── spinner.mustache    # Sélecteur numérique
+// │   │       ├── grid.mustache       # Question grille
+// │   │       ├── autocomplete.mustache # Autocomplétion
+// │   │       └── page.mustache       # Page regroupant les questions
+// │
+// │   └── public/                     # Fichiers statiques
+// │       ├── css/                    # Styles CSS
+// │       │   ├── app.css             # Styles globaux
+// │       │   ├── partials/           # Styles des composants
+// │       │   └── questions/          # Styles par type de question
+// │       ├── logo/                      
+// │       │   ├──alyce.png
 // │       │
 // │       └── js/
-// │           └── app.js               # Logique frontend (interactions, gestion des réponses, console.log)
+// │           └── app.js              # Logique frontend (interactions, soumission)
 // │
-// ├── package.json                     # Dépendances npm et scripts
-// ├─ .env              → configuration (MongoDB URI, port) 
-// └── README.md                        # Documentation du projet
+// ├── package.json                    # Dépendances et scripts npm
+// ├── .env                            # Variables d’environnement (PORT, MONGO_URI)
+// └── README.md                       # Documentation générale du projet

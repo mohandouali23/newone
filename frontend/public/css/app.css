@@ -3,6 +3,17 @@
   box-sizing: border-box;
   font-family: 'Inter', system-ui, sans-serif;
 }
+.survey-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.survey-logo {
+  height: 80px; /* ou la taille que tu veux */
+  object-fit: contain;
+  border-radius: 100%;
+}
 
 /* PAGE */
 body {

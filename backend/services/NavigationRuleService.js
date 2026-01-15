@@ -79,12 +79,12 @@ export default class NavigationRuleService {
       let match = false;
 
       //  1. GRID
-      if (rule.if?.type === 'GRID') {
+      if (rule.if?.axis ) {
         match = this.evaluateGridRule(rule.if, sessionAnswers[step.id]);
         //console.log("GRID match", match);
       }
 
-      // ✅ 2. MULTI-CONDITIONS (accordion, etc.)
+      //  2. MULTI-CONDITIONS (accordion, etc.)
       else if (rule.if?.conditions) {
         match = this.evaluateConditions(
           rule.if.conditions,
@@ -94,7 +94,7 @@ export default class NavigationRuleService {
        //console.log("CONDITIONS match", match);
       }
 
-      // ✅ 3. SIMPLE RULE
+      // 3. SIMPLE RULE
       else {
         const answerValue = sessionAnswers[step.id];
         match = this.evaluateRule(rule.if, answerValue);
@@ -105,7 +105,7 @@ export default class NavigationRuleService {
     }
   }
 
-  // 🔁 fallback
+  // fallback
   if (navigation?.default === 'NEXT') {
     return this.getNextSequentialStep(step, steps);
   }
@@ -201,136 +201,4 @@ if (rule.axis === 'column') {
   return false;
 }
 
-
-
-
-  // static resolve(step, answerValue, steps) {
-    
-  //   const navigation = step.navigation;
-    
-  //   //  Règles conditionnelles
-  //   if (navigation?.rules?.length) {
-  //     for (const rule of navigation.rules) {
-  //       const match = this.evaluateRule(rule.if, answerValue);
-  //       if (match) {
-  //         return rule.then.goTo;
-  //       }
-  //     }
-      
-  //   }
-    
-    
-  //   // 2Default navigation
-  //   if (navigation?.default === 'NEXT') {
-  //     return this.getNextSequentialStep(step, steps);
-  //   }
-    
-  //   if (navigation?.default === 'redirection') {
-  //     return step.redirection;
-  //   }
-    
-  //   //  Fallback historique
-  //   return step.redirection;
-  // }
-  
-
-  // static extractValue(answerValue, field) {
-  //   if (answerValue == null) return null;
-  //    // 🔥 PATCH : JSON string → objet
-  // if (typeof answerValue === 'string') {
-  //   try {
-  //     const parsed = JSON.parse(answerValue);
-  //     return field ? parsed?.[field] : parsed;
-  //   } catch {
-  //     return answerValue;
-  //   }
-  // }
-  //   // Cas multiple_choice → tableau d'objets
-  //   if (Array.isArray(answerValue)) {
-  //     if (field) {
-  //       return answerValue.map(v => v?.[field]).filter(v => v !== undefined);
-  //     }
-  //     return answerValue;
-  //   }
-    
-  //   // Cas objet complexe (autocomplete, accordion, single_choice avec objet)
-  //   if (typeof answerValue === 'object') {
-  //     // Si field fourni, retourner la clé spécifique
-  //     if (field && field in answerValue) return answerValue[field];
-      
-  //     // Sinon on cherche la "valeur principale" (codeItem, value, etc.)
-  //     if ('codeItem' in answerValue) return answerValue.codeItem;
-  //     if ('value' in answerValue) return answerValue.value;
-      
-  //     return answerValue;
-  //   }
-    
-  //   // Cas primitif (string, number)
-  //   return answerValue;
-  // // }
-  // static extractValue(answerValue, field) {
-  //   if (answerValue == null) return null;
-  
-  //   // 🔹 Spinner / radio simple
-  //   if ((typeof answerValue === 'string' || typeof answerValue === 'number') && field === 'codeItem') {
-  //     return answerValue;
-  //   }
-  
-  //   if (typeof answerValue === 'string') {
-  //     try {
-  //       const parsed = JSON.parse(answerValue);
-  //       return field ? parsed?.[field] : parsed;
-  //     } catch {
-  //       return answerValue;
-  //     }
-  //   }
-  
-  //   if (Array.isArray(answerValue)) {
-  //     if (field) {
-  //       return answerValue.map(v => v?.[field]).filter(v => v !== undefined);
-  //     }
-  //     return answerValue;
-  //   }
-  
-  //   if (typeof answerValue === 'object') {
-  //     if (field && field in answerValue) return answerValue[field];
-  //     if ('codeItem' in answerValue) return answerValue.codeItem;
-  //     if ('value' in answerValue) return answerValue.value;
-  //     return answerValue;
-  //   }
-  
-  //   return answerValue;
-  // // }
-  // static extractValue(answerValue, field) {
-  //   if (answerValue == null) return [];
-  
-  //   //  JSON string (autocomplete, etc.)
-  //   if (typeof answerValue === 'string') {
-  //     try {
-  //       const parsed = JSON.parse(answerValue);
-  //       return this.extractValue(parsed, field);
-  //     } catch {
-  //       return [answerValue];
-  //     }
-  //   }
-  
-  //   //  multiple_choice → ['1','7']
-  //   if (Array.isArray(answerValue)) {
-  //     return answerValue.map(v => {
-  //       if (typeof v === 'object' && field) return v[field];
-  //       return v; // string/number
-  //     }).filter(v => v !== undefined);
-  //   }
-  
-  //   //  objet (single_choice, spinner, autocomplete)
-  //   if (typeof answerValue === 'object') {
-  //     if (field && field in answerValue) return [answerValue[field]];
-  //     if ('codeItem' in answerValue) return [answerValue.codeItem];
-  //     if ('value' in answerValue) return [answerValue.value];
-  //   }
-  
-  //   // 🔹 primitif
-  //   return [answerValue];
-  // }
-  
 }

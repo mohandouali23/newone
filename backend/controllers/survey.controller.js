@@ -47,6 +47,10 @@ export const runSurveyPage = (req, res) => {
   const { surveyId } = req.params;
   const survey = SurveyService.loadSurvey(surveyId);
   
+    // Récupérer dynamiquement le logo
+    if (survey.logoName) {
+      survey.logo = SurveyService.getLogoUrl(survey.logoName);
+    }
   initSession(req);
   
   const currentStep = getCurrentStep(req, survey);

@@ -1,0 +1,286 @@
+Ce projet permet de créer et gérer des questionnaires dynamiques avec :
+
+Navigation page par page
+
+Gestion des rotations de sous-questions
+
+Sauvegarde des réponses en session et en base de données
+
+Export des réponses au format Excel
+
+>>>Lancer le serveur :
+npm run dev 
+url : http://localhost:3000/survey/survey_333/run
+
+>>>Structure des routes principales
+**Survey
+
+| GET `/survey/:surveyId/run` Affiche la page courante du questionnaire               
+| GET  `/survey/:surveyId/end` Affiche la page de fin du questionnaire 
+| GET| `/survey/:surveyId/download` | Télécharge les réponses du questionnaire au format Excel |
+ 
+ ****Réponses
+| POST    | `/response/:surveyId/run` : Soumet les réponses d’une page et avance ou recule dans le questionnaire
+
+>>>Fonctionnement
+
+1.Navigation dans le questionnaire :
+*Chaque page peut contenir plusieurs questions (step) : single_choice, multiple_choice, grid, autocomplete ou accordion.
+*Les réponses sont sauvegardées dans la session (req.session.answers) et en base de données.
+*Les sous-questions et précisions sont gérées automatiquement selon les options sélectionnées.
+
+2.Rotations :
+*Certaines questions peuvent se répéter pour différentes options (rotationTemplate).
+*Le service RotationService gère l’ordre des rotations et la sauvegarde des réponses spécifiques.
+
+3.Validation :
+*Chaque étape est validée via ValidationService.
+*Si des réponses obligatoires sont manquantes, la page reste affichée jusqu’à correction.
+
+4.Historique : 
+*pre remplissage via le service AnswerPrefillUtils
+*Les utilisateurs peuvent revenir en arrière (prev) et retrouver leurs réponses précédentes.
+*Les rotations et sous-questions sont correctement rejouées.
+
+Export des réponses :
+*Les réponses peuvent être exportées en Excel via /survey/:surveyId/download.
+*Le format Excel comprend toutes les réponses principales et sous-questions.
+
+
+
+classDiagram
+    %% ==========================
+    %% Serveur et App
+    %% ==========================
+    class ServerJS { +listen(port) }
+    class AppJS { +express() +useMiddlewares() +configureViews() +configureSessions() +mountRoutes() }
+    class DB { +connectDB() }
+    class Session
+    class MongoDB
+    ServerJS --> AppJS
+    AppJS --> Session
+    AppJS --> DB
+    DB --> MongoDB
+
+    %% ==========================
+    %% Routes
+    %% ==========================
+    class SurveyRoutes { +GET runSurveyPage() +GET endSurvey() +GET downloadSurveyResponses() }
+    class ResponseRoutes { +POST run() }
+    AppJS --> SurveyRoutes
+    AppJS --> ResponseRoutes
+
+    %% ==========================
+    %% Controllers
+    %% ==========================
+    class SurveyController { +runSurveyPage() +endSurvey() +downloadSurveyResponses() }
+    class ResponseController { +run(req,res) }
+    SurveyRoutes --> SurveyController
+    ResponseRoutes --> ResponseController
+
+    %% ==========================
+    %% Services
+    %% ==========================
+    class SurveyService {
+        +loadSurvey(surveyId)
+        +getStep(survey, stepId)
+        +loadTable(tableName)
+        +prepareStepForPage(step)
+        +prepareGridB(step, existingAnswer)
+    }
+
+    class ResponseService {
+        +createSurveyDocument()
+        +addAnswer()
+        +deleteAnswers()
+        +getLatestResponse()
+        +saveAnswer()
+        +createResponse()
+    }
+
+    class SurveyRunService {
+        +run(surveyId, action, body, session)
+        +initSession(session)
+        +ensureResponse(surveyId, session, userId)
+        +getStepsForCurrentPage(survey, currentStep, isInRotation)
+        +savePageAnswers(args)
+        +getRawValueForStep(step, body)
+        +getMainValue(step, body, rawValue)
+        +cleanupSession(step, session, mainValue, previousSelected)
+        +saveSessionAnswers(args)
+        +saveStepPrecisions(args)
+        +computeKeysToDelete(step, sessionAnswers, body)
+        +computeRotationKeysToDelete(args)
+        +computeSubQuestionKeysToDelete(args)
+        +computePrecisionKeysToDelete(step, sessionAnswers, selectedOptions)
+        +cleanupSessionPrecisions(step, sessionAnswers, selectedOptions)
+        +pushCurrentStepToHistory(session, step, isRotation, wrapper)
+        +handlePrevious(session)
+        +resolveNextStep(session, survey, currentStep, isInRotation)
+    }
+
+    class ResponseNormalizer {
+        +normalize(step, rawValue, optionIndex)
+        +handlers
+        +buildIdDB(step, optionIndex)
+        +isObject(val)
+        +normalizeToArray(value)
+        +indexById(list)
+        +flattenResult(target, source)
+        +appendPrecision(target, step, codeItem, rawValue)
+        +handleSubQuestions(args)
+    }
+
+    class RotationService {
+        +getCurrentStep(session, survey)
+        +initRotation(session, survey, answers, action)
+        +advanceRotation(session, survey, currentStep, action)
+    }
+
+    class RotationQueueUtils {
+        +generateRotationQueue(survey, mainQuestionId, answers)
+        +getStepWrapperById(session, stepId)
+        +getAllRotationsForParent(session, parentId)
+        +getRotationQueueFromHistory(session, parentId)
+    }
+
+    class NavigationRuleService {
+        +evaluateRule(rule, answerValue)
+        +evaluateConditions(conditions, sessionAnswers, stepId)
+        +resolve(step, sessionAnswers, steps)
+        +extractValue(answerValue, field)
+        +evaluateGridRule(rule, gridAnswer)
+        +getNextSequentialStep(step, steps)
+    }
+
+    class ExcelService
+    class AutoCompleteUtils { +getAutocompleteOptions(step) }
+    class AccordionUtils { +prepareQuestionFlags(q) }
+
+    %% ==========================
+    %% ValidationService
+    %% ==========================
+    class ValidationService {
+        +validateStep(step, answers, wrapper)
+        +validateGridStep(step, answers)
+        +validateAccordion(step, answers, missingFields)
+        +validateSubQuestions(options, answers, parentAnswerKey, path, wrapper)
+        +hasRealAnswer(value)
+        +hasRequiredPrecision(questionId, codeItem, answers)
+        +normalizeToArray(value)
+        +buildAnswerKey(questionId, wrapper)
+        +showMissingToast(message)
+    }
+
+    %% ==========================
+    %% AnswerPrefillUtils
+    %% ==========================
+    class AnswerPrefillUtils {
+        +single_choice(step, sessionAnswers)
+        +multiple_choice(step, sessionAnswers)
+        +text(step, sessionAnswers)
+        +spinner(step, sessionAnswers)
+        +autocomplete(step, sessionAnswers)
+        +grid(step, sessionAnswers)
+        +accordion(step, sessionAnswers)
+        +prefillSubQuestion(subQ, value)
+        +getSubQuestionValue(parentStep, subQuestion, sessionAnswers)
+        +fillSelectedOption(opt, savedValues)
+        +fillPrecision(opt, stepId, sessionAnswers)
+        +resetQuestionState(question)
+        +normalizeToArray(value)
+        +hasRealAnswer(value)
+        +getPrecisionKey(stepId, codeItem)
+        +getSubQuestionKey(parentStepId, selectedValue, subQuestionId)
+    }
+
+    class MockResponseService
+    class ToastService { +show(message, type,duration) }
+
+    %% ==========================
+    %% Relations Controllers → Services
+    %% ==========================
+    SurveyController --> SurveyService
+    SurveyController --> ExcelService
+    SurveyController --> AutoCompleteUtils
+    SurveyController --> AccordionUtils
+    SurveyController --> AnswerPrefillUtils
+
+    ResponseController --> SurveyRunService
+    ResponseController --> ResponseService
+
+    %% ==========================
+    %% Relations SurveyRunService
+    %% ==========================
+    SurveyRunService --> ResponseService
+    SurveyRunService --> SurveyService
+    SurveyRunService --> NavigationRuleService
+    SurveyRunService --> RotationService
+    SurveyRunService --> RotationQueueUtils
+    SurveyRunService --> ValidationService
+    SurveyRunService --> ResponseNormalizer
+
+    
+    AutoCompleteUtils --> SurveyService
+
+    %% ==========================
+    %% ValidationService → ToastService
+    %% ==========================
+    ValidationService --> ToastService
+
+    %% ==========================
+    %% RotationService → RotationQueueUtils
+    %% ==========================
+    RotationService --> RotationQueueUtils
+
+    %% ==========================
+    %% Model
+    %% ==========================
+    class Response {
+        +String surveyId
+        +String userId
+        +Map answers
+        +Date createdAt
+        +Date updatedAt
+    }
+
+    SurveyController --> Response
+    ResponseController --> Response
+    ResponseService --> Response
+    Response --> MongoDB
+
+
+
+
+flowchart surveyrunservicce
+flowchart TD
+    %% =========================
+    %% DÉBUT DU RUN SURVEY
+    %% =========================
+    A["Utilisateur accède au questionnaire"] --> B["SurveyRunService.run(surveyId, action, body, session)"]
+
+    %% =========================
+    %% INIT SESSION
+    %% =========================
+    B --> C{"Session existante ?"}
+    C -->|Non| D["SurveyRunService.initSession(session)"]
+    C -->|Oui| E["Charger session existante"]
+
+    %% =========================
+    %% RÉSOLUTIONS DES STEPS
+    %% =========================
+    E --> F["SurveyRunService.getStepsForCurrentPage()"]
+    F --> G["Si rotation en cours → RotationService.getCurrentStep()"]
+    F -->|Sinon| H["Step courant normal"]
+
+    %% =========================
+    %% EXTRACTION & NORMALISATION
+    %% =========================
+    H --> I["SurveyRunService.getRawValueForStep(step, body)"]
+    I --> J["ResponseNormalizer.normalize(step, rawValue)"]
+
+    %% =========================
+    %% SAUVEGARDE DES RÉPONSES
+    %% =========================
+    J --> K["SurveyRunService.savePageAnswers()"]
+    K --> L["ResponseService.saveAnswer()"]

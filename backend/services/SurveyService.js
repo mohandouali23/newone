@@ -8,7 +8,12 @@ export default class SurveyService {
     const filePath = path.resolve(`backend/data/${surveyId}.json`);
     return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
   }
-  
+  static getLogoUrl(logoName) {
+    const logosFile = path.resolve('backend/data/logo.json');
+    const logosData = JSON.parse(fs.readFileSync(logosFile, 'utf-8'));
+    const logoEntry = logosData.find(l => l.logoName === logoName);
+    return logoEntry ? logoEntry.url : null;
+  }
   static getStep(survey, stepId) {
     return survey.steps.find(s => s.id === stepId);
   }
@@ -119,7 +124,7 @@ export default class SurveyService {
         if (isRadio) {
           if (input.axis === 'column') {
             // 1 réponse par colonne
-            name = `value[${col.id}]`;
+            name = col.id;
             value = row.id;
             
             if (existingAnswer?.[col.id]?.value === row.id) {
@@ -129,7 +134,7 @@ export default class SurveyService {
           
           if (input.axis === 'row') {
             // 1 réponse par ligne
-            name = `value[${row.id}]`;
+            name = row.id;
             value = col.id;
             
             if (existingAnswer?.[row.id] === col.id) {
@@ -140,7 +145,7 @@ export default class SurveyService {
         
         // CHECKBOX
         if (isCheckbox) {
-          name = `value[${row.id}][]`;
+          name = row.id;
           value = col.id;
           
           checked =

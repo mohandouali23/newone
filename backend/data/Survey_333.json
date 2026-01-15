@@ -5,6 +5,7 @@
   "version": "1.0",
   "mode_enqueteur": "Enqueteur",
   "description": "Collecte des informations sur les transports",
+  "logoName": "alyce",
   "steps": [
     {
       "id_db": "04W4LP",
@@ -14,7 +15,7 @@
       "label": "Quel est votre moyen de transport principal ttt ?",
       "placeholder": "Ex : Bus, Train, Voiture...",
       "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
-      "redirection": "q3",
+      "redirection": "q14",
       "input_cond": "",
       "output_cond": "value.length > 0",
       "required": true,
@@ -61,22 +62,7 @@
       "rotationTemplate": ["q3_1", "q3_2", "q3_3"],
       "output_cond": "value.length > 0",
       "redirection": "q2",
-      "isSubQuestion": false,
-      "navigation": {
-        "rules": [
-          {
-            "if": {
-              "operator": "EQUALS",
-              "field": "codeItem",
-              "value": "6"
-            },
-            "then": {
-              "goTo": "q6"
-            }
-          }
-        ],
-        "default": "redirection"
-      }
+      "isSubQuestion": false
     },
     
     {
@@ -167,7 +153,7 @@
       ],
       "placeholder": "",
       "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
-      "redirection": "q44",
+      "redirection": "q4",
       "required": true,
       "isSubQuestion": false,
       "navigation": {
@@ -602,7 +588,7 @@
   "page": 11,
   "label": "Activités pratiquées et motivation principale du séjour",
   "required": true,
-  "redirection": "q2",
+  "redirection": "FIN",
   "navigation": {
     "rules": [
       {
@@ -662,7 +648,7 @@
   "input_cond": "",
   "output_cond": "value.length > 0",
   "required": true,
-  "redirection": "q4",
+  "redirection": "FIN",
   "isSubQuestion": true,
   "id_db": "8KTVIW"
 },
@@ -692,7 +678,7 @@
       "exclusive": true
     }
   ],
-  "redirection": "q3",
+  "redirection": "FIN",
   "required": true,
   "output_cond": "value.length > 0",
   "isSubQuestion": false,

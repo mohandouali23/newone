@@ -7,8 +7,8 @@ import surveyRoutes from './routes/survey.routes.js';
 import responseRoutes from './routes/response.routes.js';
 import dotenv from 'dotenv';
 import logger from './middlewares/logger.js';
-import noCache from './middlewares/noCache.js';
 import session from 'express-session';
+import FileStore from 'session-file-store';
 dotenv.config();
 
 const app = express();
@@ -30,9 +30,11 @@ app.use(bodyParser.json());
 
 // Middleware global
 //app.use(logger);
-app.use(noCache);
 
+// Créer un store de fichiers
+const FileStoreSession = FileStore(session);
 app.use(session({
+
     secret: 'survey-secret-key',
     resave: false,
     saveUninitialized: true,
@@ -42,6 +44,6 @@ app.use(session({
   }));
 /* ROUTES */
 app.use('/survey', surveyRoutes);          // afficher questions
-app.use('/api/responses', responseRoutes); // CRUD réponses
+app.use('/survey', responseRoutes); // // CRUD réponses
 
 export default app;

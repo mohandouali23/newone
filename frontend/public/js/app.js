@@ -1,5 +1,39 @@
+// import ToastService from './ToastService.js';
+
+// async function submitStep() {
+//   try {
+//     const res = await fetch(window.location.pathname, {
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify({ action: 'next' })
+//     });
+
+//     const data = await res.json();
+
+//     // ❌ Validation backend échouée
+//     if (!res.ok && data.success === false) {
+//       data.messages.forEach(msg =>
+//         ToastService.show(msg, {
+//           type: 'error',
+//           duration: 4000
+//         })
+//       );
+//       return; // ⛔ rester sur la même page
+//     }
+
+//     // ✅ Succès → reload pour afficher l’étape suivante
+//     window.location.reload();
+
+//   } catch (err) {
+//     ToastService.show('Erreur serveur', { type: 'error' });
+//     console.error(err);
+//   }
+// }
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM chargé, JS fonctionne ✅');
+  console.log('DOM chargé, JS fonctionne ');
 
   const stepType = document.querySelector('.survey')?.dataset.stepType;
   console.log('stepType:', stepType);
@@ -9,40 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     link.rel = 'stylesheet';
     link.href = `/assets/css/questions/${stepType}.css`;
     document.head.appendChild(link);
-    console.log('CSS dynamique injecté ✅', link.href);
+    console.log('CSS dynamique injecté ', link.href);
   }
 });
 
-
-
-
-
-// import SurveyManager from './SurveyManager.js';
-
-// // Initialiser le manager
-// // surveyId = dynamique ou récupéré depuis Mustache
-// const surveyId = document.body.dataset.surveyId; 
-// const userId = 'anonymous1'; // ou depuis auth
-// const surveyManager = new SurveyManager(surveyId, userId);
-
-// // Exemple : appel depuis formulaire
-// function handleSubmitQuestion(stepId, type) {
-//   // récupérer la valeur du champ correspondant
-//   const input = document.querySelector(`[name="value"]`);
-//   let value = input ? input.value : null;
-
-//   // Pour checkbox/multiple_choice
-//   if (type === 'multiple_choice') {
-//     value = Array.from(document.querySelectorAll('[name="value"]:checked')).map(el => el.value);
-//   }
-
-//   surveyManager.submitQuestion(stepId, type, value);
-
-//   // Passer à la prochaine question ou finir
-//   const nextStepId = input.dataset.nextStep;
-//   if (nextStepId) {
-//     window.location.href = `/survey/${surveyId}/${nextStepId}`;
-//   } else {
-//     surveyManager.submitSurvey();
-//   }
-// }

@@ -1,4 +1,4 @@
-<form id="surveyForm" method="POST" action="/api/responses/{{survey.id}}/run">
+<form id="surveyForm" method="POST" action="/survey/{{survey.id}}/run">
   {{#steps}}
     <div class="question-block" style="margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; border-radius: 8px;">
       {{#title}}<h4>{{title}} {{label}}</h4>{{/title}}
@@ -17,27 +17,84 @@
 
   
   <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-    <button type="submit" name="action" value="prev" style="background-color:#6c757d; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; font-size:16px;">
+    <button type="submit" name="_action" value="prev" style="background-color:#6c757d; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; font-size:16px;">
       Précédent
     </button>
 
-    <button type="submit" name="action" value="next"  style="background-color:#007bff; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; font-size:16px;">
+    <button type="submit" name="_action" value="next"  style="background-color:#007bff; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; font-size:16px;">
       Suivant
     </button>
   </div>
 </form>
 
 
-<script> 
+<script type="module">
+import ToastService from '/assets/js/ToastService.js';
+function serializeForm(form) {
+  const obj = {};
+  const elements = form.querySelectorAll('input, select, textarea');
 
-document.getElementById('surveyForm').addEventListener('submit', function(e) {
-  
-console.log("Le bouton a été cliqué !");
+  elements.forEach(el => {
+    let name = el.name;
+    if (!name) return;
 
- // Pour tester la valeur de chaque input 
-const formData = new FormData(this);
-  for (let [name, value] of formData.entries()) {
-     console.log(name, ":", value); 
-     } 
+    // retirer les crochets [] pour les tableaux
+    const isArray = name.endsWith('[]');
+    if (isArray) name = name.slice(0, -2);
+
+    if (el.type === 'checkbox') {
+      if (!obj[name]) obj[name] = [];
+      if (el.checked) obj[name].push(el.value);
+    } else if (el.type === 'radio') {
+      if (el.checked) obj[name] = el.value;
+    } else {
+      obj[name] = el.value;
+    }
+  });
+
+  return obj;
+}
+
+
+const form = document.getElementById('surveyForm');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const button = document.activeElement;
+  const action = button?.value || 'next';
+
+  const answers = serializeForm(form);
+  answers._action = action;
+  console.log("answers",answers)
+
+ try {
+    const res = await fetch(form.action, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(answers)
+     
+    });
+
+    const data = await res.json();
+console.log("data",data)
+    if (!res.ok && data.success === false) {
+      data.messages.forEach(msg =>
+        ToastService.show(msg, { type: 'error', duration: 4000 })
+      );
+      return;
+    }
+alert('test')
+    if (data.finished) {
+      window.location.href = data.redirectUrl;
+      return;
+    }
+
+    window.location.reload();
+
+  } catch (err) {
+    ToastService.show('Erreur serveur', { type: 'error' });
+    console.error(err);
+  }
 });
 </script>

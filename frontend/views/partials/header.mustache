@@ -1,3 +1,6 @@
-<header class="header">
-  <h1>{{survey.title_app}}</h1>
+<header class="survey-header">
+  {{#survey.logo}}
+    <img src="{{survey.logo}}" alt="Logo du questionnaire" class="survey-logo">
+  {{/survey.logo}}
+  <h1>{{survey.title}}</h1>
 </header>

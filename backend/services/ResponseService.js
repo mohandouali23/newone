@@ -22,6 +22,7 @@ export default class ResponseService {
     // fusionner Map existante avec les nouvelles réponses
     const currentAnswers = new Map(response.answers); // récupère l'existant
     //  Supprimer les anciennes clés
+    console.log("keysToDelete base",keysToDelete)
     keysToDelete.forEach(key => currentAnswers.delete(key));
 
     for (const [key, value] of Object.entries(answer)) {
@@ -32,6 +33,7 @@ export default class ResponseService {
       currentAnswers.set(key, value);
     }
     }
+    console.log("currentAnswers",currentAnswers)
     response.answers = currentAnswers;
     
     await response.save();
@@ -45,7 +47,7 @@ export default class ResponseService {
   
     // Convert Map en objet pour faciliter la suppression
     const answersObj = Object.fromEntries(response.answers);
-  
+  console.log("keys delete",keys)
     // Supprimer les clés
     keys.forEach(key => delete answersObj[key]);
   
@@ -53,7 +55,7 @@ export default class ResponseService {
     response.answers = new Map(Object.entries(answersObj));
   
     await response.save();
-    console.log(' Suppression effectuée pour:', keys);
+    //console.log(' Suppression effectuée pour:', keys);
   }
   
   // Obtenir le dernier document pour un user

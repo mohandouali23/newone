@@ -3,7 +3,7 @@ import SurveyRunService from '../services/SurveyRunService.js';
 export default class ResponseController {
   static async run(req, res) {
     const { surveyId } = req.params;
-    const action = req.body.action || 'next';
+    const action = req.body._action || 'next';
     
     try {
       const result = await SurveyRunService.run({
@@ -12,25 +12,32 @@ export default class ResponseController {
         body: req.body,
         session: req.session
       });
-      // if (result?.validationError) {
-      //   // on reste sur la même page
-      //   return res.redirect(`/survey/${surveyId}/run`);
+     console.log("result",result)
+      // if (result.finished) {
+      //   req.session.destroy();
+      //   return res.redirect(`/survey/${surveyId}/end`);
       // }
-      // console.log("SurveyRunService.run,surveyId,", surveyId,
-      //   ",action",action,
-      //   ",body: req.body",req.body,
-      //   ",session",req.session
-      // ) 
-      
       if (result.finished) {
         req.session.destroy();
-        return res.redirect(`/survey/${surveyId}/end`);
+        return res.json({
+          success: true,
+          finished: true,
+          redirectUrl: `/survey/${surveyId}/end`
+        });
       }
       
+
+      if (result.validationError) {
+        return res.status(400).json({
+          success: false,
+          messages: result.messages,
+          currentStepId: result.currentStepId
+        });
+      }
       // sauvegarde step courant dans session
       req.session.currentStepId = result.nextStep.id;
-      
-      return res.redirect(`/survey/${surveyId}/run`);
+      return res.json({ success: true, nextStepId: result.nextStep.id });
+      //return res.redirect(`/survey/${surveyId}/run`);
     } catch (err) {
       console.error('Erreur SurveyRunController:', err);
       return res.status(500).json({ error: 'Erreur serveur' });

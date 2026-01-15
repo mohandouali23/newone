@@ -5,14 +5,17 @@ Un moteur de règles lit le JSON et décide de la prochaine étape
            Le moteur JS exécute les règles de façon générique
 
 *Chaque question peut avoir une liste de règles, évaluées dans l’ordre
+
 "navigation": {
   "rules": [],
   "default": "NEXT"
 }
+
 *Structure d’une règle
 {
   "if": {
     "operator": "",
+     "field":"",
     "value": "",
     "values": []
   },
@@ -34,6 +37,26 @@ Un moteur de règles lit le JSON et décide de la prochaine étape
 | `BETWEEN`    | entre          |
 | `FILLED`     | champ non vide |
 | `EMPTY`      | champ vide     |
+
+        {
+          "if": {
+            "conditions": [
+              { "questionId": "", "operator": "", "value":  },
+              { "questionId": "", "operator": "", "values": }
+            ]
+          },
+          "then": { "goTo": ""}
+        }
+
+  {
+  "if": {
+    "axis": "",
+    "operator": "",
+    "value": ""
+  },
+  "then": { "goTo": "" }
+}   
+
 {
   "if": {
     "type": "GRID",
@@ -278,3 +301,27 @@ single_choice
            ├── text
            ├── spinner
            └── single_choice (possible)
+
+
+"questions": [
+    { "id_db_qst": "",
+    "id": "",
+     "label": "",
+     "required": true,
+     "cells": {
+        "R1": { "enabled": true },
+        "R2": { "enabled": true }
+    }
+  }
+    ],
+
+   "reponses": [
+      {"id_db_rps":"",
+      "id": "R1",
+      "label": "",
+      "input": {
+        "type": "radio",
+        "axis": "row"
+      }
+    },
+   ]

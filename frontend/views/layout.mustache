@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <title>{{step.title}}</title>
+  {{#survey.logo}}
+  <link rel="icon" type="image/png" href="{{survey.logo}}">
+{{/survey.logo}}
   <link rel="stylesheet" href="/assets/css/app.css">
   <link rel="stylesheet" href="/assets/css/questions/accordion.css">
   <link rel="stylesheet" href="/assets/css/questions/autocomplete.css">
@@ -21,7 +24,8 @@ data-step-id="{{step.id}}"
 
   {{{content}}}
 </main>
-<script src="/assets/js/app.js" defer></script>
+<script type="module" src="/assets/js/app.js"></script>
+
 </body>
 
 </html>
