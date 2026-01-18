@@ -280,9 +280,15 @@ if (step.rotationTemplate?.length) {
     //  Session
     sessionKeysToDelete.forEach(k => delete session.answers[k]);
 
+     // Indique que la rotation doit être relancée si on revient sur ce parent
+     session.rotationState ??= {};
+     session.rotationState[step.id] = { needsRefresh: true };
+
     // reset rotation state
-    delete session.rotationQueueDone[step.id];
     delete session.rotationQueue;
+    delete session.rotationQueueDone[step.id];
+   //delete session.rotationState?.[step.id];
+ 
   }
 }
     this.cleanupSessionPrecisions(step, sessionAnswers, Array.isArray(mainValue) ? mainValue : [mainValue]);

@@ -78,12 +78,17 @@ form.addEventListener('submit', async (e) => {
 
     const data = await res.json();
 console.log("data",data)
-    if (!res.ok && data.success === false) {
-      data.messages.forEach(msg =>
-        ToastService.show(msg, { type: 'error', duration: 4000 })
-      );
-      return;
-    }
+
+    if (data.success === false) {
+  if (data.messages?.length) {
+     ToastService.show('Veuillez compléter les champs obligatoires', {
+      type: 'error',
+      duration: 4000
+    });
+  } 
+  return;
+}
+
 alert('test')
     if (data.finished) {
       window.location.href = data.redirectUrl;

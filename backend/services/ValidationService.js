@@ -217,14 +217,16 @@ static getMissingMessages(step, answers, wrapper = null) {
   // ===========================================================================
 
   static validateGridStep(step, answers) {
-    const value = answers[step.id];
-
+    const value = answers[step.id]||{};
+   // console.log("value big",value)
     const missingRows = [];
     const missingColumns = [];
 
     // Lignes obligatoires
     step.questions?.forEach(row => {
-      if (row.required && !this.hasRealAnswer(value[row.id])) {
+      
+      const rowValue = value[row.id];
+      if (row.required && !this.hasRealAnswer(rowValue)) {
         missingRows.push(row.label || row.id);
       }
     });
@@ -234,10 +236,12 @@ static getMissingMessages(step, answers, wrapper = null) {
       if (col.input?.axis !== 'column' || !col.input?.required) return;
 
       const colId = col.id;
+      //console.log("col",col ,"colId",colId)
       let hasAnswer = this.hasRealAnswer(value[colId]);
-
+//console.log("hasAnswer",hasAnswer)
       step.questions?.forEach(row => {
         const rowValue = value[row.id];
+       // console.log("rowValue row col",rowValue ,"value",value)
         if (Array.isArray(rowValue) && rowValue.includes(colId)) {
           hasAnswer = true;
         }
@@ -252,6 +256,8 @@ static getMissingMessages(step, answers, wrapper = null) {
         msg += `Veuillez répondre à chaque ligne obligatoire :<br>${missingRows.map(r => `• ${r}`).join('<br>')}<br>`;
       }
       if (missingColumns.length) {
+       // console.log("missingColumns",missingColumns)
+
         msg += `Veuillez répondre à chaque colonne obligatoire :<br>${missingColumns.map(c => `• ${c}`).join('<br>')}`;
       }
       this.showMissingToast(msg);

@@ -266,7 +266,7 @@ export default class AnswerPrefillUtils {
 
   static grid(step, sessionAnswers, keyOverride) {
     const key = keyOverride || step.id;
-    const saved = sessionAnswers[key]?.value;
+    const saved = sessionAnswers[key];
     if (!saved) return;
 
     step.questions.forEach(row => {

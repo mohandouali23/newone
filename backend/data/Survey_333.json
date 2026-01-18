@@ -15,7 +15,7 @@
       "label": "Quel est votre moyen de transport principal ttt ?",
       "placeholder": "Ex : Bus, Train, Voiture...",
       "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
-      "redirection": "q14",
+      "redirection": "q3",
       "input_cond": "",
       "output_cond": "value.length > 0",
       "required": true,
@@ -153,7 +153,7 @@
       ],
       "placeholder": "",
       "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
-      "redirection": "q4",
+      "redirection": "q44",
       "required": true,
       "isSubQuestion": false,
       "navigation": {

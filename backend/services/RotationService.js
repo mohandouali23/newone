@@ -83,18 +83,23 @@ export default class RotationService {
   static initRotation({ session, survey, answers, action, generateQueue }) {
 
     if (action !== 'next') return null;
-  
+    session.rotationState ??= {};
+    session.rotationQueueDone ??= {};
     // Parcours de tous les steps pour détecter une rotation à déclencher
     for (const step of survey.steps) {
   
       const parentId = step.repeatFor;
-  
       if (!parentId || !answers[parentId]) continue;
   
-      // Toujours régénérer la queue si elle n'existe pas
-      const queueExists = session.rotationQueue && session.rotationQueue.length > 0;
-  
-      if (!queueExists) {
+   // Vérifier si on doit régénérer la queue : 
+        // - jamais générée
+        // - ou réponse parent modifiée
+        const needToGenerate = !session.rotationQueue || session.rotationQueue.length === 0 
+            || session.rotationQueueDone[parentId] === false 
+            || session.rotationState?.[parentId]?.needsRefresh;
+
+        if (!needToGenerate) continue;
+     
   
         const queue = generateQueue(survey, parentId, answers);
   
@@ -122,17 +127,86 @@ export default class RotationService {
           isRotation: true,
           wrapper: queue[0]
         });
-  
+  // Reset flag de refresh
+  session.rotationState[parentId] = { needsRefresh: false };
         return {
           type: 'ROTATION_STARTED',
           nextStepId: queue[0].step.id
         };
-      }
+      
     }
   
     return null;
   }
-  
+    // ==========================================================================
+  // ROTATION ADVANCEMENT
+  // ==========================================================================
+
+  /**
+   * Avance dans une rotation existante :
+   * - retire le step courant de la queue
+   * - retourne le suivant s’il existe
+   * - gère la fin de rotation
+   */
+  static advanceRotation({ session, survey, currentStep, action }) {
+
+    // Aucune rotation active
+    if (!session.rotationQueue?.length) return null;
+
+    // Navigation arrière → rester sur le même step
+    if (action !== 'next') {
+      return { nextStepId: currentStep.id };
+    }
+
+    // Retirer le step courant de la rotation
+    const processed = session.rotationQueue.shift();
+
+    // --------------------------------------------------
+    // Cas : il reste des éléments dans la rotation
+    // --------------------------------------------------
+    if (session.rotationQueue.length > 0) {
+      return {
+        nextStepId: session.rotationQueue[0].step.id
+      };
+    }
+
+    // --------------------------------------------------
+    // Cas : fin de rotation
+    // --------------------------------------------------
+    delete session.rotationQueue;
+
+    const parent = survey.steps.find(step => step.id === processed.parent);
+
+    // Redirection explicite définie sur le parent
+    if (parent?.redirection) {
+      return { nextStepId: parent.redirection };
+    }
+
+    // Fallback → la navigation sera résolue ailleurs
+    return {
+      nextStepId: null,
+      fallbackFrom: processed.step
+    };
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   // static initRotation({ session, survey, answers, action, generateQueue }) {
 
   //   // Une rotation ne démarre que sur "next" et si aucune rotation active
@@ -194,54 +268,5 @@ export default class RotationService {
   //   return null;
   // }
 
-  // ==========================================================================
-  // ROTATION ADVANCEMENT
-  // ==========================================================================
 
-  /**
-   * Avance dans une rotation existante :
-   * - retire le step courant de la queue
-   * - retourne le suivant s’il existe
-   * - gère la fin de rotation
-   */
-  static advanceRotation({ session, survey, currentStep, action }) {
-
-    // Aucune rotation active
-    if (!session.rotationQueue?.length) return null;
-
-    // Navigation arrière → rester sur le même step
-    if (action !== 'next') {
-      return { nextStepId: currentStep.id };
-    }
-
-    // Retirer le step courant de la rotation
-    const processed = session.rotationQueue.shift();
-
-    // --------------------------------------------------
-    // Cas : il reste des éléments dans la rotation
-    // --------------------------------------------------
-    if (session.rotationQueue.length > 0) {
-      return {
-        nextStepId: session.rotationQueue[0].step.id
-      };
-    }
-
-    // --------------------------------------------------
-    // Cas : fin de rotation
-    // --------------------------------------------------
-    delete session.rotationQueue;
-
-    const parent = survey.steps.find(step => step.id === processed.parent);
-
-    // Redirection explicite définie sur le parent
-    if (parent?.redirection) {
-      return { nextStepId: parent.redirection };
-    }
-
-    // Fallback → la navigation sera résolue ailleurs
-    return {
-      nextStepId: null,
-      fallbackFrom: processed.step
-    };
-  }
 }
