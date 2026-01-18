@@ -667,9 +667,7 @@ static computeRotationKeysToDelete({ step,sessionAnswers, previousSelected = [],
         }
         
         // return NavigationRuleService.resolve(currentStep, session.answers[currentStep.id], survey.steps);
-        return NavigationRuleService.resolve(currentStep, session.answers, survey.steps);
-        
-        
+        return NavigationRuleService.resolve(currentStep, session.answers, survey.steps);  
       }
       
     }

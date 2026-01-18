@@ -94,9 +94,7 @@ export default class RotationService {
    // Vérifier si on doit régénérer la queue : 
         // - jamais générée
         // - ou réponse parent modifiée
-        const needToGenerate = !session.rotationQueue || session.rotationQueue.length === 0 
-            || session.rotationQueueDone[parentId] === false 
-            || session.rotationState?.[parentId]?.needsRefresh;
+        const needToGenerate = session.rotationState?.[parentId]?.needsRefresh;
 
         if (!needToGenerate) continue;
      
@@ -173,6 +171,7 @@ export default class RotationService {
     // --------------------------------------------------
     // Cas : fin de rotation
     // --------------------------------------------------
+    if (session.rotationQueue.length === 0) {
     delete session.rotationQueue;
 
     const parent = survey.steps.find(step => step.id === processed.parent);
@@ -187,6 +186,7 @@ export default class RotationService {
       nextStepId: null,
       fallbackFrom: processed.step
     };
+  }
   }
 
 
