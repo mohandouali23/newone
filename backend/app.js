@@ -12,6 +12,7 @@ import FileStore from 'session-file-store';
 dotenv.config();
 
 const app = express();
+const surveyBasePath = process.env.SURVEY_BASE_PATH ;
 
 // connexion MongoDB
 connectDB();
@@ -42,8 +43,9 @@ app.use(session({
       httpOnly: true
     }
   }));
+ 
 /* ROUTES */
-app.use('/survey', surveyRoutes);          // afficher questions
-app.use('/survey', responseRoutes); // // CRUD réponses
+app.use(surveyBasePath, surveyRoutes);          // afficher questions
+app.use(surveyBasePath, responseRoutes); // // CRUD réponses
 
 export default app;

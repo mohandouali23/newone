@@ -1,3 +1,5 @@
+import PrecisionUtils from './precisionUtils.js';
+import SurveyService from './SurveyService.js';
 import ToastService from './ToastService.js';
 
 export default class ValidationService {
@@ -6,28 +8,7 @@ export default class ValidationService {
   // GENERIC HELPERS
   // ===========================================================================
 
-  /**
-   * Vérifie si une valeur contient une vraie réponse utilisateur
-   */
-  static hasRealAnswer(value) {
-    if (value === null || value === undefined) return false;
 
-    if (typeof value === 'string') return value.trim() !== '';
-    if (Array.isArray(value)) return value.some(v => this.hasRealAnswer(v));
-    if (typeof value === 'object')
-      return Object.values(value).some(v => this.hasRealAnswer(v));
-
-    return true;
-  }
-
-  /**
-   * Normalise une réponse en tableau
-   */
-  static normalizeToArray(value) {
-    if (Array.isArray(value)) return value;
-    if (value !== undefined && value !== null) return [value];
-    return [];
-  }
 
   /**
    * Construit la clé d’une réponse (wrapper / sous-question)
@@ -38,14 +19,15 @@ export default class ValidationService {
       : questionId;
   }
 
-  /**
-   * Vérifie la précision obligatoire d’une option
-   */
-  static hasRequiredPrecision(questionId, codeItem, answers) {
-    const key = `${questionId}_pr_${codeItem}`;
-    return !!answers[key]?.trim();
-  }
-
+  // /**
+  //  * Vérifie la précision obligatoire d’une option
+  //  */
+  // static hasRequiredPrecision(questionId, codeItem, answers) {
+  //   const key =  PrecisionUtils.buildPrecisionKey(questionId, codeItem);
+  //   return !!answers[key]?.trim();
+  // }
+ 
+  
   /**
    * Affiche un toast d’erreur standard
    */
@@ -64,23 +46,23 @@ static getMissingMessages(step, answers, wrapper = null) {
     const answerKey = this.buildAnswerKey(q.id, wrapper);
     const value = answers[answerKey];
 
-    if (q.required && !this.hasRealAnswer(value)) {
+    if (q.required && !SurveyService.hasRealAnswer(value)) {
       missing.push(q.label || q.id);
     }
 
     // Validation par type
-    if (q.type === 'single_choice' && this.hasRealAnswer(value)) {
+    if (q.type === 'single_choice' && SurveyService.hasRealAnswer(value)) {
       const opt = q.options?.find(o => o.codeItem?.toString() === value?.toString());
-      if (opt?.requiresPrecision && !this.hasRequiredPrecision(q.id, value, answers)) {
+      if (opt?.requiresPrecision && !PrecisionUtils.hasRequiredPrecision(q.id, value, answers)) {
         missing.push(`Précision pour "${opt.label}"`);
       }
     }
 
     if (q.type === 'multiple_choice') {
-      const values = this.normalizeToArray(value);
+      const values = SurveyService.normalizeToArray(value);
       values.forEach(code => {
         const opt = q.options?.find(o => o.codeItem?.toString() === code?.toString());
-        if (opt?.requiresPrecision && !this.hasRequiredPrecision(q.id, code, answers)) {
+        if (opt?.requiresPrecision && !PrecisionUtils.hasRequiredPrecision(q.id, code, answers)) {
           missing.push(`Précision pour "${opt.label}"`);
         }
       });
@@ -126,7 +108,7 @@ static getMissingMessages(step, answers, wrapper = null) {
 
     options.forEach(option => {
       const parentValue = answers[parentAnswerKey];
-      const parentValues = this.normalizeToArray(parentValue).map(v => v?.toString());
+      const parentValues = SurveyService.normalizeToArray(parentValue).map(v => v?.toString());
 
       // L’option parent n’est pas sélectionnée → on ignore ses sous-questions
       if (!parentValues.includes(option.codeItem?.toString())) return;
@@ -140,12 +122,12 @@ static getMissingMessages(step, answers, wrapper = null) {
         const labelPath = path ? `${path} > ${subQ.label || subQ.id}` : (subQ.label || subQ.id);
 
         // Sous-question obligatoire
-        if (subQ.required && !this.hasRealAnswer(value)) {
+        if (subQ.required && !SurveyService.hasRealAnswer(value)) {
           missing.push(labelPath);
         }
 
         // Récursivité sur options
-        if (subQ.options?.length && this.hasRealAnswer(value)) {
+        if (subQ.options?.length && SurveyService.hasRealAnswer(value)) {
           missing.push(
             ...this.validateSubQuestions({
               options: subQ.options,
@@ -165,7 +147,7 @@ static getMissingMessages(step, answers, wrapper = null) {
               const qValue = answers[qKey];
               const accordionPath = `${labelPath} > ${section.title} > ${q.label || q.id}`;
 
-              if (q.required && !this.hasRealAnswer(qValue)) {
+              if (q.required && !SurveyService.hasRealAnswer(qValue)) {
                 missing.push(accordionPath);
               }
 
@@ -205,7 +187,7 @@ static getMissingMessages(step, answers, wrapper = null) {
         if (!q.required) return;
 
         const value = answer[q.id];
-        if (!this.hasRealAnswer(value)) {
+        if (!SurveyService.hasRealAnswer(value)) {
           missingFields.push(`${section.title} > ${q.label || q.id}`);
         }
       });
@@ -226,7 +208,7 @@ static getMissingMessages(step, answers, wrapper = null) {
     step.questions?.forEach(row => {
       
       const rowValue = value[row.id];
-      if (row.required && !this.hasRealAnswer(rowValue)) {
+      if (row.required && !SurveyService.hasRealAnswer(rowValue)) {
         missingRows.push(row.label || row.id);
       }
     });
@@ -237,7 +219,7 @@ static getMissingMessages(step, answers, wrapper = null) {
 
       const colId = col.id;
       //console.log("col",col ,"colId",colId)
-      let hasAnswer = this.hasRealAnswer(value[colId]);
+      let hasAnswer = SurveyService.hasRealAnswer(value[colId]);
 //console.log("hasAnswer",hasAnswer)
       step.questions?.forEach(row => {
         const rowValue = value[row.id];
@@ -267,6 +249,31 @@ static getMissingMessages(step, answers, wrapper = null) {
     return true;
   }
 
+  // static validatePrecision({
+  //   question,
+  //   selectedValues,
+  //   answers,
+  //   missing,
+  //   labelPrefix = ''
+  // }) {
+  //   const values = SurveyService.normalizeToArray(selectedValues);
+  
+  //   values.forEach(code => {
+  //     const opt = question.options?.find(
+  //       o => o.codeItem?.toString() === code?.toString()
+  //     );
+  
+  //     if (!opt?.requiresPrecision) return;
+  
+  //     if (!this.hasRequiredPrecision(question.id, code, answers)) {
+  //       const label = opt.label || code;
+  //       missing.push(
+  //         `${labelPrefix}Précision pour "${label}"`
+  //       );
+  //     }
+  //   });
+  // }
+  
   // ===========================================================================
   // STEP VALIDATION
   // ===========================================================================
@@ -283,27 +290,23 @@ static getMissingMessages(step, answers, wrapper = null) {
       const answerKey = this.buildAnswerKey(q.id, wrapper);
       const value = answers[answerKey];
 
-      if (q.required && !this.hasRealAnswer(value)) {
+      if (q.required && !SurveyService.hasRealAnswer(value)) {
         missing.push(q.label || q.id);
       }
 
       // Validation par type
-      if (q.type === 'single_choice' && this.hasRealAnswer(value)) {
-        const opt = q.options?.find(o => o.codeItem?.toString() === value?.toString());
-        if (opt?.requiresPrecision && !this.hasRequiredPrecision(q.id, value, answers)) {
-          missing.push(`Précision pour "${opt.label}"`);
-        }
-      }
-
-      if (q.type === 'multiple_choice') {
-        const values = this.normalizeToArray(value);
-        values.forEach(code => {
-          const opt = q.options?.find(o => o.codeItem?.toString() === code?.toString());
-          if (opt?.requiresPrecision && !this.hasRequiredPrecision(q.id, code, answers)) {
-            missing.push(`Précision pour "${opt.label}"`);
-          }
+      if (
+        (q.type === 'single_choice' || q.type === 'multiple_choice') &&
+        SurveyService.hasRealAnswer(value)
+      ) {
+        PrecisionUtils.validatePrecision({
+          question: q,
+          selectedValues: value,
+          answers,
+          missing
         });
       }
+      
 
       if (q.type === 'accordion') {
         this.validateAccordion(q, answers, missing);

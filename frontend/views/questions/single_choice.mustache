@@ -3,6 +3,7 @@
   <label>
     <input type="radio" name="{{id}}" value="{{codeItem}}" 
            data-requires-precision="{{requiresPrecision}}"
+            data-precision-key="{{precisionKey}}"
            {{#isSelected}}checked{{/isSelected}}>
     {{label}}
   </label><br>
@@ -16,12 +17,10 @@ style="{{^showSubQuestions}}display:none;{{/showSubQuestions}}">
 </div>
 {{/hasSubQuestions}}
 
-  <input type="text" 
-  name="precision_{{codeItem}}"
-   class="precision-input" 
-   style="{{^showPrecision}}display:none;{{/showPrecision}}"
-   value="{{precisionValue}}"
-   placeholder="Précisez..." />
+    {{#requiresPrecision}}
+    {{> partials/precision }}
+  {{/requiresPrecision}}
+
 {{/options}}
 
 
@@ -30,12 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const questionId = "{{id}}"; // Mustache va remplacer
   document.querySelectorAll(`input[type=radio][name="${questionId}"]`).forEach(radio => {
     radio.addEventListener('change', function() {
-      document.querySelectorAll('.precision-input').forEach(i => i.style.display='none');
-      if(this.dataset.requiresPrecision === 'true'){
-        const precisionInput = document.querySelector(`input[name=precision_${this.value}]`);
-        if (precisionInput) precisionInput.style.display='inline-block';
-      }
-
+    
       // gérer sous-questions si besoin
       document.querySelectorAll(`.sub-questions`).forEach(block => block.style.display='none');
       const subBlock = document.querySelector(`.sub-questions[data-parent="${this.value}"]`);

@@ -1,3 +1,5 @@
+import SurveyService from "./SurveyService.js";
+
 export default class ResponseNormalizer {
 
   /* ============================================================
@@ -100,7 +102,7 @@ export default class ResponseNormalizer {
         return { [step.id_db]: null };
       }
 
-      const selected = this.normalizeToArray(rawValue[step.id]);
+      const selected = SurveyService.normalizeToArray(rawValue[step.id]);
       const result = { [step.id_db]: selected.join('/') };
 
       selected.forEach(codeItem => {
@@ -212,11 +214,11 @@ export default class ResponseNormalizer {
     return val !== null && typeof val === 'object';
   }
 
-  static normalizeToArray(value) {
-    if (Array.isArray(value)) return value;
-    if (value == null) return [];
-    return [value];
-  }
+  // static normalizeToArray(value) {
+  //   if (Array.isArray(value)) return value;
+  //   if (value == null) return [];
+  //   return [value];
+  // }
 
   static indexById(list = []) {
     return list.reduce((acc, item) => {

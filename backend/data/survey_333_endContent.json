@@ -1,0 +1,25 @@
+{
+  "endContent": [
+    {
+      "type": "text",
+      "value": "Merci pour votre participation ! Vos réponses ont été enregistrées."
+    },
+    {
+      "type": "button",
+      "label": "Recommencer le questionnaire",
+      "href": "/survey/survey_333/run",
+      "class": "btn btn-secondary"
+    },
+    {
+      "type": "button",
+      "label": "Télécharger Excel",
+      "href": "/survey/survey_333/download",
+      "class": "btn btn-primary"
+    },
+  
+    {
+      "type": "html",
+      "value": "<p>Suivez-nous sur les réseaux sociaux :</p><ul><li><a href='https://facebook.com' target='_blank'>Facebook</a></li></ul>"
+    }
+  ]
+}

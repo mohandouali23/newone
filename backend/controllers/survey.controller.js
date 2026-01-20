@@ -5,7 +5,7 @@ import AnswerPrefillUtils from '../services/AnswerPrefillUtils.js';
 import Response from '../models/Response.js';
 import path from 'path';
 import ExcelService from '../services/ExcelService.js';
-
+import fs from 'fs';
 export const downloadSurveyResponses = async (req, res) => {
   const { surveyId } = req.params;
   try {
@@ -28,12 +28,33 @@ export const endSurvey = (req, res) => {
     if (err) console.error('Erreur destruction session:', err);
   });
   
+  // Charger le contenu dynamique depuis un fichier JSON
+  let endContent = [];
+  try {
+    const filePath = path.resolve(`./backend/data/${surveyId}_endcontent.json`);
+    if (fs.existsSync(filePath)) {
+      const fileData = fs.readFileSync(filePath, 'utf-8');
+      endContent = JSON.parse(fileData).endContent || [];
+    } else return;
+  } catch (err) {
+    console.error("Erreur lecture endContent.json :", err);
+  }
+   // Préparer les flags pour Mustache
+   endContent = endContent.map(item => ({
+    ...item,
+    isText: item.type === "text",
+    isButton: item.type === "button",
+    isHtml: item.type === "html"
+  }));
+  
   const step = { type: 'end', id: 'end', title: 'Fin du questionnaire' };
   
   res.render('end', { 
     surveyId,
-    restartUrl: `/survey/${surveyId}/run`,
-    downloadUrl: `/survey/${surveyId}/download`
+    endContent,  // <-- ici on passe le tableau dynamique
+    survey
+   // restartUrl: `/survey/${surveyId}/run`,
+   // downloadUrl: `/survey/${surveyId}/download`
   }, (err, html) => {
     if (err) return res.status(500).send('Erreur rendu page de fin');
     res.render('layout', { survey, step, content: html });
@@ -81,6 +102,19 @@ export const runSurveyPage = (req, res) => {
 
 
 /** ---------- Fonctions utilitaires ---------- **/
+function prepareStepsWithPrecisionKey(steps) {
+  return steps.map(step => {
+    if (!step.options) return step;
+
+    const newOptions = step.options.map(option => ({
+      ...option,
+      precisionKey: `${step.id}_${option.codeItem}`, // clé calculée
+      requiresPrecision: option.requiresPrecision || false // assure que la clé existe
+    }));
+
+    return { ...step, options: newOptions };
+  });
+}
 
 // Initialiser la session answers si vide
 function initSession(req) {
@@ -140,10 +174,22 @@ function prepareSteps(steps, sessionAnswers, options, rotationQueue = []) {
     if (step.wrapper) {
       prefillRotationStep(step, sessionAnswers);
     }
+    //  randomiser les options si ordre_aleatoire === true ---
+    if (step.options && step.ordre_aleatoire) {
+      step.options = shuffleArray(step.options);
+    }
     return SurveyService.prepareStepForPage(step);
   });
 }
-
+// Fonction utilitaire de mélange Fisher–Yates
+function shuffleArray(array) {
+  const arr = [...array]; // copie pour ne pas modifier l'original
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 // Préparer les sections/questions d'un accordion
 function prepareAccordion(step) {
   step.sections = step.sections.map(section => ({
@@ -174,7 +220,15 @@ function prefillRotationStep(step, sessionAnswers) {
 
 // Rendu final de la page
 function renderSurveyPage(res, survey, page, steps, options,isFirstPage) {
-  res.render('questions/page', { survey, steps, options,isFirstPage}, (err, html) => {
+
+    // calculer precisionKey
+    const stepsWithPrecision = prepareStepsWithPrecisionKey(steps);
+//console.log("stepsWithPrecision",stepsWithPrecision)
+//console.log("tt",JSON.stringify(stepsWithPrecision, null, 2));
+
+  res.render('questions/page', { survey, 
+    steps: stepsWithPrecision,
+     options,isFirstPage}, (err, html) => {
     if (err) return res.status(500).send('Erreur rendu page');
     
     res.render('layout', {

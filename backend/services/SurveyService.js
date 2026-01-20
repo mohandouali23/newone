@@ -17,7 +17,30 @@ export default class SurveyService {
   static getStep(survey, stepId) {
     return survey.steps.find(s => s.id === stepId);
   }
-  
+    /**
+   * Normalise une réponse en tableau
+   */
+    static normalizeToArray(value) {
+      if (Array.isArray(value)) return value;
+      if (value !== undefined && value !== null) return [value];
+      return [];
+    }
+
+    
+  /**
+   * Vérifie si une valeur contient une vraie réponse utilisateur
+   */
+  static hasRealAnswer(value) {
+    if (value === null || value === undefined) return false;
+
+    if (typeof value === 'string') return value.trim() !== '';
+    if (Array.isArray(value)) return value.some(v => this.hasRealAnswer(v));
+    if (typeof value === 'object')
+      return Object.values(value).some(v => this.hasRealAnswer(v));
+
+    return true;
+  }
+
   static loadTable(tableName) {
     try {
       const filePath = path.resolve(`backend/data/${tableName}.json`);

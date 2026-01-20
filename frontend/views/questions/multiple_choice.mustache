@@ -6,16 +6,14 @@
     data-has-sub="{{hasSubQuestions}}"
     {{#isSelected}}checked{{/isSelected}}
     data-requires-precision="{{requiresPrecision}}"
+    data-precision-key="{{precisionKey}}"
     data-exclusive="{{exclusive}}">
     {{label}}
   </label>
 
-  <input type="text"
-   name="precision_{{id}}_{{codeItem}}"
-   class="precision-input" 
-   value="{{precisionValue}}"
-   style="{{#showPrecision}}display:inline-block;{{/showPrecision}}{{^showPrecision}}display:none;{{/showPrecision}}"
-   placeholder="Précisez..." />
+ {{#requiresPrecision}}
+    {{> partials/precision }}
+  {{/requiresPrecision}}
 
   {{#hasSubQuestions}}
    <div class="sub-questions"
@@ -30,86 +28,85 @@
 {{/hasSubQuestions}}
 
 {{/options}}
-
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
 
   const checkboxes = document.querySelectorAll(
     'input[type=checkbox][name="{{id}}[]"]'
+  );
+
+  function hidePrecision(id, value) {
+    const input = document.querySelector(
+      `input[name="precision_${id}_${value}"]`
     );
+    if (input) input.style.display = 'none';
+  }
 
   checkboxes.forEach(cb => {
-    cb.addEventListener('change', function() {
+    cb.addEventListener('change', function () {
 
-      /* ************** précision************/
-      const precisionInput = document.querySelector(
-        `input[name=precision_{{id}}_${this.value}]`
-        );
+      const isExclusive = this.dataset.exclusive === 'true';
 
- if (precisionInput) {
-        precisionInput.style.display =
-          this.checked && this.dataset.requiresPrecision === 'true'
-            ? 'inline-block'
-            : 'none';
-      }
-      
-      /* ************** sub question************/
-      const subQ = this.closest('form').querySelector(
-  `.sub-questions[data-parent="${this.value}"]`
-);
+      /* ---------- Sous-questions ---------- */
+      const subQ = document.querySelector(
+        `.sub-questions[data-parent="${this.value}"]`
+      );
+      if (subQ) subQ.style.display = this.checked ? 'block' : 'none';
 
-if (subQ) {
-  subQ.style.display = this.checked ? 'block' : 'none';
-}
-      // *****************************Gestion exclusif
-      if(this.dataset.exclusive==='true' && this.checked){
+      /* ----------  option exclusive cochée ---------- */
+      if (isExclusive && this.checked) {
         checkboxes.forEach(other => {
-          if(other !== this){
+          if (other === this) return;
+
+          other.checked = false;
+          other.disabled = true;
+
+          hidePrecision('{{id}}', other.value);
+
+          const otherSub = document.querySelector(
+            `.sub-questions[data-parent="${other.value}"]`
+          );
+          if (otherSub) otherSub.style.display = 'none';
+        });
+      }
+
+      /* ----------  option exclusive décochée ---------- */
+      if (isExclusive && !this.checked) {
+        checkboxes.forEach(other => {
+          if (other !== this) {
+            other.disabled = false;
+          }
+        });
+      }
+
+      /* ----------  option NON exclusive cochée ---------- */
+      if (!isExclusive && this.checked) {
+        checkboxes.forEach(other => {
+          if (other.dataset.exclusive === 'true') {
             other.checked = false;
             other.disabled = true;
-
-            //cacher précision
-            document.querySelector(
-              `input[name=precision_{{id}}_${other.value}]`).style.display='none';
-          
-                      // cacher sous-questions
-            const otherSub = document.querySelector(
-              `.sub-questions[data-parent="${other.value}"]`
-            );
-            if (otherSub) otherSub.style.display = 'none';
-
+            hidePrecision('{{id}}', other.value);
           }
-        });
-
-      } else if(this.dataset.exclusive!=='true'){
-        checkboxes.forEach(excl => {
-          if(excl.dataset.exclusive==='true'){
-            excl.checked = false;
-            excl.disabled = false;
-            document.querySelector(`input[name=precision_{{id}}_${excl.value}]`).style.display='none';
-          }
-        });
-      } else {
-        checkboxes.forEach(other => {
-          if(other.dataset.exclusive==='true') return;
-          other.disabled = false;
         });
       }
+
+      /* ----------  aucune option exclusive sélectionnée ---------- */
+      const hasExclusiveChecked = [...checkboxes].some(
+        c => c.dataset.exclusive === 'true' && c.checked
+      );
+
+      if (!hasExclusiveChecked) {
+        checkboxes.forEach(c => c.disabled = false);
+      }
     });
-if (!cb.dataset.requiresPrecision) return;
 
-    // afficher le champ de précision si déjà sélectionné
-    if(cb.checked && cb.dataset.requiresPrecision==='true'){
-      document.querySelector(`input[name=precision_{{id}}_${cb.value}]`).style.display='inline-block';
-    }
-    
+    /* ---------- Initialisation (reload page) ---------- */
     if (cb.checked) {
-  const subQ = document.querySelector(
-    `.sub-questions[data-parent="${cb.value}"]`
-  );
-  if (subQ) subQ.style.display = 'block';
-}
-
+      const subQ = document.querySelector(
+        `.sub-questions[data-parent="${cb.value}"]`
+      );
+      if (subQ) subQ.style.display = 'block';
+    }
   });
 });
 </script>

@@ -15,10 +15,10 @@
       "label": "Quel est votre moyen de transport principal ttt ?",
       "placeholder": "Ex : Bus, Train, Voiture...",
       "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
-      "redirection": "q24",
+      "redirection": "q3",
       "input_cond": "",
       "output_cond": "value.length > 0",
-      "required": true,
+      "required": false,
       "isSubQuestion": false,
       "page": 1
       
@@ -58,7 +58,8 @@
           "exclusive": true
         }
       ],
-      "required": true,
+      "required": false,
+      "ordre_aleatoire":true,
       "rotationTemplate": ["q3_1", "q3_2", "q3_3"],
       "output_cond": "value.length > 0",
       "redirection": "q2",
@@ -90,6 +91,7 @@
       "repeatFor": "q3",
       "input_cond": "",
       "output_cond": "value.length > 0",
+      "ordre_aleatoire":true,
       "options": [
         { "codeItem": 1, "label": "Tous les jours 1" },
         { "codeItem": 2, "label": "Quelques fois par semaine2" },
@@ -151,6 +153,7 @@
       "page": 2,
       "input_cond": "",
       "output_cond": "value.length > 0",
+      "ordre_aleatoire":true,
       "options": [
         {
           "codeItem": 1,
@@ -203,6 +206,7 @@
     "label": "Votre commune de résidence",
     "page": 5,
     "table": "communes",
+
     "columns": [
       {
         "name": "commune",
@@ -250,6 +254,7 @@
     "id": "q5",
     "title": "Q5.",
     "type": "spinner",
+    "ordre_aleatoire":true,
     "label": "Choisissez votre région",
     "page": 6,
     "options": [
@@ -340,7 +345,7 @@
 "id": "q10_3",
 "type": "multiple_choice",
 "label": "",
-"required": true,
+"required": false,
 "options": [
   { "codeItem": 1,  "label": "France"},
   { "codeItem": 2, "label": "Allemagne"},

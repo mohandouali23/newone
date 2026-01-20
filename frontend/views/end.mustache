@@ -1,16 +1,19 @@
 <div class="end-survey">
-  <h2>Merci pour votre participation !</h2>
-  <p>Vos réponses ont été enregistrées.</p>
+  {{#endContent}}
+    {{#isText}}
+      <p>{{value}}</p>
+    {{/isText}}
 
-  <p>
-    <a href="{{restartUrl}}" class="btn btn-secondary">
-      Recommencer le questionnaire
-    </a>
-  </p>
+    {{#isButton}}
+      <p>
+        <a href="{{href}}" class="{{class}}">
+          {{label}}
+        </a>
+      </p>
+    {{/isButton}}
 
-  <p>Vous pouvez télécharger vos réponses sous forme de fichier Excel :</p>
-
-  <a href="{{downloadUrl}}" class="btn btn-primary">
-    Télécharger Excel
-  </a>
+    {{#isHtml}}
+      {{{value}}}
+    {{/isHtml}}
+  {{/endContent}}
 </div>

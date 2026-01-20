@@ -1,1210 +1,902 @@
 {
-    "id": "survey_666",
-    "title": "Enquête Questionnaire",
-    "title_app": "Enquête Questionnaire_ARP",
-    "version": "1.0",
-    "mode_enqueteur": "Enqueteur",
-    "description": "Collecte des informations sur les transports",
-    "steps": [
-      {
-        "id": "q1",
-        "title": "Q1.",
-        "type": "text",
-        "label": "Quel est votre moyen de transport principal ?",
-        "placeholder": "Ex : Bus, Train, Voiture...",
-        "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
-        "redirection": "q13",
-        "input_cond": "",
-        "output_cond": "value.length > 0",
-        "required": true,
-        "isSubQuestion": false,
-        "page": 1
-      },
-      {
-        "id": "q13",
-        "type": "gridB",
-        "title": "Q13.",
-        "label": "Activités pratiquées et motivation principale du séjour",
-        "required": true,
-        "redirection": "q14",
-        "rows": [
-          { "id": "walk", "label": "Se promener, flâner" },
-          { "id": "museum", "label": "Visites de musées, monuments" },
-          { "id": "nature", "label": "Parcs, jardins, sites naturels" },
-          { "id": "guided", "label": "Visites guidées de quartiers" }
-        ],
+  "id": "survey",
+  "title": "Enquête Questionnaire",
+  "title_app": "Enquête Questionnaire_ARP",
+  "version": "1.0",
+  "mode_enqueteur": "Enqueteur",
+  "description": "Collecte des informations sur les transports",
+  "logoName": "alyce",
+  "steps": [
+    {
+      "id_db": "04W4LP",
+      "id": "q1",
+      "title": "Q1.",
+      "type": "text",
+      "label": "Quel est votre moyen de transport principal t78tt ?",
+      "placeholder": "Ex : Bus, Train, Voiture...",
+      "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
+      "redirection": "q24",
+      "input_cond": "",
+      "output_cond": "value.length > 0",
+      "required": false,
+      "isSubQuestion": false,
+      "page": 1
       
-        "columns": [
-          {
-            "id": "activity",
-            "label": "Activités pratiquées",
-            "input": {
-              "type": "checkbox",
-              "axis": "column",
-              "validation": {
-                "min": 1
-              }
-            }
-          },
-          {
-            "id": "reason",
-            "label": "Motivation principale du séjour",
-            "input": {
-              "type": "radio",
-              "axis": "column",
-              "validation": {
-                "required": true,
-                "max": 1
-              }
-            }
-          }
-        ]
-      }
-  ,    
-  {
-    "id": "q14",
-    "type": "gridB",
-    "title": "Q14.",
-    "label": "À quelle fréquence utilisez-vous les moyens de transport suivants ?",
-    "required": true,
-  "redirection": "q15",
-    "rows": [
-          { "id": "bus", "label": "Bus" },
-          { "id": "train", "label": "Train" },
-          { "id": "metro", "label": "Métro" }
-        ],
-  
-    "columns": [
-      {
-        "id": "daily",
-        "label": "Tous les jours",
-        "input": {
-          "type": "checkbox",
-          "axis": "row",
-          "validation": {
-            "min": 1
-          }
+    },
+    {
+      "id_db": "ER8136",
+      "id": "q3",
+      "title": "Q3.",
+      "type": "multiple_choice",
+      "label": "Quels transports utilisez-vous ?",
+      "page": 4,
+      "options": [
+        {
+          "codeItem": 1,
+          "label": "Bus"
+        },
+        {
+          "codeItem": 2,
+          "label": "Train",
+          "requiresPrecision": true
+        },
+        {
+          "codeItem": 3,
+          "label": "Voiture"
+        },
+        {
+          "codeItem": 4,
+          "label": "Vélo"
+        },
+        {
+          "codeItem": 5,
+          "label": "Marche"
+        },
+        {
+          "codeItem": 6,
+          "label": "Aucun",
+          "exclusive": true
         }
-      },
-      {
-        "id": "weekly",
-        "label": "Quelques fois par semaine",
-        "input": {
-          "type": "checkbox",
-          "axis": "row",
-          "validation": {
-            "required": true,
-            "min": 1
-          }
-        }
-      },
-      {
-        "id": "rarely",
-        "label": "Rarement",
-        "input": {
-          "type": "checkbox",
-          "axis": "row",
-          "validation": {
-            "required": true,
-            "min": 1
-          }
-        }
-      }
-    ]
-  }
-  ,    
-  {
-    "id": "q15",
-    "type": "gridB",
-    "title": "Q15.",
-    "label": "Quels services utilisez-vous dans votre ville ? (plusieurs réponses possibles)",
-    "required": true,
-  "rows": [
-          { "id": "transport", "label": "Transports en commun" },
-          { "id": "parking", "label": "Parking public" },
-          { "id": "velib", "label": "Vélos en libre-service" }
-        ],
-  
-    "columns": [
-      {
-        "id": "yes",
-        "label": "oui",
-        "input": {
-          "type": "radio",
-          "axis": "row",
-          "validation": {
-            "min": 1
-          }
-        }
-      },
-      {
-        "id": "no",
-        "label": "Non",
-        "input": {
-          "type": "radio",
-          "axis": "row",
-          "validation": {
-            "required": true,
-            "min": 1
-          }
-        }
-      }
-    ]
-  }
-  ,    
-      {
-        "id": "q33",
-        "type": "accordion",
-        "title": "Q33.",
-        "label": "Informations complémentaires sur vos transports",
-        "page": 4,
-        "required": true,
-        "redirection": "q2",
-      
-        "sections": [
+      ],
+      "required": false,
+      "ordre_aleatoire":true,
+      "rotationTemplate": ["q3_1", "q3_2", "q3_3"],
+      "output_cond": "value.length > 0",
+      "redirection": "q2",
+      "isSubQuestion": false,
+      "navigation": {
+        "rules": [
           {
-            "id": "section_bus",
-            "title": "Bus",
-            "questions": [
-              {
-                "id": "q10_1",
-                "type": "single_choice",
-                "label": "Utilisez-vous le bus ?",
-                "required": true,
-                "options": [
-                  { "codeItem": 1, "label": "Oui" , "requiresPrecision": true},
-                  { "codeItem": 2, "label": "Non" }
-                ]
-              },
-              {
-                "id": "q10_2",
-                "type": "text",
-                "label": "Quelle ligne utilisez-vous ?",
-                "required": false
-              }
-            ]
-          },
-          {
-            "id": "section_Pays U.E",
-            "title": "Pays U.E",
-            "questions": [
-              {
-                "id": "q10_3",
-                "type": "multiple_choice",
-                "label": "",
-                "required": true,
-                "options": [
-                  { "codeItem": 1, "value": "France", "label": "France"},
-                  { "codeItem": 2, "value": "Allemagne", "label": "Allemagne"},
-                  { "codeItem": 3, "value": "Royaume-Uni", "label": "Royaume-Uni"},
-                  { "codeItem": 4, "value": "Belgique", "label": "Belgique"}
-                ]
-              }
-            ]
-          },
-      
-          {
-            "id": "section_train",
-            "title": "Train",
-            "questions": [
-              {
-                "id": "q10_4",
-                "type": "spinner",
-                "label": "Fréquence d’utilisation",
-                "options": ["","Tous les jours", "Hebdomadaire", "Rarement"],
-                "required": true
-              }
-            ]
-          }
-        ]
-      },
-      
-      
-      {
-        "id": "q2",
-        "title": "Q2.",
-        "type": "single_choice",
-        "label": "Fréquence d’utilisation du transport en commun",
-        "page": 2,
-        "input_cond": "",
-        "output_cond": "value.length > 0",
-        "options": [
-          {
-            "codeItem": 1,
-            "label": "Tous les jours"
-          },
-          {
-            "codeItem": 2,
-            "label": "Quelques fois par semaine"
-          },
-          {
-            "codeItem": 5,
-            "label": "Autre",
-            "requiresPrecision": true
-          }
-        ],
-        "placeholder": "",
-        "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
-        "redirection": "q3",
-        "required": true,
-        "isSubQuestion": false,
-        "navigation": {
-          "rules": [
-            {
-              "if": { "operator": "NOT_EQUALS",
+            "if": {
+              "operator": "EQUALS",
               "field": "codeItem",
-               "value":2},
-              "then": { "goTo": "q6" }
+              "value": "4"
+            },
+            "then": {
+              "goTo": "q6"
             }
-          ],
-          "default": "redirection"
-        }
-      },
-      {
-        "id": "q12",
-        "type": "gridA",
-        "title": "Q12.",
-        "label": "Activités pratiquées et motivation principale du séjour",
-        "required": true,
-           "redirection": "q22",
-      
-        "rows": [
-          { "id": "walk", "label": "Se promener, flâner" },
-          { "id": "museum", "label": "Visites de musées, monuments" },
-          { "id": "nature", "label": "Parcs, jardins, sites naturels" },
-          { "id": "guided", "label": "Visites guidées de quartiers" }
-        ],
-      
-        "columns": [
-          {
-            "id": "activity",
-            "label": "Activités pratiquées",
-            "type": "multiple_choice"
-           
-          },
-          {
-            "id": "reason",
-            "label": "Motivation principale du séjour",
-            "type": "single_choice"
-           
           }
         ],
-      
-        "rules": {
-          "atLeastOneActivity": true,
-          "oneMainReason": true
-        }
+        "default": "redirection"
       }
-  ,    
-  
-      {
-        "id": "q20",
-        "type": "grid",
-        "title": "Q20.",
-        "label": "À quelle fréquence utilisez-vous les moyens de transport suivants ?",
-        "redirection": "q22",
-        "required": true,
-        "page": 2,
-        "rows": [
-          { "id": "bus", "label": "Bus" },
-          { "id": "train", "label": "Train" },
-          { "id": "metro", "label": "Métro" }
-        ],
-        "columns": [
-          { "value": "daily", "label": "Tous les jours" },
-          { "value": "weekly", "label": "Quelques fois par semaine" },
-          { "value": "rarely", "label": "Rarement" },
-          { "value": "never", "label": "Jamais", "exclusive": true }
-        ],
-        "rules": {
-          "onePerRow": false,
-          "requiredRows": ["bus", "train"]
-        }
-      },
-      {
-        "id": "q22",
-        "type": "grid",
-        "title": "Q22.",
-        "label": "Quels services utilisez-vous dans votre ville ? (plusieurs réponses possibles)",
-        "required": true,
-        "redirection": "q2",
-        "page": 3,
-        "rows": [
-          { "id": "transport", "label": "Transports en commun" },
-          { "id": "parking", "label": "Parking public" },
-          { "id": "velib", "label": "Vélos en libre-service" }
-        ],
-        "columns": [
-          { "value": "yes", 
-          "label": "Oui" },
-          { "value": "no", "label": "Non" }
-        ],
-        "rules": {
-          "onePerRow": true,
-          "requiredRows": ["transport"]
-        }
-      },
+    },
+    
+    {
+      "id_db": "ER8137",
+      "id": "q3_1",
+      "title": "Q3.1",
+      "type": "single_choice",
+      "label": "À quelle fréquence utilisez-vous le TRANSPORT ?",
+      "page": 99,
+      "repeatFor": "q3",
+      "input_cond": "",
+      "output_cond": "value.length > 0",
+      "ordre_aleatoire":true,
+      "options": [
+        { "codeItem": 1, "label": "Tous les jours 1" },
+        { "codeItem": 2, "label": "Quelques fois par semaine2" },
+        { "codeItem": 3, "label": "Rarement33" }
+      ],
+      "placeholder": "",
+      "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
+      "redirection": "q3_2",
+      "required": false,
+      "isSubQuestion": false
+    },
+    
+    {
+      "id_db": "ER8138",
+      "id": "q3_2",
+      "title": "Q3.2",
+      "type": "text",
+      "repeatFor": "q3",
+      "label": "Précisez les lignes ou destinations que vous utilisez en TRANSPORT :",
+      "placeholder": "Ex : b12 b15...",
+      "help_text": "",
+      "redirection": "q3_3",
+      "input_cond": "",
+      "output_cond": "value.length > 0",
+      "required": false,
+      "isSubQuestion": false,
+      "page": 99
       
-      {
-        "id": "q3",
-        "title": "Q3.",
-        "type": "multiple_choice",
-        "label": "Quels transports utilisez-vous ?",
-        "page": 5,
-        "options": [
+    },
+    
+    {
+      "id_db": "ER8139",
+      "id": "q3_3",
+      "title": "Q3.3",
+      "repeatFor": "q3",
+      "type": "single_choice",
+      "label": "Pour quels motifs utilisez-vous la TRANSPORT ?",
+      "page": 99,
+      "input_cond": "",
+      "output_cond": "value.length > 0",
+      "options": [
+        { "codeItem": 1, "label": "Travail" },
+        { "codeItem": 2, "label": "Loisirs" },
+        { "codeItem": 3, "label": "Courses / Déplacements quotidiens" }
+      ],
+      "placeholder": "",
+      "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
+      
+      "required": false,
+      "isSubQuestion": false
+    },
+    
+    {
+      "id_db": "UPI3DQ",
+      "id": "q2",
+      "title": "Q2.",
+      "type": "single_choice",
+      "label": "Fréquence d’utilisation du transport en commun",
+      "page": 2,
+      "input_cond": "",
+      "output_cond": "value.length > 0",
+      "ordre_aleatoire":true,
+      "options": [
+        {
+          "codeItem": 1,
+          "label": "Tous les jours"
+        },
+        {
+          "codeItem": 2,
+          "label": "Quelques fois par semaine"
+        },
+        {
+          "codeItem": 5,
+          "label": "Autre",
+          "requiresPrecision": true
+        }
+      ],
+      "placeholder": "",
+      "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
+      "redirection": "q44",
+      "required": false,
+      "isSubQuestion": false,
+      "navigation": {
+        "rules": [
           {
-            "codeItem": 1,
-            "value": "Bus",
-            "label": "Bus",
-            "requiresSubQst": {
-              "id": "q6",
-              "type": "spinner",
-              "label": "Choisissez votre région",
-              "options": ["Nord", "Sud", "Est", "Ouest", "Centre"],
-              "subQuestions": [
-                {
-                  "id": "q6a",
-                  "type": "text",
-                  "label": "Pourquoi cette région ?"
-                }
-              ]
+            "if": {
+              "operator": "EQUALS",
+              "field": "codeItem",
+              "value": 1
+            },
+            "then": {
+              "goTo": "q6"
             }
-          },
-          {
-            "codeItem": 2,
-            "value": "Train",
-            "label": "Train",
-            "requiresPrecision": true
-          },
-          {
-            "codeItem": 3,
-            "value": "Voiture",
-            "label": "Voiture",
-            "requiresSubQst": {
-              "value": true,
-              "subQst_id": "q10"
-            }
-          },
-          {
-            "codeItem": 4,
-            "value": "Vélo",
-            "label": "Vélo"
-          },
-          {
-            "codeItem": 5,
-            "value": "Marche",
-            "label": "Marche"
-          },
-          {
-            "codeItem": 6,
-            "value": "Aucun",
-            "label": "Aucun",
-            "exclusive": true
           }
         ],
-        "required": true,
-        "output_cond": "value.length > 0",
-        "redirection": "q4",
-        "isSubQuestion": false,
-        "navigation": {
+        "default": "redirection"
+      }
+    },
+    {"id_db": "YP3ZE3",
+    "id": "q44",
+    "redirection": "q4",
+    "page": 3,
+    "description": "Cette page contient des informations importantes avant les questions suivantes"
+    
+  },
+  
+  {
+    "id_db": "YP3O0G",
+    "id": "q4",
+    "title": "Q4.",
+    "type": "autocomplete",
+    "label": "Votre commune de résidence",
+    "page": 5,
+    "table": "communes",
+
+    "columns": [
+      {
+        "name": "commune",
+        "displayInList": true,
+        "displayInInput": true,
+        "saveInDB": true
+      },
+      {
+        "name": "cp",
+        "displayInList": true,
+        "displayInInput": false,
+        "saveInDB": false
+      },
+      {
+        "name": "_id",
+        "displayInList": false,
+        "displayInInput": false,
+        "saveInDB": true
+      }
+    ],
+    "placeholder": "Tapez pour rechercher votre commune",
+    "help_text": "Commencez à taper et sélectionnez la commune correspondante",
+    "redirection": "q5",
+    "input_cond": "",
+    "output_cond": "value !== null",
+    "required": false,
+    "isSubQuestion": false,
+    "navigation": {
       "rules": [
         {
-          "if": { "operator": "EQUALS",
-          "field": "codeItem",
-           "value":5},
+          "if": {
+            "operator": "IN",
+            "field": "_id",
+            "values": [1, 2]
+          },
           "then": { "goTo": "q6" }
         }
       ],
       "default": "redirection"
     }
+    
+  },
+  {
+    "id_db": "5Z10ZZ",
+    "id": "q5",
+    "title": "Q5.",
+    "type": "spinner",
+    "ordre_aleatoire":true,
+    "label": "Choisissez votre région",
+    "page": 6,
+    "options": [
+      {
+        "codeItem": 1,
+        "label": "Sud"
       },
       {
-        "id": "q4",
-        "title": "Q4.",
-        "type": "autocomplete",
-        "label": "Votre commune de résidence",
-        "page": 6,
-        "table": "communes",
-        "columns": [
-          { "name": "commune", "displayInList": true, "displayInInput": true, "saveInDB": true },
-          { "name": "cp", "displayInList": true, "displayInInput": false, "saveInDB": false },
-          { "name": "_id", "displayInList": false, "displayInInput": false, "saveInDB": true }
-        ],
-        "placeholder": "Tapez pour rechercher votre commune",
-        "help_text": "Commencez à taper et sélectionnez la commune correspondante",
-        "redirection": "FIN",
-        "input_cond": "",
-        "output_cond": "value !== null",
-        "required": true,
-        "isSubQuestion": false,
-        "navigation": {
-    "rules": [
+        "codeItem": 2,
+        "label": "Est"
+      },
       {
-        "if": {
-          "operator": "IN",
-          "field": "commune",
-          "values": ["Kouba", "Alger Centre"]
-        },
-        "then": { "goTo": "q14" }
+        "codeItem": 3,
+        "label": "Ouest"
+      },
+      {
+        "codeItem": 4,
+        "label": "Centre"
       }
+      
     ],
-    "default": "redirection"
-  }
-  
-      },
-      {
-        "id": "q5",
-        "title": "Q5.",
-        "type": "spinner",
-        "label": "Choisissez votre région",
-        "page": 7,
-        "options": ["Sud", "Est", "Ouest", "Centre"],
-        "placeholder": "Sélectionnez une option",
-        "required": true,
-        "redirection": "q2",
-        "isSubQuestion": false,
-         "navigation": {
+    "placeholder": "Sélectionnez une option",
+    "required": false,
+    "redirection": "q16",
+    "isSubQuestion": false,
+    "navigation": {
       "rules": [
         {
-          "if": { "operator": "IN", "values": ["Sud", "Ouest"] },
-          "then": { "goTo": "q3" }
+          "if": { "operator": "IN",   "field": "codeItem","values": [1, 3] },
+          "then": { "goTo": "q6" }
         }
       ],
       "default": "redirection"
+    }    
+    
+  },
+  {
+    "id_db": "14R4LP",
+    "id": "q16",
+    "type": "accordion",
+    "title": "Q16.",
+    "label": "Informations complémentaires sur vos transports",
+    "page": 7,
+    "required": false,
+    "redirection": "q17",
+     "navigation": {
+    "rules": [
+      {
+        "if": {
+          "conditions": [
+            { "questionId": "q10_1", "operator": "EQUALS", "value": 1 },
+            { "questionId": "q10_3", "operator": "IN", "values": [1, 2] }
+          ]
+        },
+        "then": { "goTo": "q6" }
+      }
+    ],
+    "default": "NEXT"
+  },
+    "sections": [
+      {"id_db_sect": "14R400",
+      "id_sect": "q16_sect1",
+      "title": "Bus",
+      "questions": [
+        {"id_db": "A2R4LO",
+        "id": "q10_1",
+        "type": "single_choice",
+        "label": "Utilisez-vous le bus ?",
+        "required": false,
+        "options": [
+          { "codeItem": 1, "label": "Oui" },
+          { "codeItem": 2, "label": "Non" }
+        ]
+      },
+      {"id_db": "A2R7LP",
+      "id": "q10_2",
+      "type": "text",
+      "label": "Quelle ligne utilisez-vous ?",
+      "required": false
+    }
+  ]
+},
+{"id_db_sect": "B7RL2O",
+"id_sect": "q16_sect2",
+"title": "Pays U.E",
+"questions": [
+{"id_db": "A2M7LP",
+"id": "q10_3",
+"type": "multiple_choice",
+"label": "",
+"required": false,
+"options": [
+  { "codeItem": 1,  "label": "France"},
+  { "codeItem": 2, "label": "Allemagne"},
+  { "codeItem": 3, "label": "Royaume-Uni"},
+  { "codeItem": 4,  "label": "Belgique"}
+]
+}
+]
+}
+]
+},
+{
+  "id_db": "SAT01",
+  "id": "q17",
+  "type": "accordion",
+  "title": "Q17.",
+  "label": "Satisfaction concernant vos moyens de transport",
+  "page": 8,
+  "redirection": "q14",
+  "required": false,
+  "sections": [
+    {
+      "id_db_sect": "SAT_SECT1",
+      "id_sect": "q17_sect1",
+      "title": "Bus",
+      "questions": [
+        {
+          "id_db": "SAT_Q1",
+          "id": "q17_1",
+          "type": "single_choice",
+          "label": "Quelle est votre satisfaction pour le bus ?",
+          "required": false,
+          "options": [
+            { "codeItem": 1, "label": "😡 Mauvais" },
+            { "codeItem": 2, "label": "😕 Moyen" },
+            { "codeItem": 3, "label": "🙂 Bien" },
+            { "codeItem": 4, "label": "😃 Très bien" }
+          ]
+        }
+      ]
+    },
+    {
+      "id_db_sect": "SAT_SECT2",
+      "id_sect": "q17_sect2",
+      "title": "Métro",
+      "questions": [
+        {
+          "id_db": "SAT_Q2",
+          "id": "q17_2",
+          "type": "single_choice",
+          "label": "Quelle est votre satisfaction pour le métro ?",
+          "required": true,
+          "options": [
+            { "codeItem": 1, "label": "😡 Mauvais" },
+            { "codeItem": 2, "label": "😕 Moyen" },
+            { "codeItem": 3, "label": "🙂 Bien" },
+            { "codeItem": 4, "label": "😃 Très bien" }
+          ]
+        }
+      ]
+    },
+    {
+      "id_db_sect": "SAT_SECT3",
+      "id_sect": "q17_sect3",
+      "title": "Tram",
+      "questions": [
+        {
+          "id_db": "SAT_Q3",
+          "id": "q17_3",
+          "type": "single_choice",
+          "label": "Quelle est votre satisfaction pour le tram ?",
+          "required": false,
+          "options": [
+            { "codeItem": 1, "label": "😡 Mauvais" },
+            { "codeItem": 2, "label": "😕 Moyen" },
+            { "codeItem": 3, "label": "🙂 Bien" },
+            { "codeItem": 4, "label": "😃 Très bien" }
+          ]
+        }
+      ]
+    },
+    {
+      "id_db_sect": "SAT_SECT4",
+      "id_sect": "q17_sect4",
+      "title": "Voiture",
+      "questions": [
+        {
+          "id_db": "SAT_Q4",
+          "id": "q17_4",
+          "type": "single_choice",
+          "label": "Quelle est votre satisfaction pour la voiture ?",
+          "required": false,
+          "options": [
+            { "codeItem": 1, "label": "😡 Mauvais" },
+            { "codeItem": 2, "label": "😕 Moyen" },
+            { "codeItem": 3, "label": "🙂 Bien" },
+            { "codeItem": 4, "label": "😃 Très bien" }
+          ]
+        }
+      ]
+    }
+  ]
+},
+{
+  "id_db": "Y1UEG9",
+  "id": "q14",
+  "type": "grid",
+  "title": "Q14.",
+  "label": "Activités pratiquées et motivation principale du séjour",
+  "required": false,
+  "redirection": "q13",
+   "navigation": {
+    "rules": [
+      {
+        "if": {
+          "type": "GRID",
+          "axis": "row",
+          "operator": "ANY_EQUALS",
+          "value": "R1"
+        },
+        "then": { "goTo": "q6" }
+      }
+    ],
+    "default": "NEXT"
+  },
+  "page": 9,
+  "questions": [
+    { "id_db_qst": "Y1UEG9_q14_1",
+    "id": "q14_1",
+    "label": "Se promener, flâner",
+    "required": false,
+    "cells": {
+      "R1": { "enabled": true },
+      "R2": { "enabled": true }
     }
   },
-      {
-        "id": "q14",
-        "title": "Q14.",
-        "type": "spinner",
-        "label": "Choisissez votre région",
-        "page": 8,
-        "options": ["Est", "Ouest", "Centre"],
-        "placeholder": "Sélectionnez une option",
-        "required": true,
-        "redirection": "FIN",
-        "isSubQuestion": false
-      },
-     
-      {
-        "id": "q7",
-        "title": "Q7bis.",
-        "type": "spinner",
-        "label": "Choisissez votre région",
-        "options": ["Nord22", "Sud35", "Est5", "Ouest8", "Centre87"],
-        "placeholder": "Sélectionnez une option",
-        "required": true,
-        "isSubQuestion": true
-      },
-      {
-        "id": "q6",
-        "title": "Q6bis.",
-        "type": "text",
-        "label": "Quel est votre moyen de transport principal  bus?",
-        "placeholder": "uu",
-        "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
-        "input_cond": "",
-        "output_cond": "value.length > 0",
-        "required": true,
-        "isSubQuestion": true
-      },
-      {
-        "id": "q8",
-        "title": "Q8bis.",
-        "type": "multiple_choice",
-        "label": "Quels transports utilisez-vous ?",
-        "options": [
-          { "codeItem": 1, "value": "Bus6", "label": "Bus" },
-          { "codeItem": 2, "value": "Train", "label": "Train", "requiresPrecision": true },
-          { "codeItem": 3, "value": "Voiture", "label": "Voiture" },
-          { "codeItem": 6, "value": "Aucun", "label": "Aucun", "exclusive": true }
-        ],
-        "required": true,
-        "output_cond": "value.length > 0",
-        "isSubQuestion": false
-      },
-      {
-        "id": "q9",
-        "title": "Q9bis.",
-        "type": "single_choice",
-        "label": "Fréquence d’utilisation du transport en commun",
-        "options": [
-          { "codeItem": 1, "label": "Tous les jours1", "requiresSubQst": {
-            "value": true,
-            "subQst_id": "q10"
-          } },
-          { "codeItem": 2, "label": "Quelques fois par semaine2", "requiresPrecision": true }
-        ],
-        "placeholder": "",
-        "help_text": "Sélectionnez la fréquence la plus proche de votre utilisation",
-        "required": true,
-        "isSubQuestion": true
-      },
-      {
-        "id": "q10",
-        "title": "Q10bis.",
-        "type": "autocomplete",
-        "label": "Votre commune de résidence",
-        "table": "communes",
-        "columns": [
-          { "name": "commune", "displayInList": true, "displayInInput": true, "saveInDB": true },
-          { "name": "cp", "displayInList": true, "displayInInput": true, "saveInDB": true },
-          { "name": "_id", "displayInList": false, "displayInInput": false, "saveInDB": true }
-        ],
-        "placeholder": "Tapez pour rechercher votre commune",
-        "help_text": "Commencez à taper et sélectionnez la commune correspondante",
-        "input_cond": "",
-        "output_cond": "value !== null",
-        "required": true,
-        "isSubQuestion": true
-      },{
-        "id": "q30",
-        "type": "accordion",
-        "title": "Q30.",
-        "label": "Détails sur vos moyens de transport",
-        "page": 8,
-        "required": true,
-        "redirection": "q2",
-      
-        "sections": [
-          {
-            "id": "acc_bus",
-            "title": "Bus",
-            "required": false,
-      
-            "questions": [
-              {
-                "id": "q30_1",
-                "type": "single_choice",
-                "label": "Utilisez-vous le bus ?",
-                "required": true,
-                "options": [
-                  { "codeItem": 1, "label": "Oui" },
-                  { "codeItem": 2, "label": "Non" }
-                ],
-      
-                "subQuestions": [
-                  {
-                    "if": {
-                      "operator": "EQUALS",
-                      "field": "codeItem",
-                      "value": 1
-                    },
-                    "questions": [
-                      {
-                        "id": "q30_1a",
-                        "type": "spinner",
-                        "label": "Fréquence d’utilisation",
-                        "options": ["Tous les jours", "Hebdomadaire", "Rarement"],
-                        "required": true
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-      
-          {
-            "id": "acc_train",
-            "title": "Train",
-            "required": true,
-      
-            "questions": [
-              {
-                "id": "q30_2",
-                "type": "text",
-                "label": "Pourquoi utilisez-vous le train ?",
-                "required": true
-              }
-            ]
-          }
-        ]
+  { "id_db_qst": "Y1UEG9_q14_2",
+  "id": "q14_2", 
+  "label": "Visites de musées, monuments" ,
+  "required": false,
+  "cells": {
+    "R1": { "enabled": true },
+    "R2": { "enabled": false }
+    }},
+    { "id_db_qst": "Y1UEG9_q14_3",
+    "id": "q14_3",
+    "label": "Parcs, jardins, sites naturels",
+    "required": false,
+    "cells": {
+      "R1": { "enabled": true },
+      "R2": { "enabled": true }
+      } }
+    ],
+    
+    "reponses": [
+      {"id_db_rps":"Y1UEG9_R1",
+      "id": "R1",
+      "label": "oui",
+      "input": {
+        "type": "radio",
+        "axis": "row",
+        "validation": {
+          "min": 1
+        }
       }
+    },
+    {
+      "id_db_rps":"Y1UEG9_R2",
+      "id": "R2",
+      "label": "non",
+      "input": {
+        "type": "radio",
+        "axis": "row",
+        "validation": {
+          "required": false,
+          "min": 1
+        }
+      }
+    }
+  ]
+}, 
+{
+  "id_db": "Y1UEGY",
+  "id": "q13",
+  "type": "grid",
+  "title": "Q13.",
+  "page":10,
+  "label": "Activités pratiquées et motivation principale du séjour",
+  "required": false,
+  "redirection": "q15",
+  "navigation": {
+    "rules": [
+      {
+        "if": {
+          "type": "GRID",
+          "axis": "column",
+          "column": "R2",
+          "operator": "COUNT_GTE",
+          "value": 1
+        },
+        "then": { "goTo": "q6" }
+      }
+    ],
+    "default": "redirection"
+  },
+  "questions": [
+    { "id_db_qst": "Y1UEGY_q13_1",
+    "id": "q13_1", "label": "Se promener, flâner" },
+    { "id_db_qst": "Y1UEGY_q13_2",
+    "id": "q13_2",
+    "label": "Visites de musées, monuments" ,
+    "cells": {
+      "R1": { "enabled": false },
+      "R2": { "enabled": true}
+    }
+  },
+  { "id_db_qst": "Y1UEGY_q13_3",
+  "id": "q13_3",
+  "label": "Parcs, jardins, sites naturels",
+  "cells": {
+    "R1": { "enabled": true },
+    "R2": { "enabled": false }
+    } },
+    { "id_db_qst": "Y1UEGY_q13_4", 
+    "id": "q13_4", 
+    "label": "Visites guidées de quartiers" ,
+    "cells": {
+      "R1": { "enabled": false },
+      "R2": { "enabled": true }
+      }}
+    ],
+    
+    "reponses": [
+      {"id_db_rps":"Y1UEGY_R1",
+      "id": "R1",
+      "label": "Activités pratiquées",
+      "input": {
+        "type": "checkbox",
+        "axis": "column",
+        "required": false
+      }
+    },
+    {"id_db_rps":"Y1UEGY_R2",
+    "id": "R2",
+    "label": "Motivation principale du séjour",
+    "input": {
+      "type": "radio",
+      "axis": "column",
+      "required": false
       
+    }
+  }
+]
+}, 
+{
+  "id_db": "Y1U3FY",
+  "id": "q15",
+  "type": "grid",
+  "title": "Q15.",
+  "page": 11,
+  "label": "Activités pratiquées et motivation principale du séjour",
+  "required": false,
+  "redirection": "FIN",
+  "navigation": {
+    "rules": [
+      {
+        "if": {
+          "type": "GRID",
+          "axis": "row",
+          "operator": "ANY_EQUALS",
+          "value": "R2"
+        },
+        "then": { "goTo": "q6" }
+      }
+    ],
+    "default": "redirection"
+  },
+  "questions": [
+    { "id_db_qst": "Y1U3FY_q15_1", "id": "q15_1", "label": "Se promener, flâner","required": false },
+    { "id_db_qst": "Y1U3FY_q15_2","id": "q15_2", "label": "Visites de musées, monuments" ,"required": false},
+    { "id_db_qst": "Y1U3FY_q15_3","id": "q15_3", "label": "Parcs, jardins, sites naturels","required": false },
+    { "id_db_qst": "Y1U3FY_q15_4","id": "q15_4", "label": "Visites guidées de quartiers","required": false }
+  ],
+  
+  "reponses": [
+    {"id_db_rps":"Y1U3FY_R1",
+    "id": "R1",
+    "label": "rarely",
+    "input": {
+      "type": "checkbox",
+      "axis": "row",
+      "validation": {
+        "min": 1
+      }
+    }
+  },
+  {"id_db_rps":"Y1U3FY_R2",
+  "id": "R2",
+  "label": "never",
+  "input": {
+    "type": "checkbox",
+    "axis": "row",
+    "validation": {
+      "required": false,
+      "max": 1
+    }
+  }
+}
+]
+}, 
+
+{
+  "id": "q6",
+  "title": "Q6bis.",
+  "type": "text",
+  "page": 111,
+  "label": "Quel est votre moyen de transport principal  bus?",
+  "placeholder": "uu",
+  "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
+  "input_cond": "",
+  "output_cond": "value.length > 0",
+  "required": false,
+  "redirection": "FIN",
+  "isSubQuestion": true,
+  "id_db": "8KTVIW"
+},
+{
+  "id": "q8",
+  "title": "Q8bis.",
+  "type": "multiple_choice",
+  "label": "Quels transports utilisez-vous ?",
+  "page": 111,
+  "options": [
+    {
+      "codeItem": 1,
+      "label": "Bus"
+    },
+    {
+      "codeItem": 2,
+      "label": "Train",
+      "requiresPrecision": true
+    },
+    {
+      "codeItem": 3,
+      "label": "Voiture"
+    },
+    {
+      "codeItem": 6,
+      "label": "Aucun",
+      "exclusive": true
+    }
+  ],
+  "redirection": "FIN",
+  "required": false,
+  "output_cond": "value.length > 0",
+  "isSubQuestion": false,
+  "id_db": "KO3HT8"
+},
+{"id_db": "KO6HT8",
+"id": "q24",
+"title": "Q24.",
+"type": "single_choice",
+"label": "Fréquence d’utilisation du transport en commun",
+"redirection": "q25",
+"page":56,
+"required": false,
+"options": [
+{
+  "codeItem": 1,
+  "label": "Tous les jours",
+  "subQuestions": [
+    {"id_db": "GO3A5U",
+    "id": "q24_1",
+    "title": "Q24_1.",
+    "type": "spinner",
+    "label": "  sub SPINNER qst?",
+    "options": [
+      {
+        "codeItem": 1,
+        "label": "SP A"
+      },
+      {
+        "codeItem": 2,
+        "label": " SP B",
+        "requiresPrecision": true
+      },
+      {
+        "codeItem": 3,
+        "label": "SB C"
+      }
     ]
   }
-  
-
-
-  
-
-  // response.routes.js
-import express from 'express';
-import SurveyService from '../services/SurveyService.js';
-import ResponseService from '../services/ResponseService.js';
-import ResponseNormalizer from '../services/ResponseNormalizer.js';
-import RotationQueueUtils from '../services/RotationQueueUtils.js';
-import NavigationRuleService from '../services/NavigationRuleService.js';
-
-const router = express.Router();
-
-router.post('/:surveyId/run', async (req, res) => {
-  const { surveyId } = req.params;
-  const action = req.body.action || 'next';
-  const userId = 'anonymous';
-
-  const survey = SurveyService.loadSurvey(surveyId);
-
-  /* =========================
-     1️⃣ Init session
-  ========================= */
-  if (!req.session.answers) req.session.answers = {};
-  if (!req.session.rotationQueueDone) req.session.rotationQueueDone = {};
-
-  /* =========================
-     2️⃣ Créer document réponse
-  ========================= */
-  if (!req.session.responseId) {
-    const response = await ResponseService.createSurveyDocument(
-      surveyId,
-      userId,
-      {}
-    );
-    req.session.responseId = response._id;
-  }
-
-  const responseId = req.session.responseId;
-
-  /* =========================
-     3️⃣ Déterminer question courante
-  ========================= */
-  let currentStep;
-  let isInRotation = false;
-
-  // Si on a une rotation en cours
-  if (req.session.rotationQueue?.length) {
-    currentStep = req.session.rotationQueue[0].step;
-    isInRotation = true;
-    console.log('🎯 En rotation:', currentStep.id);
-  } 
-  // Navigation normale
-  else if (req.session.currentStepId) {
-    currentStep = survey.steps.find(s => s.id === req.session.currentStepId);
-  } 
-  // Démarrage du questionnaire
-  else {
-    currentStep = survey.steps
-      .filter(s => s.page !== undefined)
-      .sort((a, b) => a.page - b.page)[0];
-    req.session.currentStepId = currentStep.id;
-  }
-
-  const currentPage = currentStep.page;
-
-  /* =========================
-     4️⃣ Questions à afficher
-  ========================= */
-  let stepsOnPage = [];
-  if (isInRotation) {
-    stepsOnPage = [currentStep];
-  } else {
-    stepsOnPage = survey.steps.filter(s => s.page === currentPage);
-  }
-
-  /* =========================
-     5️⃣ Sauvegarde réponses (AVANT navigation)
-  ========================= */
-  if (action === 'next' && stepsOnPage.length > 0) {
-    console.log(`💾 Sauvegarde pour ${stepsOnPage.length} étape(s) sur cette page`);
-    
-    for (const step of stepsOnPage) {
-      let rawValue = req.body[step.id];
-      
-      // Log pour débogage
-      console.log(`📝 Traitement step ${step.id}:`, {
-        type: step.type,
-        rawValue: rawValue,
-        bodyKeys: Object.keys(req.body)
-      });
-
-      // Gestion spéciale pour les types complexes
-      if (['grid', 'accordion', 'single_choice', 'multiple_choice'].includes(step.type)) {
-        rawValue = req.body;
-        console.log(`🔧 Type ${step.type} - rawValue:`, rawValue[step.id]);
+]
+},
+{
+  "codeItem": 2,
+  "label": "Quelques fois par semaine",
+  "subQuestions": [
+    {"id_db": "KO3A5U",
+    "id": "q24_77",
+    "type": "single_choice",
+    "title": "Q24_77.",
+    "label": "  sub qst?",
+    "required": false,
+    "options": [
+      {
+        "codeItem": 4,
+        "label": "A"
+      },
+      {
+        "codeItem": 8,
+        "label": " S",
+        "requiresPrecision": true
+      },
+      {
+        "codeItem": 11,
+        "label": "z S"
       }
-
-      if (rawValue !== undefined) {
-        // Normaliser la réponse
-        const normalized = ResponseNormalizer.normalize(step, rawValue);
-        console.log(`✅ Normalisé pour ${step.id}:`, normalized);
-        
-        // Sauvegarder dans la DB
-        await ResponseService.addAnswer(responseId, normalized);
-        
-        // Sauvegarder dans la session
-        if (!step.isSubQuestion) {
-          let mainValue;
-          
-          switch (step.type) {
-            case 'multiple_choice':
-              mainValue = req.body[step.id] || [];
-              break;
-            case 'single_choice':
-              mainValue = req.body[step.id] || '';
-              break;
-            default:
-              mainValue = rawValue;
-          }
-          
-          req.session.answers[step.id] = mainValue;
-          console.log(`💾 Session sauvegardée ${step.id}:`, mainValue);
-        }
-      } else {
-        console.log(`⚠️ Pas de valeur pour ${step.id}`);
+    ]
+  }
+]
+},
+{
+  "codeItem": 7,
+  "label": "Autre",
+  "subQuestions": [
+    {"id_db": "KO3T8U",
+    "id": "q24_7",
+    "title": "Q24_7.",
+    "type": "multiple_choice",
+    "label": "Quels transports utilisez-vous  sub qst?",
+    "required": false,
+    "options": [
+      {
+        "codeItem": 1,
+        "label": "BusS"
+      },
+      {
+        "codeItem": 2,
+        "label": "Train S",
+        "requiresPrecision": true
+      },
+      {
+        "codeItem": 3,
+        "label": "Voiture S"
+      },
+      {
+        "codeItem": 6,
+        "label": "Aucun S",
+        "exclusive": true
       }
-    }
+    ]
   }
-
-/* =========================
-     6️⃣ Initialiser la rotation
-========================= */
-if (action === 'next' && !req.session.rotationQueue) {
-  for (const step of survey.steps) {
-    if (step.repeatFor && 
-        req.session.answers[step.repeatFor] && 
-        !req.session.rotationQueueDone[step.repeatFor]) {
-      
-      req.session.rotationQueue = RotationQueueUtils.generateRotationQueue(
-        survey,
-        step.repeatFor,
-        req.session.answers
-      );
-      
-      req.session.rotationQueueDone[step.repeatFor] = true;
-      
-      // TRÈS IMPORTANT: Sortir IMMÉDIATEMENT après création de la rotation
-      // La première étape sera affichée au prochain GET
-      req.session.currentStepId = req.session.rotationQueue[0].step.id;
-      console.log(`✨ Rotation créée, redirection vers: ${req.session.currentStepId}`);
-      return res.redirect(`/survey/${surveyId}/run`);
-    }
-  }
+]
 }
-
-  /* =========================
-     7️⃣ Déterminer la prochaine étape
-  ========================= */
-  let nextStepId;
-  let nextStep;
-
-  if (req.session.rotationQueue?.length) {
-    console.log(`🔄 Rotation en cours (${req.session.rotationQueue.length} restants)`);
-    
-    if (action === 'next') {
-      // Supprimer l'étape actuelle (déjà traitée)
-      const processed = req.session.rotationQueue.shift();
-      console.log(`✅ Étape traitée: ${processed?.step?.id}`);
-      
-      // Vérifier s'il reste des étapes
-      if (req.session.rotationQueue.length > 0) {
-        // Passer à la prochaine étape de rotation
-        nextStep = req.session.rotationQueue[0].step;
-        nextStepId = nextStep.id;
-        console.log(`➡️ Prochaine étape rotation: ${nextStepId}`);
-      } else {
-        // Fin de la rotation
-        console.log('🏁 Fin de la rotation');
-        delete req.session.rotationQueue;
-        
-        // Trouver la question parente
-        const parentStep = survey.steps.find(s => s.id === processed?.parent);
-        if (parentStep?.redirection) {
-          nextStepId = parentStep.redirection;
-          console.log(`📍 Redirection après rotation: ${nextStepId}`);
-        } else {
-          // Navigation normale depuis la dernière étape
-          nextStepId = NavigationRuleService.resolve(
-            processed?.step || currentStep,
-            req.session.answers[processed?.step?.id || currentStep.id],
-            survey.steps
-          );
-        }
-      }
-    } else {
-      // Pour "prev", rester sur la même étape
-      nextStepId = currentStep.id;
-    }
-  } else {
-    // Navigation normale
-    nextStepId = NavigationRuleService.resolve(
-      currentStep,
-      req.session.answers[currentStep.id],
-      survey.steps
-    );
-    console.log(`➡️ Navigation normale: ${nextStepId}`);
-  }
-
-  /* =========================
-     8️⃣ FIN questionnaire
-  ========================= */
-  if (!nextStepId || nextStepId === 'FIN') {
-    console.log('🏁 Fin du questionnaire');
-    req.session.destroy();
-    return res.redirect(`/survey/${surveyId}/end`);
-  }
-
-  /* =========================
-     9️⃣ Aller à la prochaine question
-  ========================= */
-  req.session.currentStepId = nextStepId;
-  console.log(`📍 Prochaine étape définie: ${nextStepId}`);
-  console.log('--- Session actuelle ---');
-  console.log('- answers:', req.session.answers);
-  console.log('- rotationQueue:', req.session.rotationQueue?.length || 0);
-  console.log('------------------------');
-
-  return res.redirect(`/survey/${surveyId}/run`);
-});
-
-export default router;
-
-
-
-// response.routes.js
-import express from 'express';
-import ResponseNormalizer from '../services/ResponseNormalizer.js';
-import SurveyService from '../services/SurveyService.js';
-import RotationQueueUtils from '../services/RotationQueueUtils.js';
-import ResponseService from '../services/ResponseService.js';
-
-const router = express.Router();
-
-router.post('/:surveyId/run', async (req, res) => {
-  const { surveyId } = req.params;
-  const action = req.body.action || 'next';
-  const userId = 'anonymous';
-
-  const survey = SurveyService.loadSurvey(surveyId);
-
-  if (!req.session.answers) req.session.answers = {};
-  if (!req.session.pageNumber) req.session.pageNumber = 1;
-  if (!req.session.rotationQueueDone) req.session.rotationQueueDone = {};
-  
-  let pageNumber = req.session.pageNumber;
-  /* ======================================================
-     1 Créer le document réponse (UNE SEULE FOIS)
-     ====================================================== */
-  if (!req.session.responseId) {
-    const response = await ResponseService.createSurveyDocument(
-      surveyId,
-      userId,
-      {}
-    );
-    req.session.responseId = response._id;
-    console.log('📄 Document créé:', response._id);
-  }
-
-  const responseId = req.session.responseId;
-
-
-  /* ======================================================
-     2 Déterminer le STEP COURANT
-     ====================================================== */
-     let stepsOnPage = [];
-
-     if (req.session.rotationQueue && req.session.rotationQueue.length > 0) {
-       // rotation : ne traiter que la première question
-       stepsOnPage = [req.session.rotationQueue[0]];
-     } else {
-       // page normale : toutes les steps sur cette page
-       stepsOnPage = survey.steps.filter(step => step.page === pageNumber);
-     }
-
-  /* ======================================================
-     3 Sauvegarder la réponse si elle existe
-     ====================================================== */
-     if (action === 'next') {
-     for (const stepWrapper of stepsOnPage)  {
-      const stepToNormalize = stepWrapper.step || stepWrapper;
-    let rawValue = req.body[stepToNormalize.id];
-
-    if (['accordion','grid','single_choice','multiple_choice'].includes(stepToNormalize.type)) {
-      rawValue = req.body;
-    }
-
-    if (rawValue !== undefined) {
-   console.log("rawvalue",rawValue)
-      const normalized = ResponseNormalizer.normalize(stepToNormalize, rawValue,stepWrapper.optionIndex);
-      console.log("normlize response",normalized)
-
-      await ResponseService.addAnswer(responseId, normalized);
-
-      // Mémoriser réponse principale (pour rotation)
-      if (!stepToNormalize.isSubQuestion) {
-         // On stocke seulement la valeur principale pour la rotation
-  const mainValue = (stepToNormalize.type === 'multiple_choice')
-  ? req.body[stepToNormalize.id] // array des codes sélectionnés
-  : rawValue;
-        req.session.answers[stepToNormalize.id] = mainValue;
-      }
-
-      console.log(` Réponse sauvegardée: ${stepToNormalize.id}_${stepWrapper.optionIndex || ''}`);
-    }
-  }
+]
 }
-/* ===============================================
-         4 Consommer UNE question de rotation
-         =============================================== */
-         if (req.session.rotationQueue && req.session.rotationQueue.length > 0) {
-          req.session.rotationQueue.shift();
-        }
-  /* ======================================================
-     5️⃣ Initialiser la rotation (UNE SEULE FOIS)
-     ====================================================== */
-  if (!req.session.rotationQueue) {
-    // Pour chaque step qui peut avoir une rotation
-    for (const step of survey.steps) {
-      if (step.repeatFor && req.session.answers[step.repeatFor] && !req.session.rotationQueueDone[step.repeatFor]) {
-        req.session.rotationQueue = RotationQueueUtils.generateRotationQueue(
-          survey,
-          step.repeatFor,
-          req.session.answers
-        );
-        req.session.rotationQueueDone[step.repeatFor] = true; // rotation générée
-      //  console.log(' Rotation générée pour', step.repeatFor, req.session.rotationQueue.map(s => s.id));
-        break; // ne générer qu’une rotation à la fois
+,
+
+{"id_db": "AB6HT8",
+"id": "q25",
+"title": "Q25.",
+"page":42,
+"type": "multiple_choice",
+"label": "transport en commun",
+"redirection": "q3",
+"required": false,
+"navigation": {
+"rules": [
+  {
+    "if": {
+      "operator": "EQUALS",
+      "field": "codeItem",
+      "value": "1"
+    },
+    "then": {
+      "goTo": "q6"
+    }
+  }
+],
+"default": "redirection"
+},
+"options": [
+{
+  "codeItem": 1,
+  "label": "avion",
+  "requiresPrecision": true
+},
+{
+  "codeItem": 2,
+  "label": "plan",
+  "subQuestions": [
+    {"id_db": "KO9M5U",
+    "id": "q25_88",
+    "title": "Q25_88.",
+    "type": "single_choice",
+    "label": "  sub qst?",
+    "required": false,
+    "options": [
+      {
+        "codeItem": 4,
+        "label": "A m"
+      },
+      {
+        "codeItem": 8,
+        "label": " S m",
+        "requiresPrecision": true
+      },
+      {
+        "codeItem": 11,
+        "label": "z m"
       }
-    }
+    ]
   }
-  /* ======================================================
-     6️⃣ Fin de rotation → pagination normale
-     ====================================================== */
-     if (req.session.rotationQueue && req.session.rotationQueue.length === 0) {
-      delete req.session.rotationQueue;
-    }
+]
+},
+{
+  "codeItem": 7,
+  "label": "car",
+  "subQuestions": [
+    {"id_db": "KODE8U",
+    "id": "q25_8",
+    "title": "Q25_8.",
+    "type": "multiple_choice",
+    "label": "Quels transports utilisez-vous  sub qst?",
+    "required": false,
     
-
-  /* ======================================================
-     7️⃣ Pagination normale (hors rotation)
-     ====================================================== */
-  if (!req.session.rotationQueue) {
-    const pages = [...new Set(survey.steps.map(s => s.page))].sort((a, b) => a - b);
-    const index = pages.indexOf(pageNumber);
-
-    pageNumber = action === 'prev'
-      ? pages[Math.max(0, index - 1)]
-      : pages[index + 1];
-
-    req.session.pageNumber = pageNumber;
+    "options": [
+      {
+        "codeItem": 1,
+        "label": "BusS"
+      },
+      {
+        "codeItem": 2,
+        "label": "Train S",
+        "requiresPrecision": true
+      },
+      {
+        "codeItem": 3,
+        "label": "Voiture S"
+      },
+      {
+        "codeItem": 6,
+        "label": "Aucun S",
+        "exclusive": true
+      }
+    ]
   }
-
-  /* ======================================================
-     8️⃣ Fin du questionnaire
-     ====================================================== */
-  if (!pageNumber) {
-    req.session.destroy();
-    return res.redirect(`/survey/${surveyId}/end`);
-  }
-
-  /* ======================================================
-     9️⃣ Afficher la question suivante
-     ====================================================== */
-  res.redirect(`/survey/${surveyId}/run`);
-});
-
-export default router;
-
-
-
-
-// // response.routes.js
-// import express from 'express';
-// import SurveyService from '../services/SurveyService.js';
-// import ResponseService from '../services/ResponseService.js';
-// import ResponseNormalizer from '../services/ResponseNormalizer.js';
-// import RotationQueueUtils from '../services/RotationQueueUtils.js';
-// import NavigationRuleService from '../services/NavigationRuleService.js';
-
-// const router = express.Router();
-
-// router.post('/:surveyId/run', async (req, res) => {
-//   const { surveyId } = req.params;
-//   const action = req.body.action || 'next';
-//   const userId = 'anonymous';
-
-//   const survey = SurveyService.loadSurvey(surveyId);
-
-//   /* =========================
-//      1️⃣ Init session
-//   ========================= */
-//   if (!req.session.answers) req.session.answers = {};
-//   if (!req.session.rotationQueueDone) req.session.rotationQueueDone = {};
-
-//   /* =========================
-//      2️⃣ Créer document réponse
-//   ========================= */
-//   if (!req.session.responseId) {
-//     const response = await ResponseService.createSurveyDocument(
-//       surveyId,
-//       userId,
-//       {}
-//     );
-//     req.session.responseId = response._id;
-//   }
-
-//   const responseId = req.session.responseId;
-
-//   /* =========================
-//      3️⃣ Déterminer question pivot
-//   ========================= */
-//   let currentStep;
-
-//   // Rotation prioritaire
-//   if (req.session.rotationQueue?.length) {
-//     currentStep = req.session.rotationQueue[0].step;
-//  console.log('current rotation', req.session.rotationQueue[0]);
-//   } 
-//   // Navigation normale
-//   else if (req.session.currentStepId) {
-//     currentStep = survey.steps.find(s => s.id === req.session.currentStepId);
-//   } 
-//   // Démarrage du questionnaire
-//   else {
-//     currentStep = survey.steps
-//       .filter(s => s.page !== undefined)
-//       .sort((a, b) => a.page - b.page)[0];
-
-//     req.session.currentStepId = currentStep.id;
-//   }
-
-//   // Si on est en rotation, supprimer l'étape traitée seulement maintenant
-// // if (req.session.rotationQueue?.length) {
-// //   req.session.rotationQueue.shift();
-// //   if (req.session.rotationQueue.length === 0) {
-// //     delete req.session.rotationQueue;
-// //   }
-// // }
-
-//   const currentPage = currentStep.page;
-
-//   /* =========================
-//      4️⃣ Questions à afficher
-//   ========================= */
-//   let stepsOnPage = [];
-
-//   if (req.session.rotationQueue?.length) {
-//     stepsOnPage = [currentStep];
-//   } else {
-//     stepsOnPage = survey.steps.filter(s => s.page === currentPage);
-//   }
-
-//   /* =========================
-//      5️⃣ Sauvegarde réponses
-//   ========================= */
-//   if (action === 'next') {
-//     for (const step of stepsOnPage) {
-//       let rawValue = req.body[step.id];
-
-//       if (['grid', 'accordion', 'single_choice', 'multiple_choice'].includes(step.type)) {
-//         rawValue = req.body;
-//       }
-
-//       if (rawValue !== undefined) {
-//         const normalized = ResponseNormalizer.normalize(step, rawValue);
-//         await ResponseService.addAnswer(responseId, normalized);
-
-// if (!step.isSubQuestion) {
-//   let mainValue;
-
-//   switch (step.type) {
-//     case 'multiple_choice':
-//       mainValue = req.body[step.id]; // array des codeItem sélectionnés
-//       break;
-//     case 'single_choice':
-//       //  Prend la valeur spécifique de la question, pas tout le formulaire
-//       mainValue = req.body[step.id]; 
-//       break;
-//     default:
-//       mainValue = rawValue;
-//   }
-
-//   req.session.answers[step.id] = mainValue;
-// }
-
-//       }
-//     }
-//   }
-
-  
-//   /* =========================
-//      7️⃣ Init rotation (1 fois)
-//   ========================= */
-//   if (!req.session.rotationQueue) {
-//     for (const step of survey.steps) {
-//       if (
-//         step.repeatFor &&
-//         req.session.answers[step.repeatFor] &&
-//         !req.session.rotationQueueDone[step.repeatFor]
-//       ) {
-//         req.session.rotationQueue =
-//           RotationQueueUtils.generateRotationQueue(
-//             survey,
-//             step.repeatFor,
-//             req.session.answers
-//           );
-
-//         req.session.rotationQueueDone[step.repeatFor] = true;
-//         break;
-//       }
-//     }
-//   }
-
-//   /* =========================
-//      8️⃣ Résoudre navigation
-//   ========================= */
-//   console.log("currentStep",currentStep)
-//   console.log("req.session.answers[currentStep.id]" ,req.session.answers , req.session.answers[currentStep.id])
-  
-//   let nextStepId;
-
-// if (req.session.rotationQueue?.length) {
-//   // On prend la prochaine étape dans la rotation
-//     const currentRotation = req.session.rotationQueue[0];
-//   nextStepId = currentRotation.step.id;
-//    // Si la rotation est terminée
-//     if (action === 'next') {
-//     // Supprimer la sous-question traitée seulement après avoir choisi nextStepId
-//     req.session.rotationQueue.shift();
-
-//     // Si la rotation est maintenant terminée
-//     if (!req.session.rotationQueue || req.session.rotationQueue.length === 0) {
-//       delete req.session.rotationQueue;
-//       // Aller à la question parent et récupérer sa redirection
-//       const parentStep = survey.steps.find(
-//         s => s.id === currentRotation.parent
-//       );
-
-//       if (parentStep) {
-//         // Si parent a navigation spécifique, on l'utilise
-//         nextStepId = parentStep.redirection || 'FIN';
-//       }
-//     }
-//   }
-// } else {
-//   // Navigation conditionnelle normale
-//     nextStepId =  NavigationRuleService.resolve(
-//     currentStep,
-//     req.session.answers[currentStep.id],
-//     survey.steps
-//   );
-//   console.log("nextstep",nextStepId)
-// }
- 
-//   /* =========================
-//      9️⃣ FIN questionnaire
-//   ========================= */
-//   if (!nextStepId || nextStepId === 'FIN') {
-//     req.session.destroy();
-//     return res.redirect(`/survey/${surveyId}/end`);
-//   }
-
-//   /* =========================
-//      🔟 Aller à la prochaine question
-//   ========================= */
-//   req.session.currentStepId = nextStepId;
-
-//   return res.redirect(`/survey/${surveyId}/run`);
-// });
-
-// export default router;
+]
+}
+]
+}
+]
+}

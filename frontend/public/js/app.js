@@ -31,10 +31,11 @@
 // }
 
 
+import initPrecisionManager from './precisionManager.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM chargé, JS fonctionne ');
-
+  initPrecisionManager();
   const stepType = document.querySelector('.survey')?.dataset.stepType;
   console.log('stepType:', stepType);
 

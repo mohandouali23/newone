@@ -1,9 +1,5 @@
 export default class ToastService {
-    /**
-     * Affiche un toast dans le navigateur
-     * @param {string} message - Message à afficher
-     * @param {object} options - Options : type ('info'|'success'|'error'), duration (ms)
-     */
+   
     static show(message, { type = 'info', duration = 3000 } = {}) {
       // Créer le conteneur s'il n'existe pas
       let container = document.getElementById('toast-container');

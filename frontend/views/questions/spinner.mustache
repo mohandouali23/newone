@@ -1,6 +1,21 @@
-<select name="{{id}}" >
-  <option value="" disabled {{^value}}selected{{/value}}>{{placeholder}}</option>
+<select name="{{id}}" class="spinner-select">
+  <option value="" disabled {{^value}}selected{{/value}}>
+    {{placeholder}}
+  </option>
+
   {{#options}}
-    <option value="{{codeItem}}" {{#isSelected}}selected{{/isSelected}}>{{label}}</option>
+    <option
+      value="{{codeItem}}"
+      data-requires-precision="{{requiresPrecision}}"
+      data-precision-key="{{precisionKey}}"
+      {{#isSelected}}selected{{/isSelected}}>
+      {{label}}
+    </option>
   {{/options}}
 </select>
+
+{{#options}}
+  {{#requiresPrecision}}
+    {{> partials/precision }}
+  {{/requiresPrecision}}
+{{/options}}
