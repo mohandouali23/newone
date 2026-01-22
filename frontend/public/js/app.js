@@ -1,36 +1,5 @@
-// import ToastService from './ToastService.js';
 
-// async function submitStep() {
-//   try {
-//     const res = await fetch(window.location.pathname, {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify({ action: 'next' })
-//     });
-
-//     const data = await res.json();
-
-//     // ❌ Validation backend échouée
-//     if (!res.ok && data.success === false) {
-//       data.messages.forEach(msg =>
-//         ToastService.show(msg, {
-//           type: 'error',
-//           duration: 4000
-//         })
-//       );
-//       return; // ⛔ rester sur la même page
-//     }
-
-//     // ✅ Succès → reload pour afficher l’étape suivante
-//     window.location.reload();
-
-//   } catch (err) {
-//     ToastService.show('Erreur serveur', { type: 'error' });
-//     console.error(err);
-//   }
-// }
-
-
+import ToastService from './ToastService.js';
 import initPrecisionManager from './precisionManager.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -38,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initPrecisionManager();
   const stepType = document.querySelector('.survey')?.dataset.stepType;
   console.log('stepType:', stepType);
-
+  
   if (stepType) {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
@@ -46,5 +15,123 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(link);
     console.log('CSS dynamique injecté ', link.href);
   }
+  
+  const form = document.getElementById('surveyForm');
+  if (!form) return;
+
+  /* ========== RETIRER LE HIGHLIGHT SUR MODIFICATION ========== */
+  form.addEventListener('input', e => {
+    if (e.target.classList.contains('input-error')) {
+      e.target.classList.remove('input-error');
+    }
+  });
+  
+  form.addEventListener('change', e => {
+    if (e.target.classList.contains('input-error')) {
+      e.target.classList.remove('input-error');
+    }
+  });
+  
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const button = document.activeElement;
+    const action = button?.value || 'next';
+    
+    const answers = serializeForm(form);
+    answers._action = action;
+    console.log("answers",answers)
+    
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(answers)
+        
+      });
+      
+      const data = await res.json();
+      console.log("data",data)
+      
+      if (data.success === false) {
+        if (data.messages?.length) {
+          ToastService.show('Veuillez compléter les champs obligatoires', {
+            type: 'error',
+            duration: 4000
+          });
+        } 
+        if (data.invalidFields?.length) {
+          markInvalidFields(data.invalidFields);
+          setTimeout(() => {
+            const field = form.querySelector(
+              `[name="${data.invalidFields[0]}"], [name="${data.invalidFields[0]}[]"]`
+            );
+            
+            if (field) {
+              field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              field.focus();
+            }
+          }, 200);
+        }
+        return;
+      }
+      
+      if (data.finished) {
+        window.location.href = data.redirectUrl;
+        return;
+      }
+      
+      window.location.reload();
+      
+    } catch (err) {
+      ToastService.show('Erreur serveur', { type: 'error' });
+      console.error(err);
+    }
+  });
 });
 
+
+// ------------------ Helpers ------------------
+function serializeForm(form) {
+  const obj = {};
+  const elements = form.querySelectorAll('input, select, textarea');
+
+  elements.forEach(el => {
+    let name = el.name;
+    if (!name) return;
+
+    const isArray = name.endsWith('[]');
+    if (isArray) name = name.slice(0, -2);
+
+    if (el.type === 'checkbox') {
+      if (!obj[name]) obj[name] = [];
+      if (el.checked) obj[name].push(el.value);
+    } else if (el.type === 'radio') {
+      if (el.checked) obj[name] = el.value;
+    } else {
+      obj[name] = el.value;
+    }
+  });
+
+  return obj;
+}
+
+function markInvalidFields(fields) {
+  document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+
+  fields.forEach(name => {
+    const input = document.querySelector(`[name="${name}"]`);
+    if (input) {
+      input.classList.add('input-error');
+
+      if (input.classList.contains('precision-input') && input.style.display === 'none') {
+        input.style.display = 'inline-block';
+      }
+    }
+  });
+
+  const first = fields
+    .map(name => document.querySelector(`[name="${name}"]`))
+    .find(el => el && el.offsetParent !== null);
+  if (first) first.focus({ preventScroll: false });
+}

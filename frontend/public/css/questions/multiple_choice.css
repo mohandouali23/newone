@@ -1,34 +1,50 @@
-/* Conteneur des options */
 label {
   display: flex;
   align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  font-size: 1rem;
-  margin-bottom: 10px;
+  gap: var(--gap-small);
   padding: 8px 12px;
-  border-radius: 6px;
-  transition: background 0.2s ease, transform 0.2s ease;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast);
 }
 
-/* Hover sur la ligne */
 label:hover {
-  background-color: #f0f4ff; /* léger bleu */
+  background-color: #f0f4ff;
   transform: translateX(2px);
 }
 
-/* Checkbox stylisée */
 input[type="checkbox"] {
   width: 20px;
   height: 20px;
-  accent-color: #4f46e5; /* violet moderne */
+  accent-color: var(--primary-color);
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform var(--transition-fast);
 }
 
 input[type="checkbox"]:hover {
-  transform: scale(1.3);
+  transform: scale(1.2);
 }
+
+input[type="checkbox"]:checked + label {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+/* Sous-question */
+.sub-questions {
+  margin-left: 2rem;
+  padding-left: 0.5rem;
+  border-left: 2px solid var(--primary-color);
+  margin-top: 0.5rem;
+}
+
+
+
+
+
+
+
+
 
 /* Sous-question */
 .sub-question {
@@ -42,11 +58,6 @@ input[type="checkbox"]:hover {
   font-size: 0.95rem;
 }
 
-/* Option sélectionnée */
-input[type="checkbox"]:checked + label {
-  font-weight: 600;
-  color: #4f46e5;
-}
 
 /* Désactivé (pour option exclusive) */
 input[type="checkbox"]:disabled + label {

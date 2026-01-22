@@ -1,43 +1,114 @@
-
-/****************************************** PAGE END*********************************** */
+/* ================== END SURVEY ================== */
 .end-survey {
-    background: #fff;
+  width: 100%;
+  max-width: 720px;
+  padding: 3rem 2rem;
+  margin: 3rem auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background-color: var(--background-dark);
+  border-radius: var(--border-radius);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* TITRES */
+.end-survey h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+}
+
+/* PARAGRAPHES */
+.end-survey p {
+  font-size: 1.125rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* BOUTONS */
+.end-survey .btn {
+  display: inline-block;
+  min-width: 200px;
+  padding: 0.875rem 1.75rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  transition: all 0.25s ease;
+  margin: 0.5rem 0.75rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  cursor: pointer;
+}
+
+.end-survey .btn-primary {
+  background-color: var(--secondary-color);
+  color: #fff;
+}
+
+.end-survey .btn-primary:hover {
+  background-color: var(--secondary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.end-survey .btn-secondary {
+  background-color: #6c757d;
+  color: #fff;
+}
+
+.end-survey .btn-secondary:hover {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.end-survey .btn:active {
+  transform: scale(0.97);
+}
+
+/* SECTION HTML supplémentaire */
+.end-survey .extra-html {
+  margin-top: 1rem;
+  font-size: 1.125rem;
+  color: #374151;
+}
+
+.end-survey .extra-html a {
+  color: var(--secondary-color);
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+.end-survey .extra-html ul {
+ list-style: none;
+}
+.end-survey .extra-html a:hover {
+  color: var(--secondary-hover);
+}
+
+/* ================== ANIMATION ================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================== RESPONSIVE ================== */
+@media (max-width: 480px) {
+  .end-survey {
+    padding: 2rem 1rem;
+  }
+
+  .end-survey .btn {
     width: 100%;
-    padding: 40px 32px;
-    border-radius: 14px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
-    text-align: center;
-    animation: fadeIn 0.4s ease-in-out;
+    margin: 0.5rem 0;
   }
-  
-  .end-survey h2 {
-    font-size: 24px;
-    color: #1f2937;
-    margin-bottom: 12px;
-  }
-  
-  .end-survey p {
-    font-size: 16px;
-    color: #6b7280;
-    margin-bottom: 20px;
-  }
-  
-  .end-survey a {
-    display: inline-block;
-    text-decoration: none;
-    background: #2563eb;
-    color: #fff;
-    padding: 12px 24px;
-    border-radius: 10px;
-    font-weight: 600;
-    transition: background 0.2s, transform 0.1s;
-  }
-  
-  .end-survey a:hover {
-    background: #1d4ed8;
-  }
-  
-  .end-survey a:active {
-    transform: scale(0.98);
-  }
-  
+}

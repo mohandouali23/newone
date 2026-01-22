@@ -15,7 +15,7 @@
       "label": "Quel est votre moyen de transport principal t78tt ?",
       "placeholder": "Ex : Bus, Train, Voiture...",
       "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
-      "redirection": "q24",
+      "redirection": "q3",
       "input_cond": "",
       "output_cond": "value.length > 0",
       "required": false,
@@ -298,7 +298,6 @@
     "title": "Q16.",
     "label": "Informations complémentaires sur vos transports",
     "page": 7,
-    "required": false,
     "redirection": "q17",
      "navigation": {
     "rules": [
@@ -365,7 +364,6 @@
   "label": "Satisfaction concernant vos moyens de transport",
   "page": 8,
   "redirection": "q14",
-  "required": false,
   "sections": [
     {
       "id_db_sect": "SAT_SECT1",
@@ -397,7 +395,7 @@
           "id": "q17_2",
           "type": "single_choice",
           "label": "Quelle est votre satisfaction pour le métro ?",
-          "required": true,
+          "required": false,
           "options": [
             { "codeItem": 1, "label": "😡 Mauvais" },
             { "codeItem": 2, "label": "😕 Moyen" },
@@ -455,7 +453,6 @@
   "type": "grid",
   "title": "Q14.",
   "label": "Activités pratiquées et motivation principale du séjour",
-  "required": false,
   "redirection": "q13",
    "navigation": {
     "rules": [
@@ -520,8 +517,7 @@
         "type": "radio",
         "axis": "row",
         "validation": {
-          "required": false,
-          "min": 1
+          "required": false
         }
       }
     }
@@ -534,7 +530,6 @@
   "title": "Q13.",
   "page":10,
   "label": "Activités pratiquées et motivation principale du séjour",
-  "required": false,
   "redirection": "q15",
   "navigation": {
     "rules": [
@@ -607,7 +602,6 @@
   "title": "Q15.",
   "page": 11,
   "label": "Activités pratiquées et motivation principale du séjour",
-  "required": false,
   "redirection": "FIN",
   "navigation": {
     "rules": [

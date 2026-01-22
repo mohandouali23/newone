@@ -1,3 +1,12 @@
+// ============================================================================
+// SURVEY RUN SERVICE
+// Responsabilité :
+// - Orchestration complète de l’exécution d’un questionnaire
+// - Navigation (next / prev)
+// - Sauvegarde des réponses (session + DB)
+// - Validation
+// - Gestion des rotations
+// ===========================================================================
 import SurveyService from './SurveyService.js';
 import RealResponseService from './ResponseService.js';
 import ResponseNormalizer from './ResponseNormalizer.js';
@@ -13,8 +22,17 @@ process.env.MODE_TEST === 'true'
 ? MockResponseService
 : RealResponseService;
 
-export default class SurveyRunService {
-
+export default class BSurveyRunService {
+  
+  // ============================================================================
+  // POINT D’ENTRÉE PRINCIPAL
+  // Responsabilité :
+  // - Charger le questionnaire
+  // - Initialiser la session
+  // - Router les actions next / prev
+  // - Déterminer le prochain step
+  // ==========================================================================
+  
   // -------------------- RUN --------------------
   static async run({ surveyId, action, body, session }) {
     const userId = 'anonymous';
@@ -222,6 +240,88 @@ export default class SurveyRunService {
     }
   }
   
+  // -------------------- CLEANUP SESSION --------------------
+  // static async cleanupSession(step, session, mainValue, previousSelected = []) {
+  //   const sessionAnswers = session.answers;
+  //   if (!step || !sessionAnswers) return;
+    // if (step.type === 'single_choice') {
+    //   const { sessionKeysToDelete } = this.computeSubQuestionKeysToDelete({ step, sessionAnswers, newValue: mainValue });
+    //   sessionKeysToDelete.forEach(k => delete sessionAnswers[k]);
+    // }
+    // if (step.type === 'multiple_choice') {
+    //   const selectedArray = Array.isArray(mainValue) ? mainValue : [];
+    //   const oldSelected = Array.isArray(sessionAnswers[step.id]) ? sessionAnswers[step.id] : [];
+    
+    //   // Pour chaque option précédemment sélectionnée mais maintenant désélectionnée
+    //   previousSelected.forEach(optionCode => {
+      //     if (!selectedArray.includes(optionCode)) {
+    //       // Supprimer les sous-questions de cette option dans session
+    //       const { sessionKeysToDelete } = this.computeSubQuestionKeysToDelete({
+    //         step,
+    //         sessionAnswers,
+    //         oldOptionCode: optionCode
+    //       });
+    
+    //       sessionKeysToDelete.forEach(k => delete sessionAnswers[k]);
+    //     }
+    //   });
+    // }
+    
+    // // ---- ROTATION CLEANUP ----
+    // if (step.rotationTemplate?.length) {
+      
+      
+    //   const newSelected = Array.isArray(mainValue) ? mainValue : [];
+    //   console.log("cleanupsession newSelected ",newSelected)
+    //   const hasChanged =
+    //   previousSelected.length !== newSelected.length ||
+    //   previousSelected.some(v => !newSelected.includes(v));
+      
+    //   if (hasChanged) {
+    //     // const { dbKeysToDelete, sessionKeysToDelete } =
+    //     // this.computeRotationKeysToDelete({
+    //     //   step,
+    //     //   sessionAnswers,
+    //     //   previousSelected,
+    //     //   allSteps: session.surveyCache.steps
+    //     // });
+    //     const { dbKeysToDelete, sessionKeysToDelete } =
+    //     this.computeRotationKeysToDelete({
+    //       step,
+    //       mainValue,
+    //       previousSelected,
+    //       allSteps: session.surveyCache.steps
+    //     });
+        
+    //     //  DB
+    //     if (dbKeysToDelete.length) {
+    //       await ResponseService.deleteAnswers(session.responseId, dbKeysToDelete);
+    //     }
+        
+    //     //  Session
+    //     //sessionKeysToDelete.forEach(k => delete session.answers[k]);
+        
+    //     sessionKeysToDelete.forEach(k => {
+    //       Object.keys(session.answers).forEach(sessionKey => {
+    //         if (sessionKey.startsWith(k)) {
+    //           delete session.answers[sessionKey];
+    //         }
+    //       });
+    //     });
+    //     // Indique que la rotation doit être relancée si on revient sur ce parent
+    //     session.rotationState ??= {};
+    //     session.rotationState[step.id] = { needsRefresh: true };
+        
+    //     // reset rotation state
+    //     delete session.rotationQueue;
+    //     delete session.rotationQueueDone[step.id];
+        
+    //   }
+    // }
+    //this.cleanupSessionPrecisions(step, sessionAnswers, Array.isArray(mainValue) ? mainValue : [mainValue]);
+ // }
+  
+  
   // ---------------------------------------------------------------------------
   // SAUVEGARDE DES RÉPONSES EN SESSION
   // Responsabilité :
@@ -411,7 +511,13 @@ export default class SurveyRunService {
           previousSelected.some(v => !newSelected.includes(v));
           
           if (hasChanged) {
-           
+            // const { dbKeysToDelete, sessionKeysToDelete } =
+            // this.computeRotationKeysToDelete({
+            //   step,
+            //   sessionAnswers,
+            //   previousSelected,
+            //   allSteps: session.surveyCache.steps
+            // });
             const { dbKeysToDelete, sessionKeysToDelete } =
             this.computeRotationKeysToDelete({
               step,
@@ -463,6 +569,38 @@ export default class SurveyRunService {
     }
     return keysToDelete;
   }
+  
+  
+  // static computeRotationKeysToDelete({ step,sessionAnswers, previousSelected = [], allSteps }) {
+  //   const dbKeysToDelete = [];
+  //   const sessionKeysToDelete = [];
+  
+  //   previousSelected.forEach(optionCode => {
+    //     // Keys de session
+  //     Object.keys(sessionAnswers).forEach(sessionKey => {
+    //       if (sessionKey.includes(`_${optionCode}`) && sessionKey.startsWith(`${step.id}_`)) {
+  //         sessionKeysToDelete.push(sessionKey);
+  //       }
+  //     });
+  
+  //     // Keys de DB
+  //     if (step.rotationTemplate?.length) {
+  //       step.rotationTemplate.forEach(rotId => {
+    //         const rotStep = allSteps.find(s => s.id === rotId);
+  //         if (rotStep?.id_db) {
+  //           dbKeysToDelete.push(`${rotStep.id_db}_${optionCode}`);
+  //         }
+  //       });
+  //     } else if (step.id_db) {
+  //       dbKeysToDelete.push(`${step.id_db}_${optionCode}`);
+  //     }
+  //   });
+  
+  //   return {
+  //     dbKeysToDelete: [...new Set(dbKeysToDelete)],
+  //     sessionKeysToDelete: [...new Set(sessionKeysToDelete)]
+  //   };
+  // }
   
   static computeRotationKeysToDelete({
     step,
@@ -651,14 +789,11 @@ export default class SurveyRunService {
         } else {
           
           delete session.rotationQueue;
-          
           // console.log("session.rotationQueue after",session.rotationQueue)
           
         }
         
         session.currentStepId = previousStep.id;
-        
-
         return previousStep.id;
       }
       // ============================================================================
@@ -687,20 +822,17 @@ export default class SurveyRunService {
         
         // Réinitialiser si nécessaire
         RotationService.resetRotationIfNeeded(session,survey, currentStep.id, session.answers);
-
-        // Init rotation seulement si action 'next' et rotationQueue vide
-  if (!session.rotationQueue) {
+        
         const rotationInit = RotationService.initRotation({
           session,
           survey,
           answers: session.answers,
           action: 'next',
-          currentStep,
           generateQueue: RotationQueueUtils.generateRotationQueue
         });
         console.log('rotationInit next', rotationInit);
         if (rotationInit) return rotationInit.nextStepId;
-      }
+        
         const rotationAdvance = RotationService.advanceRotation({ session, survey, currentStep, action: 'next' });
         if (rotationAdvance?.nextStepId) return rotationAdvance.nextStepId;
         

@@ -1,106 +1,38 @@
-/* Grid table principale */
 .grid-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  margin-bottom: 25px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   overflow: hidden;
+  font-family: var(--font-family);
 }
 
-/* Header */
 .grid-table thead th {
-  background-color: #4f46e5; /* violet moderne */
-  color: white;
-  text-align: center;
-  padding: 12px 10px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Première colonne (labels des questions) */
-.grid-table tbody .row-label {
-  font-weight: 500;
+  background-color: var(--primary-color);
+  color: #fff;
   padding: 12px;
-  background-color: #f3f4f6; /* gris clair */
-  border-right: 1px solid #e5e7eb;
-  width: 30%;
-  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
 }
 
-/* Cellules de la grille */
+.grid-table tbody .row-label {
+  background: #f3f4f6;
+  padding: 12px;
+  font-weight: 500;
+}
+
 .grid-table tbody .grid-cell {
   text-align: center;
   padding: 12px;
-  border-bottom: 1px solid #e5e7eb;
-  transition: background 0.3s ease;
 }
 
-/* Ligne alternée */
-.grid-table tbody tr:nth-child(even) .grid-cell {
-  background-color: #fafafa;
-}
-
-/* Input radio/checkbox stylisés */
 .grid-table input[type="radio"],
 .grid-table input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
+  accent-color: var(--primary-color);
   cursor: pointer;
-  accent-color: #4f46e5; /* couleur moderne */
-  transition: transform 0.2s ease;
+  transition: transform var(--transition-fast);
 }
 
-.grid-table input[type="radio"]:hover,
-.grid-table input[type="checkbox"]:hover {
+.grid-table input:hover {
   transform: scale(1.2);
-}
-
-/* Highlight cellule hover */
-.grid-table tbody .grid-cell:hover {
-  background-color: #e0e7ff; /* léger bleu */
-  border-radius: 4px;
-}
-
-/* Label pour radio/checkbox */
-.grid-table label {
-  display: inline-block;
-  margin-left: 5px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  vertical-align: middle;
-  user-select: none;
-}
-
-/* Checkbox/Radio sélectionné */
-.grid-table input[type="radio"]:checked,
-.grid-table input[type="checkbox"]:checked {
-  
-  outline-offset: 2px;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .grid-table thead {
-    display: none; /* cacher header sur petit écran */
-  }
-  .grid-table tbody td {
-    display: block;
-    width: 100%;
-    text-align: left;
-    padding-left: 20px;
-  }
-  .grid-table tbody .row-label {
-    background-color: transparent;
-    border-right: none;
-    font-weight: bold;
-  }
-  .grid-table tbody .grid-cell {
-    border: none;
-    margin-bottom: 10px;
-  }
 }

@@ -1,19 +1,25 @@
 <div class="end-survey">
   {{#endContent}}
+
     {{#isText}}
-      <p>{{value}}</p>
+      <div class="end-text">
+        <p>{{value}}</p>
+      </div>
     {{/isText}}
 
     {{#isButton}}
-      <p>
-        <a href="{{href}}" class="{{class}}">
+      <div class="end-buttons">
+        <a href="{{href}}" class="btn {{class}}">
           {{label}}
         </a>
-      </p>
+      </div>
     {{/isButton}}
 
     {{#isHtml}}
-      {{{value}}}
+      <div class="extra-html">
+        {{{value}}}
+      </div>
     {{/isHtml}}
+
   {{/endContent}}
 </div>

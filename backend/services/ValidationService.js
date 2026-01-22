@@ -38,56 +38,201 @@ export default class ValidationService {
  * Retourne la liste des messages de validation pour un step
  * Sans afficher le toast côté backend
  */
-static getMissingMessages(step, answers, wrapper = null) {
+static getMissingMessages(step, answers) {
+  // Si c'est une grille
+  if (step.type === 'grid') {
+    const value = answers[step.id] || {};
+    const missingColumns = [];
+
+    step.reponses?.forEach(col => {
+      if (col.input?.axis !== 'column' || !col.input?.required) return;
+
+      let hasAnswer = false;
+      step.questions?.forEach(row => {
+        const rowValue = value[row.id];
+        if (Array.isArray(rowValue) && rowValue.includes(col.id)) {
+          hasAnswer = true;
+        }
+      });
+
+      if (!hasAnswer) missingColumns.push(col.label || col.id);
+    });
+
+    if (missingColumns.length) {
+      return [`Veuillez répondre à chaque colonne obligatoire : ${missingColumns.join(', ')}`];
+    }
+
+    return [];
+  }
+
+  // Sinon logique normale
   const missing = [];
+  (step.questions || [step]).forEach(q => {
+    const value = answers[q.id];
+    if (q.required && !SurveyService.hasRealAnswer(value)) missing.push(q.label || q.id);
+  });
+  return missing;
+}
+
+
+static getInvalidFields(step, answers, wrapper = null) {
+  const fields = [];
+
+  // === 1️⃣ Gestion spécifique pour les grids ===
+  if (step.type === 'grid') {
+    const value = answers[step.id] || {};
+
+    // Colonnes obligatoires
+    step.reponses?.forEach(col => {
+      if (col.input?.axis !== 'column' || !col.input?.required) return;
+
+      let hasAnswer = false;
+
+      step.questions.forEach(row => {
+        const rowValue = value[row.id]; // ex: value["q13_1"] = ["R1"]
+        if (Array.isArray(rowValue) && rowValue.includes(col.id)) {
+          hasAnswer = true;
+        }
+      });
+      if (!hasAnswer) {
+        // renvoyer directement le name HTML de l'input
+        // pour axis: column, name = ligne id
+        const firstEnabledRow = step.questions.find(
+          row => row.cells?.[col.id]?.enabled !== false
+        );
+        if (firstEnabledRow) {
+          fields.push(firstEnabledRow.id); // ex: "q13_1"
+        }
+      }
+    });
+  }
+
+  // === 2️⃣ Logique existante pour les questions normales ===
   const questions = step.questions || [step];
 
   questions.forEach(q => {
     const answerKey = this.buildAnswerKey(q.id, wrapper);
     const value = answers[answerKey];
 
+    // Question obligatoire
     if (q.required && !SurveyService.hasRealAnswer(value)) {
-      missing.push(q.label || q.id);
+      fields.push(answerKey);
     }
 
-    // Validation par type
-    if (q.type === 'single_choice' && SurveyService.hasRealAnswer(value)) {
-      const opt = q.options?.find(o => o.codeItem?.toString() === value?.toString());
-      if (opt?.requiresPrecision && !PrecisionUtils.hasRequiredPrecision(q.id, value, answers)) {
-        missing.push(`Précision pour "${opt.label}"`);
-      }
-    }
-
-    if (q.type === 'multiple_choice') {
+    // Precision requise
+    if (
+      (q.type === 'single_choice' || q.type === 'multiple_choice') &&
+      SurveyService.hasRealAnswer(value)
+    ) {
       const values = SurveyService.normalizeToArray(value);
+
       values.forEach(code => {
-        const opt = q.options?.find(o => o.codeItem?.toString() === code?.toString());
-        if (opt?.requiresPrecision && !PrecisionUtils.hasRequiredPrecision(q.id, code, answers)) {
-          missing.push(`Précision pour "${opt.label}"`);
+        const opt = q.options?.find(
+          o => o.codeItem?.toString() === code?.toString()
+        );
+        if (!opt) return;
+
+        if (opt?.requiresPrecision) {
+          const precisionKey = PrecisionUtils.buildPrecisionKey(q.id, code);
+          if (!answers[precisionKey]?.trim()) {
+            fields.push(precisionKey);
+          }
+        }
+
+        if (opt.subQuestions?.length) {
+          fields.push(
+            ...this.getInvalidSubFields({
+              options: [opt],
+              answers,
+              parentAnswerKey: answerKey,
+              wrapper
+            })
+          );
         }
       });
     }
 
-    if (q.type === 'accordion') {
-      // Appelle la validation récursive des accordion
-      this.validateAccordion(q, answers, missing);
-    }
-
-    // Sous-questions
-    if (q.options?.length) {
-      missing.push(
-        ...this.validateSubQuestions({
+    // Sous-questions hors choice
+    if (q.options?.length && q.type !== 'single_choice' && q.type !== 'multiple_choice') {
+      fields.push(
+        ...this.getInvalidSubFields({
           options: q.options,
           answers,
           parentAnswerKey: answerKey,
-          path: q.label,
           wrapper
         })
       );
     }
+
+    // Accordion
+    if (q.type === 'accordion') {
+      q.sections?.forEach(section => {
+        section.questions?.forEach(subQ => {
+          const subKey = this.buildAnswerKey(subQ.id, wrapper);
+          const subValue = answers[subKey];
+          if (subQ.required && !SurveyService.hasRealAnswer(subValue)) {
+            fields.push(subKey);
+          }
+
+          if (subQ.options?.length) {
+            fields.push(
+              ...this.getInvalidSubFields({
+                options: subQ.options,
+                answers,
+                parentAnswerKey: subKey,
+                wrapper
+              })
+            );
+          }
+        });
+      });
+    }
   });
 
-  return missing;
+  return [...new Set(fields)];
+}
+
+
+static getInvalidSubFields({
+  options = [],
+  answers,
+  parentAnswerKey,
+  wrapper = null
+}) {
+  const fields = [];
+
+  options.forEach(option => {
+    const parentValues = SurveyService
+      .normalizeToArray(answers[parentAnswerKey])
+      .map(v => v?.toString());
+
+    if (!parentValues.includes(option.codeItem?.toString())) return;
+
+    option.subQuestions?.forEach(subQ => {
+      const subKey = wrapper?.optionIndex !== undefined
+        ? `${subQ.id}_${wrapper.optionIndex}`
+        : `${parentAnswerKey}_${option.codeItem}_${subQ.id}`;
+
+      const value = answers[subKey];
+
+      if (subQ.required && !SurveyService.hasRealAnswer(value)) {
+        fields.push(subKey);
+      }
+
+      if (subQ.options?.length) {
+        fields.push(
+          ...this.getInvalidSubFields({
+            options: subQ.options,
+            answers,
+            parentAnswerKey: subKey,
+            wrapper
+          })
+        );
+      }
+    });
+  });
+
+  return fields;
 }
 
   // ===========================================================================
@@ -228,10 +373,10 @@ static getMissingMessages(step, answers, wrapper = null) {
           hasAnswer = true;
         }
       });
-
+console.log('!hasAnswer',!hasAnswer)
       if (!hasAnswer) missingColumns.push(col.label || colId);
     });
-
+    console.log('missingColumns',missingColumns)
     if (missingRows.length || missingColumns.length) {
       let msg = '';
       if (missingRows.length) {
@@ -242,6 +387,7 @@ static getMissingMessages(step, answers, wrapper = null) {
 
         msg += `Veuillez répondre à chaque colonne obligatoire :<br>${missingColumns.map(c => `• ${c}`).join('<br>')}`;
       }
+      console.log('missingColumns msg',msg)
       this.showMissingToast(msg);
       return false;
     }

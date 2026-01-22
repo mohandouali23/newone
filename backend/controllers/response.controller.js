@@ -31,6 +31,7 @@ export default class ResponseController {
         return res.status(400).json({
           success: false,
           messages: result.messages,
+          invalidFields: result.invalidFields,
           currentStepId: result.currentStepId
         });
       }

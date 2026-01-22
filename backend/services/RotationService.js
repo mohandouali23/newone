@@ -68,6 +68,20 @@ export default class RotationService {
     };
   }
 
+  static clearRotationForParent(session, parentId) {
+    delete session.rotationQueue;
+    delete session.rotationQueueDone?.[parentId];
+    delete session.rotationState?.[parentId];
+  
+    if (session.rotationQueueDone) {
+      delete session.rotationQueueDone[parentId];
+    }
+  
+    if (session.rotationState) {
+      delete session.rotationState[parentId];
+    }
+  }
+  
   // ==========================================================================
   // ROTATION INITIALIZATION
   // ==========================================================================
@@ -80,63 +94,98 @@ export default class RotationService {
    * - la condition de répétition est remplie
    */
 
-  static initRotation({ session, survey, answers, action, generateQueue }) {
+  // static initRotation({ session, survey, answers, action, generateQueue }) {
+
+  //   if (action !== 'next') return null;
+  //   session.rotationState ??= {};
+  //   session.rotationQueueDone ??= {};
+  //   // Parcours de tous les steps pour détecter une rotation à déclencher
+  //   for (const step of survey.steps) {
+  
+  //     const parentId = step.repeatFor;
+  //     if (!parentId || !answers[parentId]) continue;
+  //     //  Détecter si une rotation devrait être lancée
+  //     const hasRotation = session.rotationState?.[parentId]?.hasRotation;
+  //     const rotationDone = session.rotationQueueDone?.[parentId];
+     
+  //     if (!session.rotationQueue && !rotationDone) {
+  //       const queue = generateQueue(survey, parentId, answers);
+      
+  //       // S'il n'y a rien à répéter → rotation vide
+  //       if (queue.length === 0) {
+  //         session.rotationQueueDone[parentId] = true; // marque comme traitée
+  //         const parent = survey.steps.find(s => s.id === parentId);
+  //         return {
+  //           type: 'NO_ROTATION',
+  //           nextStepId: parent?.redirection || 'FIN'
+  //         };
+  //       }
+  
+  //       // --------------------------------------------------
+  //       // Rotation normale
+  //       // --------------------------------------------------
+  //       session.rotationQueue = queue;
+  //       session.rotationQueueDone[parentId] = true;
+  //       session.currentStepId = queue[0].step.id;
+  
+  //       // Historisation du premier step de rotation
+  //       session.history ??= [];
+  //       session.history.push({
+  //         id: queue[0].step.id,
+  //         isRotation: true,
+  //         wrapper: queue[0]
+  //       });
+  // // Reset flag de refresh
+  // session.rotationState[parentId] = { needsRefresh: false };
+  //       return {
+  //         type: 'ROTATION_STARTED',
+  //         nextStepId: queue[0].step.id
+  //       };
+      
+  //   }
+  //   }
+  //   return null;
+  // }
+  static initRotation({ session, survey, answers, action, generateQueue, currentStep }) {
 
     if (action !== 'next') return null;
+  
+    const parentId = currentStep.id;
+  
+    // Ce step n'a pas de rotation
+    const hasChildren = survey.steps.some(s => s.repeatFor === parentId);
+    if (!hasChildren) return null;
+  
+    if (!answers[parentId]) return null;
+  
     session.rotationState ??= {};
     session.rotationQueueDone ??= {};
-    // Parcours de tous les steps pour détecter une rotation à déclencher
-    for (const step of survey.steps) {
   
-      const parentId = step.repeatFor;
-      if (!parentId || !answers[parentId]) continue;
-      // MODIFICATION : Détecter si une rotation devrait être lancée
-      const hasRotation = session.rotationState?.[parentId]?.hasRotation;
-      const rotationDone = session.rotationQueueDone?.[parentId];
-      
-      // Conditions pour lancer une rotation :
-      // 1. Réponse au parent existe
-      // 2. Pas de rotation en cours
-      // 3. Rotation non déjà terminée pour cette réponse
-      // 4. Pas de rotation déjà active
-      if (!session.rotationQueue && !rotationDone) {
-        const queue = generateQueue(survey, parentId, answers);
-      
-        // S'il n'y a rien à répéter → rotation vide
-        if (queue.length === 0) {
-          session.rotationQueueDone[parentId] = true; // marque comme traitée
-          const parent = survey.steps.find(s => s.id === parentId);
-          return {
-            type: 'NO_ROTATION',
-            nextStepId: parent?.redirection || 'FIN'
-          };
-        }
+    if (session.rotationQueueDone[parentId]) return null;
   
-        // --------------------------------------------------
-        // Rotation normale
-        // --------------------------------------------------
-        session.rotationQueue = queue;
-        session.rotationQueueDone[parentId] = true;
-        session.currentStepId = queue[0].step.id;
+    const queue = generateQueue(survey, parentId, answers);
   
-        // Historisation du premier step de rotation
-        session.history ??= [];
-        session.history.push({
-          id: queue[0].step.id,
-          isRotation: true,
-          wrapper: queue[0]
-        });
-  // Reset flag de refresh
-  session.rotationState[parentId] = { needsRefresh: false };
-        return {
-          type: 'ROTATION_STARTED',
-          nextStepId: queue[0].step.id
-        };
-      
+    if (queue.length === 0) {
+      session.rotationQueueDone[parentId] = true;
+      return { type: 'NO_ROTATION', nextStepId: currentStep.redirection };
     }
-    }
-    return null;
+  
+    session.rotationQueue = queue;
+    session.rotationQueueDone[parentId] = true;
+  
+    session.history ??= [];
+    session.history.push({
+      id: queue[0].step.id,
+      isRotation: true,
+      wrapper: queue[0]
+    });
+  
+    return {
+      type: 'ROTATION_STARTED',
+      nextStepId: queue[0].step.id
+    };
   }
+  
     // ==========================================================================
   // ROTATION ADVANCEMENT
   // ==========================================================================
