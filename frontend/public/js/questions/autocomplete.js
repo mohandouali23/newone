@@ -1,31 +1,44 @@
-// document.addEventListener('DOMContentLoaded', () => {
-//     const autocompletes = document.querySelectorAll('.autocomplete-input');
-//     if (!autocompletes.length) return;
+export default function initAutocomplete() {
+    const autocompletes = document.querySelectorAll('.autocomplete-input');
+    if (!autocompletes.length) return;
   
-//     autocompletes.forEach(input => {
-//       const form = document.getElementById('surveyForm');
-//       if (!form) return;
+    autocompletes.forEach(input => {
+      const listId = input.getAttribute('list');
+      if (!listId) return;
   
-//       const datalist = document.getElementById(input.getAttribute('list'));
-//       if (!datalist) return;
+      const datalist = document.getElementById(listId);
+      if (!datalist) return;
   
-//       // Afficher inputDisplay après sélection
-//       input.addEventListener('input', () => {
-//         const option = Array.from(datalist.options)
-//           .find(opt => opt.value === input.value);
-//         if (option) {
-//           input.value = option.dataset.input;
-//         }
-//       });
+      // Affichage lisible pendant la saisie
+      input.addEventListener('input', () => {
+        const option = Array.from(datalist.options).find(
+          opt => opt.value === input.value
+        );
+        if (option && option.dataset.input) {
+          input.value = option.dataset.input; // affichage dans l'input
+          try {
+            input.dataset.jsonValueObject = JSON.stringify(JSON.parse(option.dataset.json));
+          } catch (e) {
+            input.dataset.jsonValueObject = undefined;
+          }
+        }
+      });
   
-//       // Avant soumission, envoyer JSON avec saveInDB
-//       form.addEventListener('submit', () => {
-//         const option = Array.from(datalist.options)
-//           .find(opt => opt.value === input.value || opt.dataset.input === input.value);
-//         if (option) {
-//           input.value = option.dataset.json; // valeur JSON côté serveur
-//         }
-//       });
-//     });
-//   });
+      // Mettre à jour l'objet à chaque changement
+      input.addEventListener('change', () => {
+        const option = Array.from(datalist.options).find(
+          opt => opt.dataset.input === input.value
+        );
+        if (option && option.dataset.json) {
+          try {
+            input.dataset.jsonValueObject = JSON.stringify(JSON.parse(option.dataset.json));
+          } catch (e) {
+            input.dataset.jsonValueObject = undefined;
+          }
+        } else {
+          delete input.dataset.jsonValueObject;
+        }
+      });
+    });
+  }
   

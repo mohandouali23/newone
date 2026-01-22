@@ -1,10 +1,14 @@
 
 import ToastService from './ToastService.js';
 import initPrecisionManager from './precisionManager.js';
+import initAutocomplete from './questions/autocomplete.js';
+import initSingleChoice from './questions/single_choice.js';
+import initMultipleChoice from './questions/multiple_choice.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM chargé, JS fonctionne ');
   initPrecisionManager();
+  initAutocomplete();
   const stepType = document.querySelector('.survey')?.dataset.stepType;
   console.log('stepType:', stepType);
   
@@ -15,7 +19,16 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(link);
     console.log('CSS dynamique injecté ', link.href);
   }
-  
+  // Initialiser les questions single choice
+  document.querySelectorAll('input[type=radio]').forEach(input => {
+    const name = input.name;
+    initSingleChoice(name);
+  });
+
+  document.querySelectorAll('input[type=checkbox]').forEach(input => {
+    const name = input.name.replace(/\[\]$/, '');
+    initMultipleChoice(name);
+  });
   const form = document.getElementById('surveyForm');
   if (!form) return;
 
@@ -103,13 +116,25 @@ function serializeForm(form) {
     const isArray = name.endsWith('[]');
     if (isArray) name = name.slice(0, -2);
 
+    let value;
+    if (el.dataset.jsonValueObject) {
+      // convertir string JSON stockée en objet JS
+      try {
+        value = JSON.parse(el.dataset.jsonValueObject);
+      } catch {
+        value = el.value;
+      }
+    } else {
+      value = el.value;
+    }
+
     if (el.type === 'checkbox') {
       if (!obj[name]) obj[name] = [];
       if (el.checked) obj[name].push(el.value);
     } else if (el.type === 'radio') {
       if (el.checked) obj[name] = el.value;
     } else {
-      obj[name] = el.value;
+      obj[name] = value;
     }
   });
 

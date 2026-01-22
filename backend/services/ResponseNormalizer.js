@@ -57,18 +57,34 @@ export default class ResponseNormalizer {
       return { [idDB]: rawValue };
     },
 
-    /* ---------------- AUTOCOMPLETE ---------------- */
-    autocomplete(step, rawValue, idDB) {
-      try {
-        const obj = typeof rawValue === 'string'
-          ? JSON.parse(rawValue)
-          : rawValue;
 
-        return { [idDB]: obj?._id ?? null };
-      } catch {
-        return { [idDB]: null };
-      }
-    },
+      /* ---------------- AUTOCOMPLETE ---------------- */
+      autocomplete(step, rawValue, idDB) {
+        if (!rawValue || (typeof rawValue === 'string' && rawValue.trim() === '')) {
+          return { [idDB]: null }; // champ vide → null
+        }
+        try {
+          const obj = typeof rawValue === 'string'
+            ? JSON.parse(rawValue)
+            : rawValue;
+    
+          if (!obj || typeof obj !== 'object') return { [idDB]: null };
+    
+          // Générer une clé pour chaque propriété : idDB + "_" + nomPropriété
+          const result = {};
+          Object.entries(obj).forEach(([key, value]) => {
+            result[`${idDB}_${key}`] = value;
+          });
+    
+          return result;
+    
+        } catch (e) {
+          console.error('Erreur normalisation autocomplete', e);
+          return { [idDB]: null };
+        }
+      },
+  
+    
 
     /* ---------------- SINGLE CHOICE ---------------- */
     single_choice(step, rawValue, idDB) {
@@ -263,20 +279,44 @@ export default class ResponseNormalizer {
   }
   
 
-  static handleSubQuestions({
-    parentStep,
-    optionCode,
-    subQuestions,
-    rawValue,
-    target
-  }) {
+  // static handleSubQuestions({
+  //   parentStep,
+  //   optionCode,
+  //   subQuestions,
+  //   rawValue,
+  //   target
+  // }) {
+  //   subQuestions.forEach(subQ => {
+  //     const normalized = this.normalize(subQ, rawValue);
+  //     Object.entries(normalized).forEach(([key, value]) => {
+  //       const finalKey = `${parentStep.id_db}_${optionCode}_${key}`;
+  //       target[finalKey] = value;
+  //     });
+  //   });
+  // }
+
+  static handleSubQuestions({ parentStep, optionCode, subQuestions, rawValue, target }) {
     subQuestions.forEach(subQ => {
-      const normalized = this.normalize(subQ, rawValue);
+      // prendre uniquement la valeur de cette sous-question
+      const subRawValue = rawValue[subQ.id];
+  
+      // normaliser la sous-question
+      const normalized = this.normalize(subQ, { [subQ.id]: subRawValue });
+  
+      // aplatir chaque clé
       Object.entries(normalized).forEach(([key, value]) => {
+        let finalValue = value;
+  
+        // si c'est un objet simple de type spinner/text, extraire le codeItem
+        if (this.isObject(value) && Object.keys(value).length === 1) {
+          finalValue = Object.values(value)[0];
+        }
+  
         const finalKey = `${parentStep.id_db}_${optionCode}_${key}`;
-        target[finalKey] = value;
+        target[finalKey] = finalValue;
       });
     });
   }
+  
 }
 

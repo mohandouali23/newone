@@ -23,20 +23,3 @@ style="{{^showSubQuestions}}display:none;{{/showSubQuestions}}">
 
 {{/options}}
 
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const questionId = "{{id}}"; // Mustache va remplacer
-  document.querySelectorAll(`input[type=radio][name="${questionId}"]`).forEach(radio => {
-    radio.addEventListener('change', function() {
-    
-      // gérer sous-questions si besoin
-      document.querySelectorAll(`.sub-questions`).forEach(block => block.style.display='none');
-      const subBlock = document.querySelector(`.sub-questions[data-parent="${this.value}"]`);
-      if(subBlock) subBlock.style.display = 'block';
-    });
-  });
-});
-</script>
-
-

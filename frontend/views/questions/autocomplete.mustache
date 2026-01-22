@@ -18,28 +18,3 @@
     </option>
   {{/options}}
 </datalist>
-
-<script>
-  (function() {
-    const input = document.getElementById('autocomplete-input-{{id}}');
-    const form = document.getElementById('surveyForm'); // ton formulaire principal
-
-    // Afficher inputDisplay après sélection
-    input.addEventListener('input', (e) => {
-      const option = Array.from(document.querySelectorAll('#autocomplete-list-{{id}} option'))
-        .find(opt => opt.value === input.value);
-      if (option) {
-        input.value = option.dataset.input;
-      }
-    });
-
-    // Avant soumission, envoyer JSON avec saveInDB
-    form.addEventListener('submit', (e) => {
-      const option = Array.from(document.querySelectorAll('#autocomplete-list-{{id}} option'))
-        .find(opt => opt.value === input.value || opt.dataset.input === input.value);
-      if (option) {
-        input.value = option.dataset.json; // envoyer JSON string côté serveur
-      }
-    });
-  })();
-</script>

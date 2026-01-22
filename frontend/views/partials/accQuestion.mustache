@@ -5,13 +5,19 @@
     <input type="text" name="{{id}}" placeholder="{{placeholder}}" value="{{value}}">
   {{/isText}}
 
-  {{#isSpinner}}
-    <select name="{{id}}">
-      {{#options}}
-        <option value="{{.}}"{{#isSelected}}selected{{/isSelected}}>{{.}}</option>
-      {{/options}}
-    </select>
-  {{/isSpinner}}
+ {{#isSpinner}}
+  <select name="{{id}}">
+  <option value="" disabled {{^value}}selected{{/value}}>
+    {{placeholder}}
+  </option>
+    {{#options}}
+      <option value="{{codeItem}}" {{#isSelected}}selected{{/isSelected}}>
+        {{label}}
+      </option>
+    {{/options}}
+  </select>
+{{/isSpinner}}
+
 
   {{#isSingleChoice}}
     {{#options}}

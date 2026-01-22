@@ -1,0 +1,451 @@
+{
+    "id": "resto",
+    "title": "Enquête sur les habitudes alimentaires",
+    "title_app": "Enquete_Habitudes_Alimentaires",
+    "version": "1.0",
+    "mode_enqueteur": "Enqueteur",
+    "description": "Collecte des informations sur les habitudes et préférences alimentaires",
+    "logoName": "alyce",
+    "steps": [
+      {
+        "id_db": "A1B2C3",
+        "id": "q1",
+        "title": "Q1.",
+        "type": "single_choice",
+        "label": "Quel est votre tranche d'âge ?",
+        "page": 1,
+        "options": [
+          {
+            "codeItem": 1,
+            "label": "18-25 ans"
+          },
+          {
+            "codeItem": 2,
+            "label": "26-35 ans"
+          },
+          {
+            "codeItem": 3,
+            "label": "36-50 ans"
+          },
+          {
+            "codeItem": 4,
+            "label": "51-65 ans"
+          },
+          {
+            "codeItem": 5,
+            "label": "66 ans et plus"
+          }
+        ],
+        "placeholder": "Sélectionnez votre tranche d'âge",
+        "help_text": "",
+        "redirection": "q2",
+        "input_cond": "",
+        "output_cond": "value.length > 0",
+        "required": true,
+        "isSubQuestion": false
+      },
+      {
+        "id_db": "D4E5F6",
+        "id": "q2",
+        "title": "Q2.",
+        "type": "multiple_choice",
+        "label": "Quels types d'aliments préférez-vous ?",
+        "page": 2,
+        "options": [
+          {
+            "codeItem": 1,
+            "label": "Fruits et légumes"
+          },
+          {
+            "codeItem": 2,
+            "label": "Produits laitiers"
+          },
+          {
+            "codeItem": 3,
+            "label": "Viandes et poissons"
+          },
+          {
+            "codeItem": 4,
+            "label": "Céréales et pains"
+          },
+          {
+            "codeItem": 5,
+            "label": "Produits sucrés",
+            "requiresPrecision": true
+          },
+          {
+            "codeItem": 6,
+            "label": "Plats préparés"
+          },
+          {
+            "codeItem": 7,
+            "label": "Aucune préférence",
+            "exclusive": true
+          }
+        ],
+        "ordre_aleatoire": true,
+        "placeholder": "",
+        "help_text": "Cochez toutes les options qui correspondent à vos préférences",
+        "redirection": "q3",
+        "input_cond": "",
+        "output_cond": "value.length > 0",
+        "required": false,
+        "isSubQuestion": false
+      },
+      {
+        "id_db": "G7H8I9",
+        "id": "q3",
+        "title": "Q3.",
+        "type": "single_choice",
+        "label": "Combien de repas principaux prenez-vous par jour ?",
+        "page": 3,
+        "options": [
+          {
+            "codeItem": 1,
+            "label": "1 repas"
+          },
+          {
+            "codeItem": 2,
+            "label": "2 repas"
+          },
+          {
+            "codeItem": 3,
+            "label": "3 repas"
+          },
+          {
+            "codeItem": 4,
+            "label": "Plus de 3 repas",
+            "requiresPrecision": true
+          }
+        ],
+        "placeholder": "Sélectionnez une option",
+        "help_text": "",
+        "redirection": "q4",
+        "input_cond": "",
+        "output_cond": "value.length > 0",
+        "required": true,
+        "isSubQuestion": false
+      },
+      {
+        "id_db": "J0K1L2",
+        "id": "q4",
+        "title": "Q4.",
+        "type": "spinner",
+        "label": "À quelle fréquence cuisinez-vous à la maison ?",
+        "page": 3,
+        "options": [
+          {
+            "codeItem": 1,
+            "label": "Tous les jours"
+          },
+          {
+            "codeItem": 2,
+            "label": "Plusieurs fois par semaine"
+          },
+          {
+            "codeItem": 3,
+            "label": "Une fois par semaine"
+          },
+          {
+            "codeItem": 4,
+            "label": "Rarement"
+          },
+          {
+            "codeItem": 5,
+            "label": "Jamais"
+          }
+        ],
+        "ordre_aleatoire": true,
+        "placeholder": "Sélectionnez une fréquence",
+        "help_text": "",
+        "redirection": "q5",
+        "input_cond": "",
+        "output_cond": "value.length > 0",
+        "required": false,
+        "isSubQuestion": false
+      },
+      {
+        "id_db": "M3N4O5",
+        "id": "q5",
+        "title": "Q5.",
+        "type": "text",
+        "label": "Quel est votre plat préféré ?",
+        "page": 4,
+        "placeholder": "Ex : Lasagnes, Salade César, Couscous...",
+        "help_text": "Indiquez votre plat favori",
+        "redirection": "q6",
+        "input_cond": "",
+        "output_cond": "value.length > 0",
+        "required": false,
+        "isSubQuestion": false
+      },
+      {
+        "id_db": "P6Q7R8",
+        "id": "q6",
+        "title": "Q6.",
+        "type": "single_choice",
+        "label": "Suivez-vous un régime alimentaire particulier ?",
+        "page": 5,
+        "options": [
+          {
+            "codeItem": 1,
+            "label": "Oui",
+            "subQuestions": [
+              {
+                "id_db": "S9T0U1",
+                "id": "q6_1",
+                "title": "Q6.1",
+                "type": "multiple_choice",
+                "label": "Quel(s) type(s) de régime suivez-vous ?",
+                "page": 5,
+                "options": [
+                  {
+                    "codeItem": 1,
+                    "label": "Végétarien"
+                  },
+                  {
+                    "codeItem": 2,
+                    "label": "Végétalien"
+                  },
+                  {
+                    "codeItem": 3,
+                    "label": "Sans gluten"
+                  },
+                  {
+                    "codeItem": 4,
+                    "label": "Sans lactose"
+                  },
+                  {
+                    "codeItem": 5,
+                    "label": "Autre",
+                    "requiresPrecision": true
+                  }
+                ],
+                "required": false,
+                "redirection": "q7",
+                "input_cond": "",
+                "output_cond": "value.length > 0",
+                "isSubQuestion": true
+              }
+            ]
+          },
+          {
+            "codeItem": 2,
+            "label": "Non"
+          }
+        ],
+        "placeholder": "",
+        "help_text": "",
+        "redirection": "q7",
+        "input_cond": "",
+        "output_cond": "value.length > 0",
+        "required": true,
+        "isSubQuestion": false,
+        "navigation": {
+          "rules": [
+            {
+              "if": {
+                "operator": "EQUALS",
+                "field": "codeItem",
+                "value": 1
+              },
+              "then": {
+                "goTo": "q8"
+              }
+            }
+          ],
+          "default": "redirection"
+        }
+      },
+      {
+        "id_db": "V2W3X4",
+        "id": "q7",
+        "title": "Q7.",
+        "type": "autocomplete",
+        "label": "Dans quelle ville habitez-vous ?",
+        "page": 6,
+        "table": "communes",
+        "columns": [
+          {
+            "name": "commune",
+            "displayInList": true,
+            "displayInInput": true,
+            "saveInDB": true
+          },
+          {
+            "name": "cp",
+            "displayInList": true,
+            "displayInInput": false,
+            "saveInDB": true
+          },
+          {
+            "name": "_id",
+            "displayInList": false,
+            "displayInInput": false,
+            "saveInDB": true
+          }
+        ],
+        "placeholder": "Tapez le nom de votre ville",
+        "help_text": "Commencez à taper et sélectionnez dans la liste",
+        "redirection": "q8",
+        "input_cond": "",
+        "output_cond": "value !== null",
+        "required": false,
+        "isSubQuestion": false
+      },
+      {
+        "id_db": "Y5Z6A7",
+        "id": "q8",
+        "title": "Q8.",
+        "type": "grid",
+        "label": "Évaluation de votre satisfaction alimentaire",
+        "page": 7,
+        "redirection": "q2",
+        "navigation": {
+          "rules": [
+            {
+              "if": {
+                "type": "GRID",
+                "axis": "row",
+                "operator": "ANY_EQUALS",
+                "value": "R4"
+              },
+              "then": {
+                "goTo": "FIN"
+              }
+            }
+          ],
+          "default": "redirection"
+        },
+        "questions": [
+          {
+            "id_db_qst": "B8C9D0",
+            "id": "q8_1",
+            "label": "Qualité des fruits et légumes",
+            "required": true,
+            "cells": {
+              "R1": { "enabled": true },
+              "R2": { "enabled": true },
+              "R3": { "enabled": true },
+              "R4": { "enabled": true },
+              "R5": { "enabled": true }
+            }
+          },
+          {
+            "id_db_qst": "E1F2G3",
+            "id": "q8_2",
+            "label": "Variété des produits disponibles",
+            "required": true,
+            "cells": {
+              "R1": { "enabled": true },
+              "R2": { "enabled": true },
+              "R3": { "enabled": true },
+              "R4": { "enabled": true },
+              "R5": { "enabled": true }
+            }
+          },
+          {
+            "id_db_qst": "H4I5J6",
+            "id": "q8_3",
+            "label": "Prix des aliments",
+            "required": true,
+            "cells": {
+              "R1": { "enabled": true },
+              "R2": { "enabled": true },
+              "R3": { "enabled": true },
+              "R4": { "enabled": true },
+              "R5": { "enabled": true }
+            }
+          },
+          {
+            "id_db_qst": "K7L8M9",
+            "id": "q8_4",
+            "label": "Accessibilité des produits bio",
+            "required": true,
+            "cells": {
+              "R1": { "enabled": true },
+              "R2": { "enabled": true },
+              "R3": { "enabled": true },
+              "R4": { "enabled": true },
+              "R5": { "enabled": false }
+            }
+          },
+          {
+            "id_db_qst": "N0O1P2",
+            "id": "q8_5",
+            "label": "Information nutritionnelle",
+            "required": false,
+            "cells": {
+              "R1": { "enabled": true },
+              "R2": { "enabled": true },
+              "R3": { "enabled": true },
+              "R4": { "enabled": true },
+              "R5": { "enabled": true }
+            }
+          }
+        ],
+        "reponses": [
+          {
+            "id_db_rps": "Q3R4S5",
+            "id": "R1",
+            "label": "Très insatisfait",
+            "input": {
+              "type": "radio",
+              "axis": "row",
+              "validation": {
+                "min": 1
+              }
+            }
+          },
+          {
+            "id_db_rps": "T6U7V8",
+            "id": "R2",
+            "label": "Insatisfait",
+            "input": {
+              "type": "radio",
+              "axis": "row",
+              "validation": {
+                "required": false
+              }
+            }
+          },
+          {
+            "id_db_rps": "W9X0Y1",
+            "id": "R3",
+            "label": "Neutre",
+            "input": {
+              "type": "radio",
+              "axis": "row",
+              "validation": {
+                "required": false
+              }
+            }
+          },
+          {
+            "id_db_rps": "Z2A3B4",
+            "id": "R4",
+            "label": "Satisfait",
+            "input": {
+              "type": "radio",
+              "axis": "row",
+              "validation": {
+                "required": false
+              }
+            }
+          },
+          {
+            "id_db_rps": "C5D6E7",
+            "id": "R5",
+            "label": "Très satisfait",
+            "input": {
+              "type": "radio",
+              "axis": "row",
+              "validation": {
+                "required": false
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }

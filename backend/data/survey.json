@@ -15,7 +15,7 @@
       "label": "Quel est votre moyen de transport principal t78tt ?",
       "placeholder": "Ex : Bus, Train, Voiture...",
       "help_text": "Indiquez le moyen que vous utilisez le plus souvent",
-      "redirection": "q3",
+      "redirection": "q24",
       "input_cond": "",
       "output_cond": "value.length > 0",
       "required": true,
@@ -218,7 +218,7 @@
         "name": "cp",
         "displayInList": true,
         "displayInInput": false,
-        "saveInDB": false
+        "saveInDB": true
       },
       {
         "name": "_id",
@@ -716,6 +716,7 @@
     "title": "Q24_1.",
     "type": "spinner",
     "label": "  sub SPINNER qst?",
+    "placeholder": "Sélectionnez une option",
     "options": [
       {
         "codeItem": 1,

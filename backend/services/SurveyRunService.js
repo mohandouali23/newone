@@ -255,6 +255,22 @@ export default class SurveyRunService {
     (typeof v === 'string' && v.trim() === '') ||
     (Array.isArray(v) && v.length === 0);
     
+    
+  // ==========================================================
+  // CAS AUTOCOMPLETE
+  // ==========================================================
+  if (step.type === 'autocomplete') {
+    if (isEmpty(mainValue) || isEmpty(rawValue)) {
+      // Supprimer toutes les clés dérivées : id_db_colonne
+      step.columns?.forEach(col => {
+        if (col.saveInDB) {
+          keysToDelete.push(`${step.id_db}_${col.name}`);
+        }
+      });
+    }
+    return keysToDelete;
+  }
+  
     // ==========================================================
     // CAS 1 : ACCORDION
     // ==========================================================
