@@ -1,3 +1,4 @@
+import RotationService from './RotationService.js';
 export default class NavigationRuleService {
     //  Évalue un opérateur simple sur une réponse
 
@@ -5,14 +6,6 @@ export default class NavigationRuleService {
     const extracted = this.extractValue(answerValue, rule.field);
        const values = Array.isArray(extracted) ? extracted : [extracted];
 
-//     console.log("NAV DEBUG", {
-//   answerValue,
-//   extracted,
-//   rule,
-//   values
-// });
-
-    
    // const values = Array.isArray(extracted) ? extracted : [extracted];
     switch (rule.operator) {
       case 'EQUALS':
@@ -199,6 +192,45 @@ if (rule.axis === 'column') {
 
 
   return false;
+}
+
+
+
+
+static next({ session, survey, currentStep }) {
+
+  // 1️⃣ règles conditionnelles
+  const ruleTarget = this.resolve(
+    currentStep,
+    session.answers,
+    survey.steps
+  );
+  if (ruleTarget) return ruleTarget;
+
+  const parentId = currentStep.id;
+
+  // 2️⃣ init rotation uniquement depuis le parent
+  if (RotationService.canStart(parentId, session, session.answers, survey)) {
+    const first = RotationService.start({
+      parentId,
+      survey,
+      session,
+      answers: session.answers
+    });
+    if (first) return first;
+  }
+
+  // 3️⃣ avancer rotation
+  const nextRot = RotationService.advance(parentId, session);
+  if (nextRot) return nextRot;
+
+  // 4️⃣ fallback
+  return currentStep.redirection;
+}
+
+static previous(session) {
+  session.history.pop(); // retire current
+  return session.history.at(-1)?.id ?? session.currentStepId;
 }
 
 }

@@ -1,6 +1,6 @@
 import PrecisionUtils from './precisionUtils.js';
 import SurveyService from './SurveyService.js';
-import ToastService from './ToastService.js';
+import ToastUtils from './ToastUtils.js';
 
 export default class ValidationService {
 
@@ -32,7 +32,7 @@ export default class ValidationService {
    * Affiche un toast d’erreur standard
    */
   static showMissingToast(message) {
-    ToastService.show(message, { type: 'error' });
+    ToastUtils.show(message, { type: 'error' });
   }
 /**
  * Retourne la liste des messages de validation pour un step

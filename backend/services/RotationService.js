@@ -1,4 +1,3 @@
-// services/RotationService.js
 
 import RotationQueueUtils from "./RotationQueueUtils.js";
 
@@ -68,32 +67,77 @@ export default class RotationService {
     };
   }
 
-  static clearRotationForParent(session, parentId) {
-    delete session.rotationQueue;
-    delete session.rotationQueueDone?.[parentId];
-    delete session.rotationState?.[parentId];
+  // static clearRotationForParent(session, parentId) {
+  //   delete session.rotationQueue;
+  //   delete session.rotationQueueDone?.[parentId];
+  //   delete session.rotationState?.[parentId];
   
-    if (session.rotationQueueDone) {
-      delete session.rotationQueueDone[parentId];
-    }
+  //   if (session.rotationQueueDone) {
+  //     delete session.rotationQueueDone[parentId];
+  //   }
   
-    if (session.rotationState) {
-      delete session.rotationState[parentId];
-    }
-  }
+  //   if (session.rotationState) {
+  //     delete session.rotationState[parentId];
+  //   }
+  // }
   
   // ==========================================================================
   // ROTATION INITIALIZATION
   // ==========================================================================
+  static initRotation({ session, survey, answers, action, generateQueue, currentStep }) {
 
-  /**
-   * Initialise une rotation si :
-   * - l’action est "next"
-   * - aucune rotation n’est déjà active
-   * - une question possède repeatFor
-   * - la condition de répétition est remplie
-   */
-
+    if (action !== 'next') return null;
+  
+    const parentId = currentStep.id;
+  
+    // 1️⃣ Ce step n'est pas un parent de rotation
+    const hasChildren = survey.steps.some(s => s.repeatFor === parentId);
+    if (!hasChildren) return null;
+  
+    // 2️⃣ Pas de réponse → pas de rotation
+    if (!answers[parentId]) return null;
+  
+    session.rotationState ??= {};
+    session.rotationQueueDone ??= {};
+  
+    // 3️⃣ ⚠️ rotationQueueDone est valide UNIQUEMENT
+    // si on est déjà passé par la rotation ET qu'on n'est PAS revenu au parent
+    if (
+      session.rotationQueueDone[parentId] &&
+      session.currentStepId !== parentId
+    ) {
+      return null;
+    }
+  
+    // 4️⃣ Génération de la rotation
+    const queue = generateQueue(survey, parentId, answers);
+  
+    // 5️⃣ Pas de rotation à faire
+    if (queue.length === 0) {
+      session.rotationQueueDone[parentId] = true;
+      return {
+        type: 'NO_ROTATION',
+        nextStepId: currentStep.redirection
+      };
+    }
+  
+    // 6️⃣ Init rotation
+    session.rotationQueue = queue;
+    session.rotationQueueDone[parentId] = true;
+  
+    session.history ??= [];
+    session.history.push({
+      id: queue[0].step.id,
+      isRotation: true,
+      wrapper: queue[0]
+    });
+  
+    return {
+      type: 'ROTATION_STARTED',
+      nextStepId: queue[0].step.id
+    };
+  }
+  
   // static initRotation({ session, survey, answers, action, generateQueue }) {
 
   //   if (action !== 'next') return null;
@@ -146,45 +190,46 @@ export default class RotationService {
   //   }
   //   return null;
   // }
-  static initRotation({ session, survey, answers, action, generateQueue, currentStep }) {
 
-    if (action !== 'next') return null;
+  // static initRotation({ session, survey, answers, action, generateQueue, currentStep }) {
+
+  //   if (action !== 'next') return null;
   
-    const parentId = currentStep.id;
+  //   const parentId = currentStep.id;
   
-    // Ce step n'a pas de rotation
-    const hasChildren = survey.steps.some(s => s.repeatFor === parentId);
-    if (!hasChildren) return null;
+  //   // Ce step n'a pas de rotation
+  //   const hasChildren = survey.steps.some(s => s.repeatFor === parentId);
+  //   if (!hasChildren) return null;
   
-    if (!answers[parentId]) return null;
+  //   if (!answers[parentId]) return null;
   
-    session.rotationState ??= {};
-    session.rotationQueueDone ??= {};
+  //   session.rotationState ??= {};
+  //   session.rotationQueueDone ??= {};
   
-    if (session.rotationQueueDone[parentId]) return null;
+  //   if (session.rotationQueueDone[parentId]) return null;
   
-    const queue = generateQueue(survey, parentId, answers);
+  //   const queue = generateQueue(survey, parentId, answers);
   
-    if (queue.length === 0) {
-      session.rotationQueueDone[parentId] = true;
-      return { type: 'NO_ROTATION', nextStepId: currentStep.redirection };
-    }
+  //   if (queue.length === 0) {
+  //     session.rotationQueueDone[parentId] = true;
+  //     return { type: 'NO_ROTATION', nextStepId: currentStep.redirection };
+  //   }
   
-    session.rotationQueue = queue;
-    session.rotationQueueDone[parentId] = true;
+  //   session.rotationQueue = queue;
+  //   session.rotationQueueDone[parentId] = true;
   
-    session.history ??= [];
-    session.history.push({
-      id: queue[0].step.id,
-      isRotation: true,
-      wrapper: queue[0]
-    });
+  //   session.history ??= [];
+  //   session.history.push({
+  //     id: queue[0].step.id,
+  //     isRotation: true,
+  //     wrapper: queue[0]
+  //   });
   
-    return {
-      type: 'ROTATION_STARTED',
-      nextStepId: queue[0].step.id
-    };
-  }
+  //   return {
+  //     type: 'ROTATION_STARTED',
+  //     nextStepId: queue[0].step.id
+  //   };
+  // }
   
     // ==========================================================================
   // ROTATION ADVANCEMENT

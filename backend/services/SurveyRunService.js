@@ -14,13 +14,11 @@ process.env.MODE_TEST === 'true'
 : RealResponseService;
 
 export default class SurveyRunService {
-
+  
   // -------------------- RUN --------------------
   static async run({ surveyId, action, body, session }) {
     const userId = 'anonymous';
     const survey = SurveyService.loadSurvey(surveyId);
-    // Stocker le survey dans le cache de session pour utilisation ultérieure
-    session.surveyCache = survey;
     
     this.initSession(session);
     
@@ -35,12 +33,12 @@ export default class SurveyRunService {
         body, 
         responseId, 
         session, 
-        isInRotation });
+        isInRotation,survey });
         
         const isStepValid = ValidationService.validateStep(currentStep, session.answers, currentStepWrapper);
         
         if (!isStepValid) {
-          // Récupérer les messages de validation
+          
           const messages = ValidationService.getMissingMessages(currentStep, session.answers, currentStepWrapper);
           const invalidFields =
           ValidationService.getInvalidFields(
@@ -48,11 +46,11 @@ export default class SurveyRunService {
             session.answers,
             currentStepWrapper
           );
-          // Retourner l’erreur au frontend
+          
           return {
             success: false,
             validationError: true,
-            messages, // tableau de strings
+            messages, 
             invalidFields,
             currentStepId: currentStep.id
           };
@@ -61,7 +59,7 @@ export default class SurveyRunService {
         this.pushCurrentStepToHistory(session, currentStep, isInRotation,currentStepWrapper);
       }
       if (action === 'prev') {
-        const prevStepId = this.handlePrevious(session);
+        const prevStepId = this.handlePrevious(session,survey);
         if (prevStepId) return { nextStep: { id: prevStepId } };
       }
       
@@ -92,12 +90,6 @@ export default class SurveyRunService {
       return session.responseId;
     }
     
-    // ============================================================================
-    // GESTION DES PAGES / STEPS
-    // Responsabilité :
-    // - Déterminer quels steps appartiennent à la page courante
-    // - Gérer les cas de rotation
-    // ============================================================================
     static getStepsForCurrentPage(survey, currentStep, isInRotation) {
       if (!currentStep) return []; // éviter TypeError
       
@@ -106,18 +98,9 @@ export default class SurveyRunService {
       : survey.steps.filter(s => s.page === currentStep.page);
     }
     
-    // ============================================================================
-    // SAUVEGARDE DES RÉPONSES DE PAGE
-    // Responsabilité :
-    // - Extraction des valeurs
-    // - Normalisation
-    // - Nettoyage
-    // - Sauvegarde DB
-    // - Sauvegarde session
-    // ============================================================================
     // -------------------- SAVE PAGE ANSWERS --------------------
     
-    static async savePageAnswers({ steps, wrappers, body, responseId, session, isInRotation }) {
+    static async savePageAnswers({ steps, wrappers, body, responseId, session, isInRotation,survey }) {
       for (let i = 0; i < steps.length; i++) {
         const step = steps[i];
         const wrapper = wrappers?.[i];
@@ -134,18 +117,18 @@ export default class SurveyRunService {
             v !== undefined && v !== null && !(typeof v === 'string' && v.trim() === '')
         )
       );
-      console.log("normalized after clean ",normalized)
+      
       let mainValue = this.getMainValue(step, body, rawValue);
-      console.log("mainnnnn value",mainValue)
       
-      const previousSelected = session.answers[step.id]; // ex: '7'
+      
+      const previousSelected = session.answers[step.id]; 
       const oldOptionCode = Array.isArray(previousSelected) ? previousSelected[0] : previousSelected;
-      const keysToDelete = await this.computeKeysToDelete(step, rawValue, mainValue,oldOptionCode,session,previousSelected);
+      const keysToDelete = await this.computeKeysToDelete(step, rawValue, mainValue,oldOptionCode,session,previousSelected,survey);
       
-      // --- 2. Nettoyer la session et ajouter d’autres clés à supprimer si nécessaire ---
+      
       await this.cleanupSession(step, session, mainValue, previousSelected);
       
-      // --- 3. Enregistrer en DB ---
+      
       await ResponseService.addAnswer(responseId, normalized, keysToDelete);
       
       // Recalculer mainValue après cleanup
@@ -157,12 +140,7 @@ export default class SurveyRunService {
       
     }
   }
-  // ============================================================================
-  // EXTRACTION DES VALEURS
-  // Responsabilité :
-  // - Déterminer la valeur brute envoyée par le client
-  // - Déterminer la valeur principale du step
-  // ============================================================================
+  
   static getRawValueForStep(step, body) {
     if (['grid', 'accordion', 'single_choice', 'multiple_choice'].includes(step.type)) return body;
     return body[step.id];
@@ -189,20 +167,13 @@ export default class SurveyRunService {
     return prev.filter(v => !next.includes(v));
   }
   
-  // ============================================================================
-  // NETTOYAGE DE SESSION
-  // Responsabilité :
-  // - Supprimer anciennes sous-questions
-  // - Réinitialiser rotations si nécessaire
-  // - Nettoyer les précisions obsolètes
   
-  // ============================================================================
   static async cleanupSession(step, session, mainValue, previousSelected = []) {
     const sessionAnswers = session.answers;
     if (!sessionAnswers) return;
-  
+    
     const deselected = this.computeDeselected(previousSelected, mainValue);
-  
+    
     deselected.forEach(code => {
       Object.keys(sessionAnswers).forEach(k => {
         if (
@@ -213,7 +184,7 @@ export default class SurveyRunService {
         }
       });
     });
-  
+    
     if (step.rotationTemplate?.length && deselected.length) {
       session.rotationState ??= {};
       session.rotationState[step.id] = { needsRefresh: true };
@@ -222,13 +193,6 @@ export default class SurveyRunService {
     }
   }
   
-  // ---------------------------------------------------------------------------
-  // SAUVEGARDE DES RÉPONSES EN SESSION
-  // Responsabilité :
-  // - Enregistrer la valeur principale du step
-  // - Enregistrer les sous-questions normalisées
-  // - Gérer les clés spécifiques aux rotations
-  // ---------------------------------------------------------------------------
   
   // -------------------- SESSION & DB --------------------
   static saveSessionAnswers({ step, normalized, mainValue, session, wrapper, isInRotation }) {
@@ -237,7 +201,7 @@ export default class SurveyRunService {
     session.answers[answerKey] = mainValue;
     // Fusionner toutes les sous-questions
     Object.keys(normalized).forEach(dbKey => {
-      if (dbKey === step.id_db) return;// ignorer la clé principale DB
+      if (dbKey === step.id_db) return;
       
       const parts = dbKey.split('_'); 
       const codeItem = parts[1]; // code de l'option
@@ -249,12 +213,7 @@ export default class SurveyRunService {
       session.answers[sessionKey] = normalized[dbKey];
     });
   }
-  // ---------------------------------------------------------------------------
-  // SAUVEGARDE DES PRÉCISIONS (CHAMPS CONDITIONNELS)
-  // Responsabilité :
-  // - Enregistrer les champs "précision" liés aux options sélectionnées
-  // - Respecter les règles requiresPrecision
-  // --------------------------------------------------------------------------
+  
   static saveStepPrecisions({ step, rawValue, mainValue, sessionAnswers }) {
     if (!step || !rawValue || !sessionAnswers) return;
     
@@ -287,15 +246,7 @@ export default class SurveyRunService {
     });
   }
   
-  // ---------------------------------------------------------------------------
-  // CALCUL DES CLÉS À SUPPRIMER EN BASE DE DONNÉES
-  // Responsabilité :
-  // - Identifier les réponses obsolètes
-  // - Gérer la suppression des précisions
-  // - Gérer la suppression des sous-questions
-  // ---------------------------------------------------------------------------
-  
-  static async computeKeysToDelete(step, rawValue, mainValue, oldOptionCode = undefined,session,previousSelected = []) {
+  static async computeKeysToDelete(step, rawValue, mainValue, oldOptionCode = undefined,session,previousSelected = [],survey) {
     const keysToDelete = [];
     
     const isEmpty = v =>
@@ -400,59 +351,56 @@ export default class SurveyRunService {
       }
     }
     
-        // ---- ROTATION CLEANUP ----
-        if (step.rotationTemplate?.length) {
+    // ---- ROTATION CLEANUP ----
+    if (step.rotationTemplate?.length) {
       
+      const newSelected = Array.isArray(mainValue) ? mainValue : [];
+     // console.log("cleanupsession newSelected ",newSelected)
+      const hasChanged =
+      previousSelected.length !== newSelected.length ||
+      previousSelected.some(v => !newSelected.includes(v));
       
-          const newSelected = Array.isArray(mainValue) ? mainValue : [];
-          console.log("cleanupsession newSelected ",newSelected)
-          const hasChanged =
-          previousSelected.length !== newSelected.length ||
-          previousSelected.some(v => !newSelected.includes(v));
-          
-          if (hasChanged) {
-           
-            const { dbKeysToDelete, sessionKeysToDelete } =
-            this.computeRotationKeysToDelete({
-              step,
-              mainValue,
-              previousSelected,
-              allSteps: session.surveyCache.steps
-            });
-            
-            //  DB
-            if (dbKeysToDelete.length) {
-              await ResponseService.deleteAnswers(session.responseId, dbKeysToDelete);
-            }
-            
-            //  Session
-            //sessionKeysToDelete.forEach(k => delete session.answers[k]);
-            
-            sessionKeysToDelete.forEach(k => {
-              Object.keys(session.answers).forEach(sessionKey => {
-                if (sessionKey.startsWith(k)) {
-                  delete session.answers[sessionKey];
-                }
-              });
-            });
-            // Indique que la rotation doit être relancée si on revient sur ce parent
-            session.rotationState ??= {};
-            session.rotationState[step.id] = { needsRefresh: true };
-            
-            // reset rotation state
-            delete session.rotationQueue;
-            delete session.rotationQueueDone[step.id];
-            
-          }
+      if (hasChanged) {
+        
+        const { dbKeysToDelete, sessionKeysToDelete } =
+        this.computeRotationKeysToDelete({
+          step,
+          mainValue,
+          previousSelected,
+          allSteps: survey.steps
+        });
+        
+        //  DB
+        if (dbKeysToDelete.length) {
+          await ResponseService.deleteAnswers(session.responseId, dbKeysToDelete);
         }
-
+        
+        //  Session
+        sessionKeysToDelete.forEach(k => {
+          Object.keys(session.answers).forEach(sessionKey => {
+            if (sessionKey.startsWith(k)) {
+              delete session.answers[sessionKey];
+            }
+          });
+        });
+        // Indique que la rotation doit être relancée si on revient sur ce parent
+        session.rotationState ??= {};
+        session.rotationState[step.id] = { needsRefresh: true };
+        
+        // reset rotation state
+        delete session.rotationQueue;
+        delete session.rotationQueueDone[step.id];
+        
+      }
+    }
+    
     // ==========================================================
     // CAS 3 : STEP SIMPLE
     // ==========================================================
     if (step.id_db && isEmpty(mainValue)) {
       keysToDelete.push(step.id_db);
     }
-    // 4. PRECISIONS (_pr_) — APPEL DE LA FONCTION
+    // 4. PRECISIONS (_pr_)
     const precisionKeys = this.computePrecisionKeysToDelete(step, mainValue);
     keysToDelete.push(...precisionKeys);
     
@@ -472,7 +420,6 @@ export default class SurveyRunService {
   }) {
     const dbKeysToDelete = [];
     const sessionKeysToDelete = [];
-    
     // Nouvelle sélection normalisée
     const newSelected = Array.isArray(mainValue) ? mainValue.map(String) : [String(mainValue)];
     
@@ -487,15 +434,11 @@ export default class SurveyRunService {
     
     deselectedOptions.forEach(optionCode => {
       
-      // --------------------
       // SESSION KEYS
-      // --------------------
       // Toutes les clés enfants générées par rotation
       sessionKeysToDelete.push(`${step.id}_${optionCode}`);
       
-      // --------------------
       // DB KEYS
-      // --------------------
       if (step.rotationTemplate?.length) {
         step.rotationTemplate.forEach(rotId => {
           const rotStep = allSteps.find(s => s.id === rotId);
@@ -514,10 +457,8 @@ export default class SurveyRunService {
     };
   }
   
-  
-  // ==========================================================
   // Supprimer les clés de sous-questions pour option désélectionnée
-  // ==========================================================
+  
   static computeSubQuestionKeysToDelete({ step, mainValue, oldOptionCode }) {
     const dbKeysToDelete = [];
     const sessionKeysToDelete = [];
@@ -536,11 +477,6 @@ export default class SurveyRunService {
     return { dbKeysToDelete, sessionKeysToDelete };
   }
   
-  // ---------------------------------------------------------------------------
-  // GESTION DES PRÉCISIONS À SUPPRIMER (DB)
-  // Responsabilité :
-  // - Supprimer les champs de précision devenus invalides
-  // --------------------------------------------------------------------------
   static computePrecisionKeysToDelete(step, mainValue) {
     const keysToDelete = [];
     
@@ -555,21 +491,14 @@ export default class SurveyRunService {
       
       if (!selected.includes(code)) {
         keysToDelete.push(dbPrKey);
-        console.log("-> Precision key to delete:", dbPrKey);
+       // console.log("-> Precision key to delete:", dbPrKey);
       } else {
-        console.log("-> Precision key kept:", dbPrKey);
+       // console.log("-> Precision key kept:", dbPrKey);
       }
     });
     
     return keysToDelete;
   }
-  
-  // ---------------------------------------------------------------------------
-  // NETTOYAGE DES PRÉCISIONS EN SESSION
-  // Responsabilité :
-  // - Supprimer les précisions obsolètes de la session
-  // - Maintenir la cohérence avec les réponses sélectionnées
-  // --------------------------------------------------------------------------
   static cleanupSessionPrecisions(step, sessionAnswers, selectedOptions = []) {
     Object.keys(sessionAnswers).forEach(key => {
       if (step.type === 'single_choice' && key.startsWith(`${step.id}_pr_`)) delete sessionAnswers[key];
@@ -579,12 +508,6 @@ export default class SurveyRunService {
       }
     });
   }
-  // ============================================================================
-  // HISTORIQUE DE NAVIGATION
-  // Responsabilité :
-  // - Permettre la navigation arrière
-  // - Rejouer correctement les rotations
-  // =========================================================================
   // -------------------- HISTORIQUE --------------------
   static pushCurrentStepToHistory(session, step, isRotation,wrapper=null) {
     if (!step) return;
@@ -599,7 +522,7 @@ export default class SurveyRunService {
       wrapper: isRotation ? wrapper : null });
     }
     
-    static handlePrevious(session) {
+    static handlePrevious(session,survey) {
       if (!session.history?.length) {
         // On est déjà à la première question
         return session.currentStepId; // on reste sur la première question
@@ -619,6 +542,21 @@ export default class SurveyRunService {
       
       const previousStep = session.history[lastIndex];
       if (!previousStep) return null;
+      // Si on revient sur un parent de rotation → reset total
+const isParent = survey.steps.some(
+  s => s.repeatFor === previousStep.id
+);
+
+if (isParent) {
+  delete session.rotationQueue;
+  if (session.rotationQueueDone) {
+    delete session.rotationQueueDone[previousStep.id];
+  }
+  if (session.rotationState) {
+    delete session.rotationState[previousStep.id];
+  }
+}
+
       // Gestion des rotations
       if (previousStep.isRotation && previousStep.wrapper) {
         const parentId = previousStep.wrapper.parent;
@@ -627,47 +565,31 @@ export default class SurveyRunService {
         if (session.rotationQueueDone?.[parentId]) {
           delete session.rotationQueueDone[parentId];
         }
-        
-        // Réinitialiser l'état de rotation
-        if (session.rotationState?.[parentId]) {
-          // Conserver seulement si la réponse n'a pas changé
-          const currentAnswer = session.answers[parentId];
-          const originalAnswer = session.rotationState[parentId].originalAnswer;
-          
-          if (JSON.stringify(currentAnswer) !== JSON.stringify(originalAnswer)) {
-            delete session.rotationState[parentId];
-          }
-        }
+        // console.log("rotationState",session.rotationState)
+        // // Réinitialiser l'état de rotation
+        // if (session.rotationState?.[parentId]) {
+        //   // Conserver seulement si la réponse n'a pas changé
+        //   const currentAnswer = session.answers[parentId];
+        //   const originalAnswer = session.rotationState[parentId].originalAnswer;
+        //   console.log("rotationState666",session.rotationState)
+        //   if (JSON.stringify(currentAnswer) !== JSON.stringify(originalAnswer)) {
+        //     delete session.rotationState[parentId];
+        //   }
+        // }
         
         // On récupère TOUTES les rotations du parent
-        const allRotations = RotationQueueUtils.getAllRotationsForParent(session, parentId);
-        
+        const allRotations = RotationQueueUtils.getAllRotationsForParent(session,survey, parentId);
         // On trouve l'index exact de cette instance dans allRotations
         const rotationIndex = allRotations.findIndex(r => r.id === previousStep.id 
           && r.optionCode === previousStep.wrapper.optionCode);
-          
           // On remet la rotationQueue à partir de cette instance
           session.rotationQueue = rotationIndex >= 0 ? allRotations.slice(rotationIndex) : allRotations;
         } else {
-          
           delete session.rotationQueue;
-          
-          // console.log("session.rotationQueue after",session.rotationQueue)
-          
         }
-        
         session.currentStepId = previousStep.id;
-        
-
         return previousStep.id;
       }
-      // ============================================================================
-      // RÉSOLUTION DE LA NAVIGATION
-      // Responsabilité :
-      // - Initier une rotation
-      // - Avancer une rotation
-      // - Appliquer les règles de navigation
-      // ============================================================================
       // -------------------- NAVIGATION --------------------
       static resolveNextStep(session, survey, currentStep, isInRotation) {
         // 1 NAVIGATION CONDITIONNELLE D’ABORD
@@ -687,20 +609,20 @@ export default class SurveyRunService {
         
         // Réinitialiser si nécessaire
         RotationService.resetRotationIfNeeded(session,survey, currentStep.id, session.answers);
-
+        
         // Init rotation seulement si action 'next' et rotationQueue vide
-  if (!session.rotationQueue) {
-        const rotationInit = RotationService.initRotation({
-          session,
-          survey,
-          answers: session.answers,
-          action: 'next',
-          currentStep,
-          generateQueue: RotationQueueUtils.generateRotationQueue
-        });
-        console.log('rotationInit next', rotationInit);
-        if (rotationInit) return rotationInit.nextStepId;
-      }
+        if (!session.rotationQueue) {
+          const rotationInit = RotationService.initRotation({
+            session,
+            survey,
+            answers: session.answers,
+            action: 'next',
+            currentStep,
+            generateQueue: RotationQueueUtils.generateRotationQueue
+          });
+          console.log('rotationInit next', rotationInit);
+          if (rotationInit) return rotationInit.nextStepId;
+        }
         const rotationAdvance = RotationService.advanceRotation({ session, survey, currentStep, action: 'next' });
         if (rotationAdvance?.nextStepId) return rotationAdvance.nextStepId;
         

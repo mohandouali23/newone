@@ -63,8 +63,8 @@ export default class RotationQueueUtils {
     return session.rotationQueue.find(wrapper => wrapper.step.id === stepId) || null;
   }
   // NOUVELLE FONCTION MANQUANTE
-  static getAllRotationsForParent(session, parentId) {
-    if (!session.surveyCache) {
+  static getAllRotationsForParent(session,survey, parentId) {
+    if (!survey) {
       console.warn('surveyCache non disponible dans la session');
       return [];
     }
@@ -74,7 +74,6 @@ export default class RotationQueueUtils {
     // 2. De la réponse à la question parent (session.answers[parentId])
     // 3. De générer la queue complète
     
-    const survey = session.surveyCache;
     if (!survey) {
       console.warn('Survey non trouvé dans le cache');
       return [];

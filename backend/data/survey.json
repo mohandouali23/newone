@@ -18,7 +18,7 @@
       "redirection": "q3",
       "input_cond": "",
       "output_cond": "value.length > 0",
-      "required": false,
+      "required": true,
       "isSubQuestion": false,
       "page": 1
       
@@ -602,7 +602,7 @@
   "title": "Q15.",
   "page": 11,
   "label": "Activités pratiquées et motivation principale du séjour",
-  "redirection": "FIN",
+  "redirection": "q6",
   "navigation": {
     "rules": [
       {
